@@ -1,0 +1,18 @@
+{
+  "name": "htbp",
+  "version": "1.0.0",
+  "description": "frontend of hospitals time booking platform",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "core-js": "^2.6.12",
+    "jquery": "^3.6.0"
+  },
+  "devDependencies": {
+    "babel-preset-es2015": "^6.24.1"
+  }
+}

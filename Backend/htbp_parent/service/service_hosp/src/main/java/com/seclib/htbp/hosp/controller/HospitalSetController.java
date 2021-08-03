@@ -20,6 +20,7 @@ import java.util.Random;
 @Api(tags="Hospital information configuration.")
 @RestController
 @RequestMapping("/admin/hosp/hospitalSet")
+@CrossOrigin
 public class HospitalSetController {
     @Autowired
     private HospitalSetService hospitalSetService;
@@ -53,7 +54,7 @@ public class HospitalSetController {
             wrapper.like("hosname", hosname);
         }
         if(!StringUtils.isEmpty(hoscode)){
-            wrapper.eq("hospcode", hoscode);
+            wrapper.eq("hoscode", hoscode);
         }
         Page<HospitalSet> pageHospitalSet = hospitalSetService.page(page,wrapper);
         return Result.ok(pageHospitalSet);
