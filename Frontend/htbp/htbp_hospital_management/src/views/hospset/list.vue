@@ -3,7 +3,7 @@
     Hospital Name List:
     <br />
     <br />
-    
+
     <el-form :inline="true">
       <el-form-item>
         <el-input v-model="searchObj.hosname" placeholder="Hospital Name" />
@@ -16,7 +16,18 @@
         <el-button type="default" @click="resetData()">Reset</el-button>
       </el-form-item>
     </el-form>
-    <el-table :data="list" style="width: 100%">
+
+    <div>
+      <el-button type="danger" size="mini" @click="removeRows()"
+        >Batch Delete</el-button
+      >
+    </div>
+    <el-table
+      :data="list"
+      @selection-change="handleSelection"
+      style="width: 100%"
+    >
+      <el-table-column type="selection" width="55" />
       <el-table-column type="index" label="No. " width="50" />
       <el-table-column prop="hosname" label="Hospital Name" />
       <el-table-column prop="hoscode" label="Hospital Code" />
@@ -26,6 +37,34 @@
       <el-table-column label="Status" width="80">
         <template slot-scope="scope">
           {{ scope.row.status === 1 ? "Available" : "Invalid" }}
+        </template>
+      </el-table-column>
+      <el-table-column label="Action" width="280" alige="center">
+        <template slot-scope="scope">
+          <el-button
+            type="danger"
+            size="mini"
+            icon="el-icon-delete"
+            @click="removeDataById(scope.row.id)"
+          />
+          <el-button
+            type="primary"
+            v-if="scope.row.status == 1"
+            size="mini"
+            @click="lockHostSet(scope.row.id, 0)"
+            >Lock</el-button
+          >
+          <el-button
+            type="danger"
+            v-if="scope.row.status == 0"
+            size="mini"
+            @click="lockHostSet(scope.row.id, 1)"
+            >Unlock</el-button
+          >
+          
+          <router-link :to="'/hospSet/edit/'+scope.row.id"> 
+             <el-button type="primary" size="mini" icon="el-icon-edit"/> 
+          </router-link> 
         </template>
       </el-table-column>
     </el-table>
@@ -51,12 +90,56 @@ export default {
       searchObj: {},
       list: [],
       total: 0,
+      multipleSelection: [],
     };
   },
   created() {
     this.getList();
   },
   methods: {
+    lockHostSet(id, status) {
+      hospset
+        .lockHospSet(id, status)
+        .then((response) => {
+          this.getList(this.current);
+        });
+    },
+    handleSelection(selection) {
+      this.multipleSelection = selection;
+    },
+    removeRows() {
+      this.$confirm(
+        "This action will delete the record permanently, continue?",
+        "Warning",
+        {
+          confirmButtonText: "Confirm",
+          cancelButtonText: "Cancel",
+          type: "warning",
+        }
+      )
+        .then(() => {
+          var idList = [];
+          for (var i = 0; i < this.multipleSelection.length; i++) {
+            // var obj = this.multipleSelection[i]
+            // var id = obj.id
+            // idList.push(id)
+            idList.push(this.multipleSelection[i].id);
+          }
+          hospset.batchRemove(idList).then((response) => {
+            this.$message({
+              type: "success",
+              message: "Deleted!",
+            });
+            this.getList(this.current);
+          });
+        })
+        .catch(() => {
+          this.$message({
+            type: "info",
+            message: "Canceled!",
+          });
+        });
+    },
     getList(page = 1) {
       this.current = page;
       hospset
@@ -73,6 +156,32 @@ export default {
     resetData() {
       this.searchObj.hosname = "";
       this.searchObj.hoscode = "";
+    },
+    removeDataById(id) {
+      this.$confirm(
+        "This action will delete the record permanently, continue?",
+        "Warning",
+        {
+          confirmButtonText: "Confirm",
+          cancelButtonText: "Cancel",
+          type: "warning",
+        }
+      )
+        .then(() => {
+          hospset.removeDataById(id).then((response) => {
+            this.$message({
+              type: "success",
+              message: "Deleted!",
+            });
+            this.getList(this.current);
+          });
+        })
+        .catch(() => {
+          this.$message({
+            type: "info",
+            message: "Canceled!",
+          });
+        });
     },
   },
 };

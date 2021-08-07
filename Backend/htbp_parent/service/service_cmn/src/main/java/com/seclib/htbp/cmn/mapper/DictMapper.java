@@ -1,7 +1,7 @@
-package com.seclib.htbp.hosp.mapper;
+package com.seclib.htbp.cmn.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.seclib.htbp.model.hosp.HospitalSet;
+import com.seclib.htbp.model.cmn.Dict;
 
-public interface HospitalSetMapper extends BaseMapper<HospitalSet> {
+public interface DictMapper extends BaseMapper<Dict> {
 }

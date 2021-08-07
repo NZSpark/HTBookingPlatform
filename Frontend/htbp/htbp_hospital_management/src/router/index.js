@@ -70,13 +70,50 @@ export const constantRoutes = [
       },
       {
         path: 'add',
-        name: 'Add Hospital',
+        name: 'Add Hospital Information',
         component: () => import('@/views/hospset/add'),
-        meta: { title: 'Add Hospital', icon: 'tree' }
-      }
+        meta: { title: 'Add Hospital Information', icon: 'tree' }
+      }, 
+      { 
+        path: 'edit/:id', 
+        name: 'Update Hospital Information', 
+        component: () =>import('@/views/hospset/add'), 
+        meta: { title: 'Update Hospital Information', noCache: true }, 
+        hidden: true 
+      } 
+        
     ]
   },
-
+  {
+    path: '/cmn',
+    component: Layout,
+    redirect: '/cmn/list',
+    name: 'Dictionary Management',
+    meta: { title: 'Dictionary Management', icon: 'el-icon-s-help' },
+    alwaysShow: true,
+    children: [
+      {
+        path: 'list',
+        name: 'Dictionary List',
+        component: () => import('@/views/dict/list'),
+        meta: { title: 'Dictionary List', icon: 'table' }
+      },
+      {
+        path: 'add',
+        name: 'Add Dictionary Information',
+        component: () => import('@/views/dict/add'),
+        meta: { title: 'Add Dictionary Information', icon: 'tree' }
+      }, 
+      { 
+        path: 'edit/:id', 
+        name: 'Update Dictionary Information', 
+        component: () =>import('@/views/dict/add'), 
+        meta: { title: 'Update Dictionary Information', noCache: true }, 
+        hidden: true 
+      } 
+        
+    ]
+  },
   {
     path: '/form',
     component: Layout,
