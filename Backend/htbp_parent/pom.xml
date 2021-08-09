@@ -21,7 +21,8 @@
 		<module>common</module>
 		<module>model</module>
 		<module>service</module>
-	</modules>
+        <module>hospital-manage</module>
+    </modules>
 	<packaging>pom</packaging>
 
 	<properties>
