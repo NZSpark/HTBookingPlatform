@@ -22,6 +22,7 @@
 		<module>model</module>
 		<module>service</module>
         <module>hospital-manage</module>
+        <module>service_client</module>
     </modules>
 	<packaging>pom</packaging>
 
