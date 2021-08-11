@@ -64,24 +64,46 @@ export const constantRoutes = [
     children: [
       {
         path: 'list',
-        name: 'Hospital List',
+        name: 'Hospital Setting List',
         component: () => import('@/views/hospset/list'),
-        meta: { title: 'Hospital List', icon: 'table' }
+        meta: { title: 'Hospital Setting List', icon: 'table' }
       },
       {
         path: 'add',
         name: 'Add Hospital Information',
         component: () => import('@/views/hospset/add'),
         meta: { title: 'Add Hospital Information', icon: 'tree' }
-      }, 
-      { 
-        path: 'edit/:id', 
-        name: 'Update Hospital Information', 
-        component: () =>import('@/views/hospset/add'), 
-        meta: { title: 'Update Hospital Information', noCache: true }, 
-        hidden: true 
-      } 
-        
+      },
+      {
+        path: 'edit/:id',
+        name: 'Update Hospital Information',
+        component: () => import('@/views/hospset/add'),
+        meta: { title: 'Update Hospital Information', noCache: true },
+        hidden: true
+      },
+      {
+        path: 'hosp/list',
+        name: 'Hospital List',
+        component: () => import('@/views/hosp/list'),
+        meta: { title: 'Hostpital List', icon: 'table' }
+      },
+      {
+        path: 'hosp/show/:id',
+        name: 'Hospital Detail',
+        component: () => import('@/views/hosp/show'),
+        meta: { title: 'Hostpital Detail',  noCache: true },
+        hidden: true
+      },
+      {
+        path: 'hosp/schedule/:hoscode',
+        name: 'Schedule',
+        component: () => import('@/views/hosp/schedule'),
+        meta: { title: 'Schedule',  noCache: true },
+        hidden: true
+      }
+
+
+
     ]
   },
   {
@@ -103,17 +125,17 @@ export const constantRoutes = [
         name: 'Add Dictionary Information',
         component: () => import('@/views/dict/add'),
         meta: { title: 'Add Dictionary Information', icon: 'tree' }
-      }, 
-      { 
-        path: 'edit/:id', 
-        name: 'Update Dictionary Information', 
-        component: () =>import('@/views/dict/add'), 
-        meta: { title: 'Update Dictionary Information', noCache: true }, 
-        hidden: true 
-      } 
-        
+      },
+      {
+        path: 'edit/:id',
+        name: 'Update Dictionary Information',
+        component: () => import('@/views/dict/add'),
+        meta: { title: 'Update Dictionary Information', noCache: true },
+        hidden: true
+      }
     ]
   },
+
   {
     path: '/form',
     component: Layout,

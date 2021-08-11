@@ -8,6 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Map;
+
 @RestController
 @RequestMapping("/admin/hosp/hospital")
 @CrossOrigin
@@ -21,6 +23,18 @@ public class HospitalController {
         Page<Hospital> pageModel = hospitalService.selectHospPage(page,limit,hospitalQueryVo);
 
         return Result.ok(pageModel);
+    }
+
+    @GetMapping("updateHospStatus/{id}/{status}")
+    public  Result updateHospStatus(@PathVariable String id,@PathVariable Integer status){
+        hospitalService.updateStatus(id,status);
+        return Result.ok();
+    }
+
+    @GetMapping("showHospitalDetail/{id}")
+    public Result showHospitalDetail(@PathVariable String id){
+        Map<String,Object> result = hospitalService.getHospById(id);
+        return Result.ok(result);
     }
 
 }
