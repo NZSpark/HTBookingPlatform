@@ -2,6 +2,7 @@ package com.seclib.htbp.hosp.service.impl;
 
 import com.alibaba.fastjson.JSONObject;
 import com.seclib.htbp.hosp.repository.ScheduleRepository;
+import com.seclib.htbp.hosp.service.DepartmentService;
 import com.seclib.htbp.hosp.service.HospitalService;
 import com.seclib.htbp.hosp.service.ScheduleService;
 import com.seclib.htbp.model.hosp.Department;
@@ -34,6 +35,8 @@ public class ScheduleServiceImpl implements ScheduleService {
 
     @Autowired
     private HospitalService hospitalService;
+    @Autowired
+    private DepartmentService departmentService;
 
     @Override
     public Page<Schedule> selectPage(Integer page, Integer limit, ScheduleQueryVo scheduleQueryVo) {
@@ -111,6 +114,23 @@ public class ScheduleServiceImpl implements ScheduleService {
 
         return result;
 
+    }
+
+    @Override
+    public List<Schedule> getScheduleDetail(String hoscode, String depcode, String workDate) {
+        List<Schedule> scheduleList = scheduleRepository.findScheduleByHoscodeAndDepcodeAndWorkDate(hoscode,depcode,new DateTime(workDate).toDate());
+        scheduleList.stream().forEach(item ->{
+            this.packageSchedule(item);
+        });
+        return scheduleList;
+    }
+
+    private Schedule packageSchedule(Schedule schedule) {
+        schedule.getParam().put("hosname",hospitalService.getHospName(schedule.getHoscode()));
+        schedule.getParam().put("depname",departmentService.getDepName(schedule.getHoscode(),schedule.getDepcode()));
+        schedule.getParam().put("dayOfWeek",this.getDayOfWeek(new DateTime(schedule.getWorkDate())));
+
+        return schedule;
     }
 
 

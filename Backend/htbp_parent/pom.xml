@@ -23,7 +23,8 @@
 		<module>service</module>
         <module>hospital-manage</module>
         <module>service_client</module>
-    </modules>
+		<module>service_gateway</module>
+	</modules>
 	<packaging>pom</packaging>
 
 	<properties>
@@ -40,6 +41,7 @@
 		<aliyun.version>4.1.1</aliyun.version>
 		<oss.version>3.9.1</oss.version>
 		<jodatime.version>2.10.1</jodatime.version>
+		<elasticsearch.version>6.8.13</elasticsearch.version>
 	</properties>
 
 	<dependencies>
@@ -136,19 +138,23 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-data-mongodb</artifactId>
 		</dependency>
+
+		<!---
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-security</artifactId>
 		</dependency>
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-web</artifactId>
-		</dependency>
+		-->
+
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web-services</artifactId>
 		</dependency>
 
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-web</artifactId>
+		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-devtools</artifactId>

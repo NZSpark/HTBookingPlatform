@@ -24,7 +24,7 @@ public class DepartmentServiceImpl implements DepartmentService {
         String paramString = JSONObject.toJSONString(paramMap);
         Department department = JSONObject.parseObject(paramString,Department.class);
 
-        Department departmentExist = departmentRepository.getDeparmentByHoscodeAndDepcode(department.getHoscode(),department.getDepcode());
+        Department departmentExist = departmentRepository.getDepartmentByHoscodeAndDepcode(department.getHoscode(),department.getDepcode());
 
         if(departmentExist != null){
             departmentExist.setUpdateTime(new Date());
@@ -53,7 +53,7 @@ public class DepartmentServiceImpl implements DepartmentService {
 
     @Override
     public void remove(String hoscode, String depcode) {
-        Department department = departmentRepository.getDeparmentByHoscodeAndDepcode(hoscode,depcode);
+        Department department = departmentRepository.getDepartmentByHoscodeAndDepcode(hoscode,depcode);
         if(department != null) {
             departmentRepository.deleteById(department.getId());
         }
@@ -89,5 +89,14 @@ public class DepartmentServiceImpl implements DepartmentService {
         }
 
         return result;
+    }
+
+    @Override
+    public String getDepName(String hoscode,String depcode) {
+        Department department = departmentRepository.getDepartmentByHoscodeAndDepcode(hoscode, depcode);
+        if(department != null) {
+            return department.getDepname();
+        }
+        return null;
     }
 }
