@@ -17,13 +17,13 @@
                     placeholder="点击输入医院名称"
                     @select="handleSelect"
                     >
-                    <span slot="suffix" class="search-btn v-link highlight clickable selected">搜索 </span>
+                    <span slot="suffix" class="search-btn v-link highlight clickable selected">Search</span>
                 </el-autocomplete>
             </div>
         </div>
         <!-- 右侧 -->
         <div class="right-wrapper">
-        <span class="v-link clickable">帮助中心</span>
+        <span class="v-link clickable">Help</span>
         <!--        <el-dropdown >-->
         <!--              <span class="el-dropdown-link">-->
         <!--                晴天<i class="el-icon-arrow-down el-icon&#45;&#45;right"></i>-->
@@ -40,6 +40,47 @@
     </div>
 </template>
 <script>
+import hospApi from "@/api/hosp";
+import dictApi from "@/api/dict";
+
 export default {
-}
+  data() {
+    return {
+      searchObj: {},
+      page: 1,
+      limit: 10,
+
+      hosname: "", //医院名称
+      state: "",
+    };
+  },
+  created() {
+    //this.init();
+  },
+  methods: {
+ 
+
+    //在输入框输入值，弹出下拉框，显示相关内容
+    querySearchAsync(queryString, cb) {
+      this.searchObj = [];
+      if (queryString == "") return;
+      hospApi.getByHosname(queryString).then((response) => {
+        for (let i = 0, len = response.data.length; i < len; i++) {
+          response.data[i].value = response.data[i].hosname;
+        }
+        cb(response.data);
+      });
+    },
+
+    //在下拉框选择某一个内容，执行下面方法，跳转到详情页面中
+    handleSelect(item) {
+      window.location.href = "/hospital/" + item.hoscode;
+    },
+
+    //点击某个医院名称，跳转到详情页面中
+    show(hoscode) {
+      window.location.href = "/hospital/" + hoscode;
+    },
+  },
+};
 </script>

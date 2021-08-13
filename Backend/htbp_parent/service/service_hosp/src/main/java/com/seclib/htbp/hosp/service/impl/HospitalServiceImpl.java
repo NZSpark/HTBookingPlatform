@@ -98,6 +98,11 @@ public class HospitalServiceImpl implements HospitalService {
         return null;
     }
 
+    @Override
+    public List<Hospital> findByHosName(String hosname) {
+        return hospitalRepository.findHospitalByHosnameLike(hosname);
+    }
+
     private Hospital setHospitalHosType(Hospital hospital) {
         String hostypeString = dictFeignClient.getName("hostype", hospital.getHostype());
         String provinceString = dictFeignClient.getName(hospital.getProvinceCode());

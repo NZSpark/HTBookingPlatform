@@ -2,7 +2,7 @@ import axios from 'axios'
 import { MessageBox, Message } from 'element-ui'
 // 创建axios实例
 const service = axios.create({
-    baseURL: 'http://localhost',
+    baseURL: 'http://192.168.1.10:9001',
     timeout: 15000 // 请求超时时间
 })
 // http request 拦截器
