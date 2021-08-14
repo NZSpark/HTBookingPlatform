@@ -12,16 +12,12 @@
           <el-autocomplete
             class="search-input"
             prefix-icon="el-icon-search"
-            v-model="state"
+            v-model="queryString"
             :fetch-suggestions="querySearchAsync"
             placeholder="点击输入医院名称"
             @select="handleSelect"
           >
-            <span
-              slot="suffix"
-              class="search-btn v-link highlight clickable selected"
-              >搜索
-            </span>
+            <span slot="suffix"  class="search-btn v-link highlight clickable selected">Search</span>
           </el-autocomplete>
         </div>
       </div>
@@ -30,27 +26,31 @@
     <div class="bottom">
       <div class="left">
         <div class="home-filter-wrapper">
-          <div class="title">医院</div>
+          <div class="title">Hospital</div>
           <div>
             <div class="filter-wrapper">
-              <span class="label">等级：</span>
+              <span class="label">Type: </span>
               <div class="condition-wrapper">
                 <span
                   v-for="(item, index) in hostypeList"
                   :key="index"
                   class="item v-link clickable"
+                  :class = "hostypeActiveIndex == index  ?  'selected' : ''"
+                  @click="hostypeSelect(item.value,index)"
                 >
                   {{ item.name }}
                 </span>
               </div>
             </div>
             <div class="filter-wrapper">
-              <span class="label">地区：</span>
+              <span class="label">District: </span>
               <div class="condition-wrapper">
                 <span
                   v-for="(item, index) in districtList"
                   :key="index"
+                  @click="districtSelect(item.value,index)"
                   class="item v-link clickable"
+                  :class = "provinceActiveIndex == index  ?  'selected' : ''"
                 >
                   {{ item.name }}
                 </span>
@@ -59,7 +59,7 @@
           </div>
         </div>
         <div class="v-scroll-list hospital-list">
-          <div v-for="(item,index) in hospitallist" :key=index class="v-card clickable list-item">
+          <div v-for="(item,index) in hospitallist" :key=index class="v-card clickable list-item" @click="show(item.hoscode)">
             <div class="">
               <div class="hospital-list-item hos-item" index="0">
                 <div class="wrapper">
@@ -205,7 +205,7 @@ export default {
 
       hostypeActiveIndex: 0,
       provinceActiveIndex: 0,
-      state: ""
+      queryString: ""
     };
   },
   created() {
@@ -231,8 +231,9 @@ export default {
     //查询医院列表
     getList() {
       hospApi
-        .getPageList(this.page, this.limit, this.searchObj)
+        .getPageList(this.pages, this.limit, this.searchObj)
         .then((response) => {
+           this.hospitallist = []
           for (let i in response.data.content) {
             this.hospitallist.push(response.data.content[i]);
           }
@@ -244,7 +245,7 @@ export default {
     hostypeSelect(hostype, index) {
       //准备数据
       this.list = [];
-      this.page = 1;
+      this.pages = 1;
       this.hostypeActiveIndex = index;
       this.searchObj.hostype = hostype;
       //调用查询医院列表方法
@@ -254,7 +255,7 @@ export default {
     //根据地区查询医院
     districtSelect(districtCode, index) {
       this.list = [];
-      this.page = 1;
+      this.pages = 1;
       this.provinceActiveIndex = index;
       this.searchObj.districtCode = districtCode;
       this.getList();
