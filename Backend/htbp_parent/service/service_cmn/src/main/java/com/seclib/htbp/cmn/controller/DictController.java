@@ -15,7 +15,7 @@ import java.util.List;
 @Api(tags="Dictionary configuration.")
 @RestController
 @RequestMapping("/admin/cmn/dict")
-@CrossOrigin
+//@CrossOrigin
 public class DictController {
     @Autowired
     private DictService dictService;

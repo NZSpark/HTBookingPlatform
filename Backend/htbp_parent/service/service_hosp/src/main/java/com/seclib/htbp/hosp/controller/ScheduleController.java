@@ -12,7 +12,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/admin/hosp/department")
-@CrossOrigin
+//@CrossOrigin
 public class ScheduleController {
     @Autowired
     private ScheduleService scheduleService;

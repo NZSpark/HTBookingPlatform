@@ -30,7 +30,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api/hosp")
-@CrossOrigin
+//@CrossOrigin
 public class ApiController {
     @Autowired
     private HospitalService hospitalService;
