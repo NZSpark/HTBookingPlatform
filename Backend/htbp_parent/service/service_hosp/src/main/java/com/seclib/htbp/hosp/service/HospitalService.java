@@ -23,4 +23,6 @@ public interface HospitalService {
     String getHospName(String hoscode);
 
     List<Hospital> findByHosName(String hosname);
+
+    Map<String, Object> item(String hoscode);
 }

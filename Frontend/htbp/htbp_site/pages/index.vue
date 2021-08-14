@@ -134,7 +134,7 @@
             <div class="notice-wrapper">
               <div class="point"></div>
               <span class="notice v-link clickable dark">
-              北京总医院号源暂停更新通知
+              \总医院号源暂停更新通知
               </span>
             </div>
           </div>
@@ -275,12 +275,12 @@ export default {
 
     //在下拉框选择某一个内容，执行下面方法，跳转到详情页面中
     handleSelect(item) {
-      window.location.href = "/hospital/" + item.hoscode;
+      window.location.href = "/hosp/" + item.hoscode;
     },
 
     //点击某个医院名称，跳转到详情页面中
     show(hoscode) {
-      window.location.href = "/hospital/" + hoscode;
+      window.location.href = "/hosp/" + hoscode;
     },
   },
 };
