@@ -1,4 +1,4 @@
-package com.seclib.htbp.msm.utils;
+package com.seclib.htbp.sms.utils;
 
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Value;

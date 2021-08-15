@@ -1,4 +1,4 @@
-package com.seclib.htbp.msm.utils;
+package com.seclib.htbp.sms.utils;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;

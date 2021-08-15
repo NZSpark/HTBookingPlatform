@@ -1,4 +1,4 @@
-package com.seclib.htbp.msm.service.impl;
+package com.seclib.htbp.sms.service.impl;
 
 import com.alibaba.fastjson.JSONObject;
 import com.aliyuncs.CommonRequest;
@@ -9,8 +9,8 @@ import com.aliyuncs.exceptions.ClientException;
 import com.aliyuncs.exceptions.ServerException;
 import com.aliyuncs.http.MethodType;
 import com.aliyuncs.profile.DefaultProfile;
-import com.seclib.htbp.msm.service.MsmService;
-import com.seclib.htbp.msm.utils.ConstantPropertiesUtils;
+import com.seclib.htbp.sms.service.SmsService;
+import com.seclib.htbp.sms.utils.ConstantPropertiesUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
@@ -18,7 +18,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Service
-public class MsmServiceImpl implements MsmService {
+public class SmsServiceImpl implements SmsService {
     @Override
     public boolean send(String phone, String code) {
         if (StringUtils.isEmpty(phone)){

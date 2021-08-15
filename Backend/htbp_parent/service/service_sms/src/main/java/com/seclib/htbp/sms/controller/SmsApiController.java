@@ -1,9 +1,9 @@
-package com.seclib.htbp.msm.controller;
+package com.seclib.htbp.sms.controller;
 
 
 import com.seclib.htbp.common.result.Result;
-import com.seclib.htbp.msm.service.MsmService;
-import com.seclib.htbp.msm.utils.RandomUtil;
+import com.seclib.htbp.sms.service.SmsService;
+import com.seclib.htbp.sms.utils.RandomUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.util.StringUtils;
@@ -16,10 +16,10 @@ import java.util.concurrent.TimeUnit;
 
 
 @RestController
-@RequestMapping("/api/msm")
-public class MsmApiController {
+@RequestMapping("/api/sms")
+public class SmsApiController {
     @Autowired
-    private MsmService msmService;
+    private SmsService smsService;
 
     @Autowired
     private RedisTemplate<String,String> redisTemplate;
@@ -33,7 +33,7 @@ public class MsmApiController {
         }
 
         code = RandomUtil.getSixBitRandom();
-        boolean isSend =  msmService.send(phone,code);
+        boolean isSend =  smsService.send(phone,code);
 
         if(isSend){
             redisTemplate.opsForValue().set(phone,code,2, TimeUnit.MINUTES);

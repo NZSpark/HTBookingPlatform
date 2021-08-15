@@ -1,4 +1,4 @@
-package com.seclib.htbp.msm;
+package com.seclib.htbp.sms;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -9,8 +9,8 @@ import org.springframework.context.annotation.ComponentScan;
 @SpringBootApplication(exclude = DataSourceAutoConfiguration.class)
 @EnableDiscoveryClient
 @ComponentScan(basePackages = "com.seclib.htbp")
-public class ServiceMsmApplication {
+public class ServiceSmsApplication {
     public static void main(String[] args) {
-        SpringApplication.run(ServiceMsmApplication.class, args);
+        SpringApplication.run(ServiceSmsApplication.class, args);
     }
 }
