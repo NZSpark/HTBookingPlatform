@@ -17,6 +17,7 @@
         <module>service_hosp</module>
         <module>service_user</module>
         <module>service_cmn</module>
+        <module>service_sms</module>
     </modules>
 
     <dependencies>
@@ -41,6 +42,12 @@
             <groupId>com.alibaba.cloud</groupId>
             <artifactId>spring-cloud-starter-alibaba-nacos-discovery</artifactId>
             <version>2.2.0.RELEASE</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.seclib.htbp</groupId>
+            <artifactId>service-utils</artifactId>
+            <version>1.0-SNAPSHOT</version>
         </dependency>
     </dependencies>
 
