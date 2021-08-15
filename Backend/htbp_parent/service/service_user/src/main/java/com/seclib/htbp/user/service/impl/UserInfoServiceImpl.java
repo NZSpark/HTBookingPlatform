@@ -3,6 +3,7 @@ package com.seclib.htbp.user.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.seclib.htbp.common.exception.HtbpException;
+import com.seclib.htbp.common.helper.JwtHelper;
 import com.seclib.htbp.common.result.ResultCodeEnum;
 import com.seclib.htbp.model.user.UserInfo;
 import com.seclib.htbp.user.mapper.UserInfoMapper;
@@ -18,7 +19,7 @@ import java.util.Map;
 public class UserInfoServiceImpl extends ServiceImpl<UserInfoMapper, UserInfo> implements UserInfoService {
 
     @Override
-    public Map<String, Object> login(LoginVo loginVo) {
+    public Map<String, Object> loginUser(LoginVo loginVo) {
         String phone = loginVo.getPhone();
         String code = loginVo.getCode();
         //校验参数
@@ -58,9 +59,11 @@ public class UserInfoServiceImpl extends ServiceImpl<UserInfoMapper, UserInfo> i
             name = userInfo.getPhone();
         }
         map.put("name", name);
-        map.put("token", "");
+        String token = JwtHelper.createToken(userInfo.getId(),name);
+        map.put("token", token);
         return map;
 
     }
+
 }
 

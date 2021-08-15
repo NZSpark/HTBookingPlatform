@@ -7,5 +7,7 @@ import com.seclib.htbp.vo.user.LoginVo;
 import java.util.Map;
 
 public interface UserInfoService extends IService<UserInfo> {
-    Map<String, Object> login(LoginVo loginVo);
+
+    Map<String, Object> loginUser(LoginVo loginVo);
+
 }
