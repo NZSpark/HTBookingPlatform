@@ -134,7 +134,7 @@
             <div class="notice-wrapper">
               <div class="point"></div>
               <span class="notice v-link clickable dark">
-              \总医院号源暂停更新通知
+              总医院号源暂停更新通知
               </span>
             </div>
           </div>

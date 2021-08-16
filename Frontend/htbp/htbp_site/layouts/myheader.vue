@@ -12,7 +12,7 @@
                 <el-autocomplete
                     class="search-input small"
                     prefix-icon="el-icon-search"
-                    v-model="state"
+                    v-model="queryString"
                     :fetch-suggestions="querySearchAsync"
                     placeholder="点击输入医院名称"
                     @select="handleSelect"
@@ -145,13 +145,24 @@ export default {
       // 弹出层相关属性
       dialogAtrr:defaultDialogAtrr,
 
-      name: '' // 用户登录显示的名称
+      name: '', // 用户登录显示的名称
+      queryString: ''
     }
   },
 
   created() {
     this.showInfo()
   },
+  mounted() {
+// 注册全局登录事件对象
+    window.loginEvent = new Vue();
+    // 监听登录事件
+    loginEvent.$on('loginDialogEvent', function () {
+      document.getElementById("loginDialog").click();
+    })
+    // 触发事件，显示登录层：loginEvent.$emit('loginDialogEvent')
+  },
+
   methods: {
     // 绑定登录或获取验证码按钮
     btnClick() {
@@ -169,10 +180,9 @@ export default {
 
     // 绑定登录，点击显示登录层
     showLogin() {
-      this.dialogUserFormVisible = true
-
       // 初始化登录层相关参数
-      this.dialogAtrr = { ...defaultDialogAtrr }
+      this.dialogAtrr = {...defaultDialogAtrr}
+      this.dialogUserFormVisible = true
     },
 
     // 登录
@@ -216,7 +226,7 @@ export default {
       }
 
       // 初始化验证码相关属性
-      this.dialogAtrr.inputValue = ''
+      this.dialogAtrr.inputValue = '123456'
       this.dialogAtrr.placeholder = '请输入验证码'
       this.dialogAtrr.maxlength = 6
       this.dialogAtrr.loginBtn = '马上登录'
@@ -261,7 +271,17 @@ export default {
         clearInterval(this.clearSmsTime);
       }
     },
-
+    //在输入框输入值，弹出下拉框，显示相关内容
+    querySearchAsync(queryString, cb) {
+      this.searchObj = [];
+      if (queryString == "") return;
+      hospApi.getByHosname(queryString).then((response) => {
+        for (let i = 0, len = response.data.length; i < len; i++) {
+          response.data[i].value = response.data[i].hosname;
+        }
+        cb(response.data);
+      });
+    },
     showInfo() {
       let token = cookie.get('token')
       if (token) {

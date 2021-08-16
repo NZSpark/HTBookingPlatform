@@ -37,7 +37,13 @@ module.exports = {
   },
   plugins: [
     { src: '~/plugins/myPlugin.js', ssr: false }
-  ]
+  ],
+
+  server: {
+    //HOST=0 PORT=8000 npm run dev
+    host: '0.0.0.0' , // default: localhost
+    port: 3000 // default: 3000
+  }
 
 }
 
