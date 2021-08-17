@@ -61,9 +61,11 @@
                       <div class="send-button v-button" @click="btnClick()"> {{ dialogAtrr.loginBtn }}</div>
                     </div>
                     <div class="bottom">
-                      <div class="wechat-wrapper" @click="weixinLogin()"><span
-                        class="iconfont icon"></span></div>
-                      <span class="third-text"> 第三方账号登录 </span></div>
+                      <div class="wechat-wrapper" @click="weixinLogin()">
+                        <span  class="iconfont icon"></span>
+                      </div>
+                      <span class="third-text"> 第三方账号登录 </span>
+                    </div>
                   </div>
                 </div>
                 <!-- 手机登录 #end -->
@@ -105,7 +107,6 @@
                 </div>
               </div>
             </el-dialog>
-
         </div>
     </div>
 </template>
@@ -189,7 +190,7 @@ export default {
     // 绑定登录，点击显示登录层
     showLogin() {
       // 初始化登录层相关参数
-      this.dialogAtrr = {...defaultDialogAtrr}
+      // this.dialogAtrr = { ...defaultDialogAtrr }
       this.dialogUserFormVisible = true
     },
 
@@ -234,7 +235,7 @@ export default {
       }
 
       // 初始化验证码相关属性
-      this.dialogAtrr.inputValue = '123456'
+      this.dialogAtrr.inputValue = ''
       this.dialogAtrr.placeholder = '请输入验证码'
       this.dialogAtrr.maxlength = 6
       this.dialogAtrr.loginBtn = '马上登录'
