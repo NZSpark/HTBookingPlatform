@@ -23,7 +23,7 @@ service.interceptors.request.use(
 // http response 拦截器
 service.interceptors.response.use(
     response => {
-        if (response.data.code !== 208) { //ERROR_AUTH
+        if (response.data.code === 208) { //ERROR_AUTH
             loginEvent.$emit('loginDialogEvent')
             return
         } else {

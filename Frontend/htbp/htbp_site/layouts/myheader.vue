@@ -116,6 +116,7 @@ import Vue from 'vue'
 import userInfoApi from '@/api/userInfo'
 import smsApi from '@/api/msm'
 import hospitalApi from '@/api/hosp'
+import weixinApi from '@/api/weixin'
 
 const defaultDialogAtrr = {
   showLoginType: 'phone', // 控制手机登录与微信登录切换
@@ -161,6 +162,13 @@ export default {
       document.getElementById("loginDialog").click();
     })
     // 触发事件，显示登录层：loginEvent.$emit('loginDialogEvent')
+    //初始化微信js
+    const script = document.createElement('script')
+    script.type = 'text/javascript'
+    script.src = 'https://res.wx.qq.com/connect/zh_CN/htmledition/js/wxLogin.js'
+    document.body.appendChild(script)
+
+
   },
 
   methods: {
@@ -202,14 +210,14 @@ export default {
         return;
       }
       this.dialogAtrr.loginBtn = '正在提交...'
-      // userInfoApi.login(this.userInfo).then(response => {
-      //   console.log(response.data)
-      //   // 登录成功 设置cookie
-      //   this.setCookies(response.data.name, response.data.token)
-      // }).catch(e => {
-      //   this.dialogAtrr.loginBtn = '马上登录'
-      // })
-      this.setCookies("13912345678", "response.data.token")
+      userInfoApi.login(this.userInfo).then(response => {
+        console.log(response.data)
+        // 登录成功 设置cookie
+        this.setCookies(response.data.name, response.data.token)
+      }).catch(e => {
+        this.dialogAtrr.loginBtn = '马上登录'
+      })
+      // this.setCookies("13912345678", "response.data.token")
     },
 
     setCookies(name, token) {
@@ -238,13 +246,14 @@ export default {
       this.timeDown();
       this.dialogAtrr.sending = false;
       this.timeDown();
-      // smsApi.sendCode(this.userInfo.phone).then(response => {
-      //   this.timeDown();
-      // }).catch(e => {
-      //   this.$message.error('发送失败，重新发送')
-      //   // 发送失败，回到重新获取验证码界面
-      //   this.showLogin()
-      // })
+      smsApi.sendCode(this.userInfo.phone).then(response => {
+        this.dialogAtrr.inputValue  = response.data
+        this.timeDown();
+      }).catch(e => {
+        this.$message.error('发送失败，重新发送')
+        // 发送失败，回到重新获取验证码界面
+        this.showLogin()
+      })
     },
 
     // 倒计时
@@ -308,6 +317,20 @@ export default {
 
     weixinLogin() {
       this.dialogAtrr.showLoginType = 'weixin'
+      
+
+      weixinApi.getLoginParam().then(reponse =>{
+        var obj = new WxLogin({
+          self_redirect:true,
+          id:"weixinLogin", 
+          appid: reponse.data.appid, 
+          scope: reponse.data.scope, 
+          redirect_uri: reponse.data.redirect_uri,
+          state: reponse.data.state,
+          style: 'black',
+          href: ''
+        });
+      })
     },
 
     phoneLogin() {

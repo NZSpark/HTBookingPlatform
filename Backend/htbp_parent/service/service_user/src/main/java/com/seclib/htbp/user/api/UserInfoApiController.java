@@ -1,4 +1,4 @@
-package com.seclib.htbp.user.controller;
+package com.seclib.htbp.user.api;
 
 import com.seclib.htbp.common.result.Result;
 import com.seclib.htbp.user.service.UserInfoService;

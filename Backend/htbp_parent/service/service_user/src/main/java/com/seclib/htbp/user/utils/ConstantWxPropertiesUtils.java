@@ -1,29 +1,37 @@
-package com.seclib.htbp.sms.utils;
+package com.seclib.htbp.user.utils;
 
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 @Component
-public class ConstantPropertiesUtils implements InitializingBean {
+public class ConstantWxPropertiesUtils implements InitializingBean {
 
-    @Value("${aliyun.sms.regionId}")
-    private String regionId;
 
-    @Value("${aliyun.sms.accessKeyId}")
-    private String accessKeyId;
+    @Value("${wx.open.app_id}")
+    private String appId;
 
-    @Value("${aliyun.sms.secret}")
-    private String secret;
+    @Value("${wx.open.app_secret}")
+    private String appSecret;
 
-    public static String REGION_ID;
-    public static String ACCESS_KEY_ID;
-    public static String SECRECT;
+    @Value("${wx.open.redirect_url}")
+    private String redirectUrl;
+
+    @Value("${htbp.baseUrl}")
+    private String htbpBaseUrl;
+
+    public static String WX_OPEN_APP_ID;
+    public static String WX_OPEN_APP_SECRET;
+    public static String WX_OPEN_REDIRECT_URL;
+
+    public static String HTBP_BASE_URL;
 
     @Override
     public void afterPropertiesSet() throws Exception {
-        REGION_ID = regionId;
-        ACCESS_KEY_ID = accessKeyId;
-        SECRECT = secret;
+        WX_OPEN_APP_ID = appId;
+        WX_OPEN_APP_SECRET = appSecret;
+        WX_OPEN_REDIRECT_URL = redirectUrl;
+        HTBP_BASE_URL = htbpBaseUrl;
     }
+
 }

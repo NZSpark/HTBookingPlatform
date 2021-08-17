@@ -29,7 +29,8 @@ public class SmsApiController {
 
         String code = redisTemplate.opsForValue().get(phone);
         if(!StringUtils.isEmpty(code)){
-            return Result.ok();
+//            return Result.ok();
+            return Result.ok(code);
         }
 
         code = RandomUtil.getSixBitRandom();
@@ -37,7 +38,8 @@ public class SmsApiController {
 
         if(isSend){
             redisTemplate.opsForValue().set(phone,code,2, TimeUnit.MINUTES);
-            return Result.ok();
+//            return Result.ok();
+            return Result.ok(code); //return code for test
         } else {
             return Result.fail().message("SMS send error.");
         }
