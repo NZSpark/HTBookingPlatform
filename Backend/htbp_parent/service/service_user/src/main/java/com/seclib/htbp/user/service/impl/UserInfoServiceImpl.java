@@ -38,18 +38,32 @@ public class UserInfoServiceImpl extends ServiceImpl<UserInfoMapper, UserInfo> i
             throw new HtbpException(ResultCodeEnum.CODE_ERROR);
         }
 
-        //手机号已被使用
-        QueryWrapper<UserInfo> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("phone", phone);
-        //获取会员
-        UserInfo userInfo = baseMapper.selectOne(queryWrapper);
-        if(null == userInfo) {
-            userInfo = new UserInfo();
-            userInfo.setName("");
-            userInfo.setPhone(phone);
-            userInfo.setStatus(1);
-            this.save(userInfo);
+        UserInfo userInfo = null;
+        if(!StringUtils.isEmpty(loginVo.getOpenid())) {
+            userInfo = this.getByOpenid(loginVo.getOpenid());
+            if(null != userInfo) {
+                userInfo.setPhone(loginVo.getPhone());
+                this.updateById(userInfo);
+            } else {
+                throw new HtbpException(ResultCodeEnum.DATA_ERROR);
+            }
         }
+
+        if(userInfo == null) {
+            //手机号已被使用
+            QueryWrapper<UserInfo> queryWrapper = new QueryWrapper<>();
+            queryWrapper.eq("phone", phone);
+            //获取会员
+            userInfo = baseMapper.selectOne(queryWrapper);
+            if (null == userInfo) {
+                userInfo = new UserInfo();
+                userInfo.setName("");
+                userInfo.setPhone(phone);
+                userInfo.setStatus(1);
+                this.save(userInfo);
+            }
+        }
+
         //校验是否被禁用
         if(userInfo.getStatus() == 0) {
             throw new HtbpException(ResultCodeEnum.LOGIN_DISABLED_ERROR);
@@ -67,11 +81,25 @@ public class UserInfoServiceImpl extends ServiceImpl<UserInfoMapper, UserInfo> i
             name = userInfo.getPhone();
         }
         map.put("name", name);
+
         String token = JwtHelper.createToken(userInfo.getId(),name);
         map.put("token", token);
         return map;
 
     }
+    @Override
+    public UserInfo getByOpenid(String openid) {
+        return baseMapper.selectOne(new QueryWrapper<UserInfo>().eq("openid", openid));
+    }
+
+    @Override
+    public UserInfo selectWxInfoOpenId(String openId) {
+        QueryWrapper<UserInfo> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("openid",openId);
+        UserInfo userInfo = baseMapper.selectOne(queryWrapper);
+        return userInfo;
+    }
+
 
 }
 

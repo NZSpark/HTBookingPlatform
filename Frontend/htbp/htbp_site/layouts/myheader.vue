@@ -12,7 +12,7 @@
                 <el-autocomplete
                     class="search-input small"
                     prefix-icon="el-icon-search"
-                    v-model="queryString"
+                    v-model="state"
                     :fetch-suggestions="querySearchAsync"
                     placeholder="点击输入医院名称"
                     @select="handleSelect"
@@ -38,78 +38,76 @@
             </el-dropdown-menu>
           </el-dropdown>
         </div>
-
         </div>
-        <div>
-            <!-- 登录弹出层 -->
-            <el-dialog :visible.sync="dialogUserFormVisible" style="text-align: left;" top="50px" :append-to-body="true"  width="960px" @close="closeDialog()">
-              <div class="container">
 
-                <!-- 手机登录 #start -->
-                <div class="operate-view" v-if="dialogAtrr.showLoginType === 'phone'">
-                  <div class="wrapper" style="width: 100%">
-                    <div class="mobile-wrapper" style="position: static;width: 70%">
-                      <span class="title">{{ dialogAtrr.labelTips }}</span>
-                      <el-form>
-                        <el-form-item>
-                          <el-input v-model="dialogAtrr.inputValue" :placeholder="dialogAtrr.placeholder" :maxlength="dialogAtrr.maxlength" class="input v-input">
-                            <span slot="suffix" class="sendText v-link" v-if="dialogAtrr.second > 0">{{ dialogAtrr.second }}s </span>
-                            <span slot="suffix" class="sendText v-link highlight clickable selected" v-if="dialogAtrr.second == 0" @click="getCodeFun()">重新发送 </span>
-                          </el-input>
-                        </el-form-item>
-                      </el-form>
-                      <div class="send-button v-button" @click="btnClick()"> {{ dialogAtrr.loginBtn }}</div>
-                    </div>
-                    <div class="bottom">
-                      <div class="wechat-wrapper" @click="weixinLogin()">
-                        <span  class="iconfont icon"></span>
-                      </div>
-                      <span class="third-text"> 第三方账号登录 </span>
-                    </div>
-                  </div>
-                </div>
-                <!-- 手机登录 #end -->
+        <!-- 登录弹出层 -->
+    <el-dialog :visible.sync="dialogUserFormVisible" style="text-align: left;" top="50px" :append-to-body="true"  width="960px" @close="closeDialog()">
+      <div class="container">
 
-                <!-- 微信登录 #start -->
-                <div class="operate-view"  v-if="dialogAtrr.showLoginType === 'weixin'" >
-                  <div class="wrapper wechat" style="height: 400px">
-                    <div>
-                      <div id="weixinLogin"></div>
-                    </div>
-                    <div class="bottom wechat" style="margin-top: -80px;">
-                      <div class="phone-container">
-                        <div class="phone-wrapper"  @click="phoneLogin()"><span
-                          class="iconfont icon"></span></div>
-                        <span class="third-text"> 手机短信验证码登录 </span></div>
-                    </div>
-                  </div>
-                </div>
-                <!-- 微信登录 #end -->
+        <!-- 手机登录 #start -->
+        <div class="operate-view" v-if="dialogAtrr.showLoginType === 'phone'">
+          <div class="wrapper" style="width: 100%">
+            <div class="mobile-wrapper" style="position: static;width: 70%">
+              <span class="title">{{ dialogAtrr.labelTips }}</span>
+              <el-form>
+                <el-form-item>
+                  <el-input v-model="dialogAtrr.inputValue" :placeholder="dialogAtrr.placeholder" :maxlength="dialogAtrr.maxlength" class="input v-input">
+                    <span slot="suffix" class="sendText v-link" v-if="dialogAtrr.second > 0">{{ dialogAtrr.second }}s </span>
+                    <span slot="suffix" class="sendText v-link highlight clickable selected" v-if="dialogAtrr.second == 0" @click="getCodeFun()"> Re-send </span>
+                  </el-input>
+                </el-form-item>
+              </el-form>
+              <div class="send-button v-button" @click="btnClick()"> {{ dialogAtrr.loginBtn }}</div>
+            </div>
+            <div class="bottom">
+              <div class="wechat-wrapper" @click="weixinLogin()"><span
+                class="iconfont icon"></span></div>
+              <span class="third-text"> WeChat Login </span></div>
+          </div>
+        </div>
+        <!-- 手机登录 #end -->
 
-                <div class="info-wrapper">
-                  <div class="code-wrapper">
-                    <div><img src="//img.114yygh.com/static/web/code_login_wechat.png" class="code-img">
-                      <div class="code-text"><span class="iconfont icon"></span>微信扫一扫关注
-                      </div>
-                      <div class="code-text"> “快速预约挂号”</div>
-                    </div>
-                    <div class="wechat-code-wrapper"><img
-                      src="//img.114yygh.com/static/web/code_app.png"
-                      class="code-img">
-                      <div class="code-text"> 扫一扫下载</div>
-                      <div class="code-text"> “预约挂号”APP</div>
-                    </div>
-                  </div>
-                  <div class="slogan">
-                    <div>xxxxxx官方指定平台</div>
-                    <div>快速挂号 安全放心</div>
-                  </div>
-                </div>
+        <!-- 微信登录 #start -->
+        <div class="operate-view"  v-if="dialogAtrr.showLoginType === 'weixin'" >
+          <div class="wrapper wechat" style="height: 400px">
+            <div>
+              <div id="weixinLogin"></div>
+            </div>
+            <div class="bottom wechat" style="margin-top: -80px;">
+              <div class="phone-container">
+                <div class="phone-wrapper"  @click="phoneLogin()"><span
+                  class="iconfont icon"></span></div>
+                <span class="third-text"> 手机短信验证码登录 </span></div>
+            </div>
+          </div>
+        </div>
+        <!-- 微信登录 #end -->
+
+        <div class="info-wrapper">
+          <div class="code-wrapper">
+            <div><img src="//img.114yygh.com/static/web/code_login_wechat.png" class="code-img">
+              <div class="code-text"><span class="iconfont icon"></span>微信扫一扫关注
               </div>
-            </el-dialog>
+              <div class="code-text"> “快速预约挂号”</div>
+            </div>
+            <div class="wechat-code-wrapper"><img
+              src="//img.114yygh.com/static/web/code_app.png"
+              class="code-img">
+              <div class="code-text"> 扫一扫下载</div>
+              <div class="code-text"> “预约挂号”APP</div>
+            </div>
+          </div>
+          <div class="slogan">
+            <div>xxxxxx官方指定平台</div>
+            <div>快速挂号 安全放心</div>
+          </div>
         </div>
+      </div>
+    </el-dialog>
     </div>
 </template>
+
+
 <script>
 import cookie from 'js-cookie'
 import Vue from 'vue'
@@ -163,16 +161,35 @@ export default {
       document.getElementById("loginDialog").click();
     })
     // 触发事件，显示登录层：loginEvent.$emit('loginDialogEvent')
+    
     //初始化微信js
     const script = document.createElement('script')
     script.type = 'text/javascript'
     script.src = 'https://res.wx.qq.com/connect/zh_CN/htmledition/js/wxLogin.js'
     document.body.appendChild(script)
 
+    // 微信登录回调处理
+    let self = this;
+    window["loginCallback"] = (name,token, openid) => {
+      self.loginCallback(name, token, openid);
+    }
+
 
   },
 
   methods: {
+
+    loginCallback(name, token, openid) {
+      // 打开手机登录层，绑定手机号，改逻辑与手机登录一致
+      if(openid != '') {
+        this.userInfo.openid = openid
+        this.showLogin()
+      } else {
+        this.setCookies(name, token)
+      }
+    },
+
+
     // 绑定登录或获取验证码按钮
     btnClick() {
       // 判断是获取验证码还是登录
@@ -246,7 +263,6 @@ export default {
       // 发送短信验证码
       this.timeDown();
       this.dialogAtrr.sending = false;
-      this.timeDown();
       smsApi.sendCode(this.userInfo.phone).then(response => {
         this.dialogAtrr.inputValue  = response.data
         this.timeDown();
