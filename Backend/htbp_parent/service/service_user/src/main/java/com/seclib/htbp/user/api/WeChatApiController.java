@@ -5,6 +5,7 @@ import com.seclib.htbp.common.result.Result;
 import com.seclib.htbp.user.utils.ConstantWxPropertiesUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
@@ -16,6 +17,13 @@ import java.util.Map;
 @Controller  //no response data.
 @RequestMapping("/api/ucenter/wx")
 public class WeixinApiController {
+    @GetMapping("callback")
+    public String callback(@PathVariable String code,@PathVariable String state){
+
+        return "";
+
+    }
+
     //1.generate QR code
     @GetMapping("getLoginParam")
     @ResponseBody  //have response data
