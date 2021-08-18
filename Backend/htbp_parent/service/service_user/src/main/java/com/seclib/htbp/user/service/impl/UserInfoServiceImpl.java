@@ -1,6 +1,8 @@
 package com.seclib.htbp.user.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.seclib.htbp.common.exception.HtbpException;
 import com.seclib.htbp.common.helper.JwtHelper;
@@ -11,6 +13,7 @@ import com.seclib.htbp.user.mapper.UserInfoMapper;
 import com.seclib.htbp.user.service.UserInfoService;
 import com.seclib.htbp.vo.user.LoginVo;
 import com.seclib.htbp.vo.user.UserAuthVo;
+import com.seclib.htbp.vo.user.UserInfoQueryVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
@@ -114,6 +117,48 @@ public class UserInfoServiceImpl extends ServiceImpl<UserInfoMapper, UserInfo> i
         userInfo.setAuthStatus(AuthStatusEnum.AUTH_RUN.getStatus());
         //进行信息更新
         baseMapper.updateById(userInfo);
+    }
+
+    @Override
+    public IPage<UserInfo> selectPage(Page<UserInfo> pageParam, UserInfoQueryVo userInfoQueryVo) {
+        String name = userInfoQueryVo.getKeyword();
+        Integer status = userInfoQueryVo.getStatus();
+        Integer authStatus = userInfoQueryVo.getAuthStatus();
+        String createTimeBegin = userInfoQueryVo.getCreateTimeBegin();
+        String createTimeEnd = userInfoQueryVo.getCreateTimeEnd();
+        QueryWrapper<UserInfo> queryWrapper = new QueryWrapper<>();
+        if(!StringUtils.isEmpty(name)){
+            queryWrapper.like("name",name);
+        }
+
+        if(!StringUtils.isEmpty(status)){
+            queryWrapper.eq("status",name);
+        }
+        if(!StringUtils.isEmpty(authStatus)){
+            queryWrapper.eq("auth_status",name);
+        }
+        if(!StringUtils.isEmpty(createTimeBegin)){
+            queryWrapper.ge("createTimeBegin",createTimeBegin);
+        }
+        if(!StringUtils.isEmpty(createTimeEnd)){
+            queryWrapper.lt("createTimeEnd",createTimeEnd);
+        }
+
+        IPage<UserInfo> userInfoPage = baseMapper.selectPage(pageParam, queryWrapper);
+
+        userInfoPage.getRecords().stream().forEach(item->{
+            this.packUserInfo(item);
+        });
+
+        return userInfoPage;
+    }
+
+    private UserInfo packUserInfo(UserInfo userInfo) {
+
+        userInfo.getParam().put("authStatusString",AuthStatusEnum.getStatusNameByStatus(userInfo.getAuthStatus()));
+        String statusString =  userInfo.getStatus().intValue() == 0 ? "lock" :"normal";
+        userInfo.getParam().put("statusString",statusString);
+        return  userInfo;
     }
 
 
