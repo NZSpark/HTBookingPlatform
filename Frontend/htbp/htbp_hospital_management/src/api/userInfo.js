@@ -17,6 +17,21 @@ export default {
       url: `${api_name}/lock/${id}/${status}`,
       method: 'get'
     })
-  }
+  },
+  //用户详情
+  show(id) {
+    return request({
+      url: `${api_name}/show/${id}`,
+      method: 'get'
+    })
+  },
+  //lock user
+  approval(id, status) {
+    return request({
+      url: `${api_name}/approval/${id}/${status}`,
+      method: 'get'
+    })
+  },
+
 
 }

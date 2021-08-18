@@ -40,35 +40,29 @@
         </template>
       </el-table-column>
 
-      <el-table-column prop="phone" label="手机号" />
-      <el-table-column prop="nickName" label="昵称" />
       <el-table-column prop="name" label="姓名" />
-      <el-table-column label="状态" prop="param.statusString" />
-      <el-table-column label="认证状态" prop="param.authStatusString" />
+      <el-table-column prop="certificatesType" label="证件类型" />
+      <el-table-column prop="certificatesNo" label="证件号" />
       <el-table-column prop="createTime" label="创建时间" />
 
-      <el-table-column label="操作" width="200" align="center">
-        <el-table-column label="操作" width="200" align="center">
-          <template slot-scope="scope">
-            <router-link :to="'/user/userInfo/show/' + scope.row.id">
-              <el-button type="primary" size="mini">查看</el-button>
-            </router-link>
-            <el-button
-              v-if="scope.row.status == 1"
-              type="primary"
-              size="mini"
-              @click="lock(scope.row.id, 0)"
-              >锁定</el-button
-            >
-            <el-button
-              v-if="scope.row.status == 0"
-              type="danger"
-              size="mini"
-              @click="lock(scope.row.id, 1)"
-              >取消锁定</el-button
-            >
-          </template>
-        </el-table-column>
+      <el-table-column label="操作" width="250" align="center">
+        <template slot-scope="scope">
+          <router-link :to="'/user/userInfo/show/' + scope.row.id">
+            <el-button type="primary" size="mini">查看</el-button>
+          </router-link>
+          <el-button
+            type="primary"
+            size="mini"
+            @click="approval(scope.row.id, 2)"
+            >通过</el-button
+          >
+          <el-button
+            type="danger"
+            size="mini"
+            @click="approval(scope.row.id, -1)"
+            >不通过</el-button
+          >
+        </template>
       </el-table-column>
     </el-table>
 
@@ -97,13 +91,17 @@ export default {
       total: 0, // 数据库中的总记录数
       page: 1, // 默认页码
       limit: 10, // 每页记录数
-      searchObj: {}, // 查询表单对象
+      searchObj: {
+        authStatus: 1,
+      }, // 查询表单对象
     };
   },
+
   // 当页面加载时获取数据
   created() {
     this.fetchData();
   },
+
   methods: {
     // 调用api层获取数据库中的数据
     fetchData(page = 1) {
@@ -119,36 +117,40 @@ export default {
           this.listLoading = false;
         });
     },
+
     // 当页码发生改变的时候
     changeSize(size) {
       console.log(size);
       this.limit = size;
       this.fetchData(1);
     },
+
     // 重置查询表单
     resetData() {
       console.log("重置查询表单");
       this.searchObj = {};
       this.fetchData();
     },
-    // 锁定
-    lock(id, status) {
-      this.$confirm("确定该操作吗?", "提示", {
-        confirmButtonText: "确定",
-        cancelButtonText: "取消",
+
+    // 审批
+    approval(id, authStatus) {
+      // debugger
+      this.$confirm("Are you sure?", "Note", {
+        confirmButtonText: "Yes",
+        cancelButtonText: "No",
         type: "warning",
       })
         .then(() => {
           // promise
           // 点击确定，远程调用ajax
-          return userInfoApi.lock(id, status);
+          return userInfoApi.approval(id, authStatus);
         })
         .then((response) => {
           this.fetchData(this.page);
           if (response.code) {
             this.$message({
               type: "success",
-              message: "操作成功!",
+              message: "Successed!",
             });
           }
         });

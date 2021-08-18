@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Map;
+
 @RestController
 @RequestMapping("/admin/user")
 public class UserController {
@@ -36,4 +38,18 @@ public class UserController {
         userInfoService.lock(userId,status);
         return Result.ok();
     }
+
+    //user info
+    @GetMapping("show/{userId}")
+    public Result show(@PathVariable Long userId){
+        Map<String,Object> map  = userInfoService.show(userId);
+        return Result.ok(map);
+    }
+    //authorize
+    @GetMapping("approval/{userId}/{authStatus}")
+    public Result approval(@PathVariable Long userId, @PathVariable Integer authStatus){
+        userInfoService.approval(userId,authStatus);
+        return Result.ok();
+    }
+
 }

@@ -8,8 +8,10 @@ import com.seclib.htbp.common.exception.HtbpException;
 import com.seclib.htbp.common.helper.JwtHelper;
 import com.seclib.htbp.common.result.ResultCodeEnum;
 import com.seclib.htbp.enums.AuthStatusEnum;
+import com.seclib.htbp.model.user.Patient;
 import com.seclib.htbp.model.user.UserInfo;
 import com.seclib.htbp.user.mapper.UserInfoMapper;
+import com.seclib.htbp.user.service.PatientService;
 import com.seclib.htbp.user.service.UserInfoService;
 import com.seclib.htbp.vo.user.LoginVo;
 import com.seclib.htbp.vo.user.UserAuthVo;
@@ -20,6 +22,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Service
@@ -27,6 +30,9 @@ public class UserInfoServiceImpl extends ServiceImpl<UserInfoMapper, UserInfo> i
 
     @Autowired
     private RedisTemplate<String,String> redisTemplate;
+
+    @Autowired
+    private PatientService patientService;
 
     @Override
     public Map<String, Object> loginUser(LoginVo loginVo) {
@@ -132,10 +138,10 @@ public class UserInfoServiceImpl extends ServiceImpl<UserInfoMapper, UserInfo> i
         }
 
         if(!StringUtils.isEmpty(status)){
-            queryWrapper.eq("status",name);
+            queryWrapper.eq("status",status);
         }
         if(!StringUtils.isEmpty(authStatus)){
-            queryWrapper.eq("auth_status",name);
+            queryWrapper.eq("auth_status",authStatus);
         }
         if(!StringUtils.isEmpty(createTimeBegin)){
             queryWrapper.ge("createTimeBegin",createTimeBegin);
@@ -158,6 +164,25 @@ public class UserInfoServiceImpl extends ServiceImpl<UserInfoMapper, UserInfo> i
         if(status.intValue() == 0 || status == 1){
             UserInfo userInfo = baseMapper.selectById(userId);
             userInfo.setStatus(status);
+            baseMapper.updateById(userInfo);
+        }
+    }
+
+    @Override
+    public Map<String, Object> show(Long userId) {
+        Map<String,Object> map = new HashMap<>();
+        UserInfo userInfo = this.packUserInfo(baseMapper.selectById(userId));
+        map.put("userInfo",userInfo);
+        List<Patient> patientList = patientService.findAllByUserId(userId);
+        map.put("patientList",patientList);
+        return map;
+    }
+
+    @Override
+    public void approval(Long userId, Integer authStatus) {
+        if(authStatus.intValue() == 2 || authStatus == -1){
+            UserInfo userInfo = baseMapper.selectById(userId);
+            userInfo.setAuthStatus(authStatus);
             baseMapper.updateById(userInfo);
         }
     }
