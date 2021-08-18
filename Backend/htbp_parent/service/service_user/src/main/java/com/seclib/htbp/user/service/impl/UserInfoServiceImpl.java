@@ -153,6 +153,15 @@ public class UserInfoServiceImpl extends ServiceImpl<UserInfoMapper, UserInfo> i
         return userInfoPage;
     }
 
+    @Override
+    public void lock(Long userId, Integer status) {
+        if(status.intValue() == 0 || status == 1){
+            UserInfo userInfo = baseMapper.selectById(userId);
+            userInfo.setStatus(status);
+            baseMapper.updateById(userInfo);
+        }
+    }
+
     private UserInfo packUserInfo(UserInfo userInfo) {
 
         userInfo.getParam().put("authStatusString",AuthStatusEnum.getStatusNameByStatus(userInfo.getAuthStatus()));

@@ -26,4 +26,6 @@ public interface UserInfoService extends IService<UserInfo> {
     void userAuth(Long userId, UserAuthVo userAuthVo);
 
     IPage<UserInfo> selectPage(Page<UserInfo> pageParam, UserInfoQueryVo userInfoQueryVo);
+
+    void lock(Long userId, Integer status);
 }

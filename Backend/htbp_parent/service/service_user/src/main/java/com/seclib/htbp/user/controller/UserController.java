@@ -29,4 +29,11 @@ public class UserController {
                 userInfoService.selectPage(pageParam,userInfoQueryVo);
         return Result.ok(pageModel);
     }
+
+    //lock user
+    @GetMapping("lock/{userId}/{status}")
+    public Result lock(@PathVariable Long userId, @PathVariable Integer status){
+        userInfoService.lock(userId,status);
+        return Result.ok();
+    }
 }

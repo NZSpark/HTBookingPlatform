@@ -48,6 +48,13 @@
       <el-table-column prop="createTime" label="创建时间" />
 
       <el-table-column label="操作" width="200" align="center">
+        <el-table-column label="操作" width="200" align="center">
+    <template slot-scope="scope">
+        <el-button v-if="scope.row.status == 1" type="primary" size="mini" @click="lock(scope.row.id, 0)">锁定</el-button>
+        <el-button v-if="scope.row.status == 0" type="danger" size="mini" @click="lock(scope.row.id, 1)">取消锁定</el-button>
+    </template>
+</el-table-column>
+
       </el-table-column>
     </el-table>
 
@@ -110,6 +117,26 @@ export default {
       this.searchObj = {};
       this.fetchData();
     },
+    // 锁定
+    lock(id, status) {
+        this.$confirm('确定该操作吗?', '提示', {
+            confirmButtonText: '确定',
+            cancelButtonText: '取消',
+            type: 'warning'
+            }).then(() => { // promise
+                // 点击确定，远程调用ajax
+                return userInfoApi.lock(id, status)
+            }).then((response) => {
+                this.fetchData(this.page)
+                if (response.code) {
+                    this.$message({
+                    type: 'success',
+                    message: '操作成功!'
+                })
+            }
+        })
+    },
+
   },
 };
 </script>
