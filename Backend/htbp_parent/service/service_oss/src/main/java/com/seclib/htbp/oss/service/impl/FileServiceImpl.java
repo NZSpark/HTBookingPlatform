@@ -44,7 +44,8 @@ public class FileServiceImpl implements FileService {
             return url;
         } catch (Exception e) {
             e.printStackTrace();
-            return null;
+//            return null;
+            return "http://localhost:3000/_nuxt/assets/images/logo.png"; //for test
         }
 
     }

@@ -12,29 +12,29 @@
                 <el-autocomplete
                     class="search-input small"
                     prefix-icon="el-icon-search"
-                    v-model="state"
+                    v-model="queryString"
                     :fetch-suggestions="querySearchAsync"
                     placeholder="点击输入医院名称"
                     @select="handleSelect"
                     >
-                    <span slot="suffix" class="search-btn v-link highlight clickable selected">Search</span>
+                    <span slot="suffix" class="search-btn v-link highlight clickable selected">Search </span>
                 </el-autocomplete>
             </div>
         </div>
         <!-- 右侧 -->
         <!-- 右侧 -->
         <div class="right-wrapper">
-          <span class="v-link clickable"> Help </span>
+          <span class="v-link clickable">Help</span>
           <span v-if="name == ''" class="v-link clickable" @click="showLogin()" id="loginDialog">Login/SignUp</span>
           <el-dropdown v-if="name != ''" @command="loginMenu">
                 <span class="el-dropdown-link">
                   {{ name }}<i class="el-icon-arrow-down el-icon--right"></i>
                 </span>
             <el-dropdown-menu class="user-name-wrapper" slot="dropdown">
-              <el-dropdown-item command="/user">实名认证</el-dropdown-item>
-              <el-dropdown-item command="/order">挂号订单</el-dropdown-item>
-              <el-dropdown-item command="/patient">就诊人管理</el-dropdown-item>
-              <el-dropdown-item command="/logout" divided>退出登录</el-dropdown-item>
+              <el-dropdown-item command="/user">UserAuth</el-dropdown-item>
+              <el-dropdown-item command="/order">TimeBooking</el-dropdown-item>
+              <el-dropdown-item command="/patient">PatientManagement</el-dropdown-item>
+              <el-dropdown-item command="/logout" divided>Logout</el-dropdown-item>
             </el-dropdown-menu>
           </el-dropdown>
         </div>
@@ -53,7 +53,7 @@
                 <el-form-item>
                   <el-input v-model="dialogAtrr.inputValue" :placeholder="dialogAtrr.placeholder" :maxlength="dialogAtrr.maxlength" class="input v-input">
                     <span slot="suffix" class="sendText v-link" v-if="dialogAtrr.second > 0">{{ dialogAtrr.second }}s </span>
-                    <span slot="suffix" class="sendText v-link highlight clickable selected" v-if="dialogAtrr.second == 0" @click="getCodeFun()"> Re-send </span>
+                    <span slot="suffix" class="sendText v-link highlight clickable selected" v-if="dialogAtrr.second == 0" @click="getCodeFun()">重新发送 </span>
                   </el-input>
                 </el-form-item>
               </el-form>
@@ -62,7 +62,7 @@
             <div class="bottom">
               <div class="wechat-wrapper" @click="weixinLogin()"><span
                 class="iconfont icon"></span></div>
-              <span class="third-text"> WeChat Login </span></div>
+              <span class="third-text"> 第三方账号登录 </span></div>
           </div>
         </div>
         <!-- 手机登录 #end -->
