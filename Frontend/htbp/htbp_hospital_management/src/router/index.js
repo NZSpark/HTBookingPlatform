@@ -91,14 +91,14 @@ export const constantRoutes = [
         path: 'hosp/show/:id',
         name: 'Hospital Detail',
         component: () => import('@/views/hosp/show'),
-        meta: { title: 'Hostpital Detail',  noCache: true },
+        meta: { title: 'Hostpital Detail', noCache: true },
         hidden: true
       },
       {
         path: 'hosp/schedule/:hoscode',
         name: 'Schedule',
         component: () => import('@/views/hosp/schedule'),
-        meta: { title: 'Schedule',  noCache: true },
+        meta: { title: 'Schedule', noCache: true },
         hidden: true
       }
 
@@ -132,6 +132,22 @@ export const constantRoutes = [
         component: () => import('@/views/dict/add'),
         meta: { title: 'Update Dictionary Information', noCache: true },
         hidden: true
+      }
+    ]
+  },
+  {
+    path: '/user',
+    component: Layout,
+    redirect: '/user/userInfo/list',
+    name: 'userInfo',
+    meta: { title: '用户管理', icon: 'table' },
+    alwaysShow: true,
+    children: [
+      {
+        path: 'userInfo/list',
+        name: '用户列表',
+        component: () => import('@/views/user/userInfo/list'),
+        meta: { title: '用户列表', icon: 'table' }
       }
     ]
   },
