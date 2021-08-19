@@ -190,6 +190,12 @@ public class ScheduleServiceImpl extends ServiceImpl<ScheduleMapper, Schedule> i
         return scheduleOrderVo;
     }
 
+    @Override
+    public void update(Schedule schedule) {
+        schedule.setUpdateTime(new Date());
+        scheduleRepository.save(schedule);
+    }
+
 
     @Override
     public Map<String, Object> getBookingScheduleRule(Integer page, Integer limit, String hoscode, String depcode) {

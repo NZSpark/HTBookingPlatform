@@ -26,4 +26,6 @@ public interface ScheduleService {
     //根据排班id获取预约下单数据
     ScheduleOrderVo getScheduleOrderVo(String scheduleId);
 
+    //for mq
+    void update(Schedule schedule);
 }
