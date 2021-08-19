@@ -1,16 +1,23 @@
 package com.seclib.htbp.hosp.service.impl;
 
 import com.alibaba.fastjson.JSONObject;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
+import com.seclib.htbp.common.exception.HtbpException;
+import com.seclib.htbp.common.result.ResultCodeEnum;
 import com.seclib.htbp.hosp.repository.ScheduleRepository;
 import com.seclib.htbp.hosp.service.DepartmentService;
 import com.seclib.htbp.hosp.service.HospitalService;
 import com.seclib.htbp.hosp.service.ScheduleService;
+import com.seclib.htbp.model.hosp.BookingRule;
 import com.seclib.htbp.model.hosp.Department;
+import com.seclib.htbp.model.hosp.Hospital;
 import com.seclib.htbp.model.hosp.Schedule;
 import com.seclib.htbp.vo.hosp.BookingScheduleRuleVo;
 import com.seclib.htbp.vo.hosp.ScheduleQueryVo;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeConstants;
+import org.joda.time.format.DateTimeFormat;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.*;
@@ -20,10 +27,8 @@ import org.springframework.data.mongodb.core.aggregation.AggregationResults;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.stereotype.Service;
 
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class ScheduleServiceImpl implements ScheduleService {
@@ -125,6 +130,113 @@ public class ScheduleServiceImpl implements ScheduleService {
         return scheduleList;
     }
 
+    @Override
+    public Map<String, Object> getBookingScheduleRule(Integer page, Integer limit, String hoscode, String depcode) {
+        Map<String,Object> result = new HashMap<>();
+        Hospital hospital = hospitalService.getByHoscode(hoscode);
+        if(hospital == null){
+            throw new HtbpException(ResultCodeEnum.DATA_ERROR);
+        }
+        BookingRule bookingRule = hospital.getBookingRule();
+        IPage iPage = this.getListDate(page,limit,bookingRule);
+        List<Date> dateList = iPage.getRecords();
+
+        Criteria criteria = Criteria.where("hoscode").is(hoscode).and("depcode").is(depcode).and("workDate").in(dateList);
+        Aggregation agg = Aggregation.newAggregation(
+                Aggregation.match(criteria),
+                Aggregation.group("workDate").first("workDate").as("workDate")
+                        .count().as("docCount")
+                        .sum("availableNumber").as("availableNumber")
+                        .sum("reservedNumber").as("reservedNumber")
+        );
+        AggregationResults<BookingScheduleRuleVo> aggregateResult = mongoTemplate.aggregate(agg, Schedule.class, BookingScheduleRuleVo.class);
+        List<BookingScheduleRuleVo> scheduleRuleVoList = aggregateResult.getMappedResults();
+
+        Map<Date,BookingScheduleRuleVo> scheduleRuleVoMap = new HashMap<>();
+        if(!CollectionUtils.isEmpty(scheduleRuleVoList)){
+            scheduleRuleVoMap = scheduleRuleVoList.stream().collect(Collectors.toMap(BookingScheduleRuleVo::getWorkDate, BookingScheduleRuleVo -> BookingScheduleRuleVo ));
+        }
+
+        List<BookingScheduleRuleVo> bookingScheduleRuleVoList = new ArrayList<>();
+        for (int i = 0, len = dateList.size();i<len;i++){
+            Date date = dateList.get(i);
+            BookingScheduleRuleVo bookingScheduleRuleVo = scheduleRuleVoMap.get(date);
+            if(bookingScheduleRuleVo == null){
+                bookingScheduleRuleVo = new BookingScheduleRuleVo();
+                bookingScheduleRuleVo.setDocCount(0);
+                bookingScheduleRuleVo.setAvailableNumber(-1);
+            }
+            bookingScheduleRuleVo.setWorkDate(date);
+            bookingScheduleRuleVo.setWorkDateMd(date);
+            String dayOfWeek = this.getDayOfWeek(new DateTime(date));
+            bookingScheduleRuleVo.setDayOfWeek(dayOfWeek);
+
+            if(i == len-1 && page == iPage.getPages()) {
+                bookingScheduleRuleVo.setStatus(1);
+            } else {
+                bookingScheduleRuleVo.setStatus(0);
+            }
+            //当天预约如果过了停号时间， 不能预约
+            if(i == 0 && page == 1) {
+                DateTime stopTime = this.getDateTime(new Date(), bookingRule.getStopTime());
+                if(stopTime.isBeforeNow()) {
+                    //停止预约
+                    bookingScheduleRuleVo.setStatus(-1);
+                }
+            }
+            bookingScheduleRuleVoList.add(bookingScheduleRuleVo);
+        }
+
+        result.put("bookingScheduleList", bookingScheduleRuleVoList);
+        result.put("total", iPage.getTotal());
+        //其他基础数据
+        Map<String, String> baseMap = new HashMap<>();
+        //医院名称
+        baseMap.put("hosname", hospitalService.getHospName(hoscode));
+        //科室
+        Department department =departmentService.getDepartment(hoscode, depcode);
+        //大科室名称
+        baseMap.put("bigname", department.getBigname());
+        //科室名称
+        baseMap.put("depname", department.getDepname());
+        baseMap.put("workDateString", new DateTime().toString("yyyy年MM月"));
+        baseMap.put("releaseTime", bookingRule.getReleaseTime());
+        baseMap.put("stopTime", bookingRule.getStopTime());
+        result.put("baseMap", baseMap);
+
+        return result;
+    }
+
+
+    private IPage getListDate(Integer page, Integer limit, BookingRule bookingRule) {
+        DateTime releaseTime = this.getDateTime(new Date(),bookingRule.getReleaseTime());
+        Integer cycle = bookingRule.getCycle();
+        if(releaseTime.isBeforeNow()){
+            cycle += 1;
+        }
+        List<Date> dateList = new ArrayList<>();
+        for(int i = 0; i<cycle ; i++){
+            DateTime curDateTime = new DateTime().plusDays(i);
+            String dateString = curDateTime.toString("yyyy-MM-dd");
+            dateList.add(new DateTime(dateString).toDate());
+        }
+
+        List<Date> pageDateList = new ArrayList<>();
+        int start = (page-1) * limit;
+        int end = page * limit;
+        if(end > dateList.size()){
+            end = dateList.size();
+        }
+        for(int i=start; i< end ; i++){
+            pageDateList.add(dateList.get(i));
+        }
+
+        IPage<Date> iPage = new com.baomidou.mybatisplus.extension.plugins.pagination.Page<>(page,limit,dateList.size());
+        iPage.setRecords(pageDateList);
+
+        return iPage;
+    }
+
     private Schedule packageSchedule(Schedule schedule) {
         schedule.getParam().put("hosname",hospitalService.getHospName(schedule.getHoscode()));
         schedule.getParam().put("depname",departmentService.getDepName(schedule.getHoscode(),schedule.getDepcode()));
@@ -132,6 +244,13 @@ public class ScheduleServiceImpl implements ScheduleService {
 
         return schedule;
     }
+
+    private DateTime getDateTime(Date date, String timeString) {
+        String dateTimeString = new DateTime(date).toString("yyyy-MM-dd") + " "+ timeString;
+        DateTime dateTime = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm").parseDateTime(dateTimeString);
+        return dateTime;
+    }
+
 
 
     /**

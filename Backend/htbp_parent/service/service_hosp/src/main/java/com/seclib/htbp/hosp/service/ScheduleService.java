@@ -1,6 +1,7 @@
 package com.seclib.htbp.hosp.service;
 
 import com.seclib.htbp.model.hosp.Schedule;
+import com.seclib.htbp.vo.hosp.BookingScheduleRuleVo;
 import com.seclib.htbp.vo.hosp.ScheduleQueryVo;
 import org.springframework.data.domain.Page;
 
@@ -16,4 +17,6 @@ public interface ScheduleService {
     Map<String, Object> getScheduleRule(Long page, Long limit, String hoscode, String depcode);
 
     List<Schedule> getScheduleDetail(String hoscode, String depcode, String workDate);
+
+    Map<String,Object> getBookingScheduleRule(Integer page, Integer limit, String hoscode, String depcode);
 }
