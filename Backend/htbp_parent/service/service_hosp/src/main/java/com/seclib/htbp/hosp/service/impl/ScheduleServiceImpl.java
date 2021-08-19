@@ -3,11 +3,8 @@ package com.seclib.htbp.hosp.service.impl;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
-import com.baomidou.mybatisplus.extension.service.IService;
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.seclib.htbp.common.exception.HtbpException;
 import com.seclib.htbp.common.result.ResultCodeEnum;
-import com.seclib.htbp.hosp.mapper.ScheduleMapper;
 import com.seclib.htbp.hosp.repository.ScheduleRepository;
 import com.seclib.htbp.hosp.service.DepartmentService;
 import com.seclib.htbp.hosp.service.HospitalService;
@@ -35,7 +32,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
-public class ScheduleServiceImpl extends ServiceImpl<ScheduleMapper, Schedule> implements ScheduleService {
+public class ScheduleServiceImpl  implements ScheduleService {
     @Autowired
     private ScheduleRepository scheduleRepository;
 
@@ -145,7 +142,7 @@ public class ScheduleServiceImpl extends ServiceImpl<ScheduleMapper, Schedule> i
     public ScheduleOrderVo getScheduleOrderVo(String scheduleId) {
         ScheduleOrderVo scheduleOrderVo = new ScheduleOrderVo();
         //排班信息
-        Schedule schedule = baseMapper.selectById(scheduleId);
+        Schedule schedule =  scheduleRepository.getScheduleById(scheduleId);
         if(null == schedule) {
             throw new HtbpException(ResultCodeEnum.PARAM_ERROR);
         }
