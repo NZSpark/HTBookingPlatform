@@ -24,7 +24,7 @@
         <module>hospital-manage</module>
         <module>service_client</module>
 		<module>service_gateway</module>
-	</modules>
+    </modules>
 	<packaging>pom</packaging>
 
 	<properties>

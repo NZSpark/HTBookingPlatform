@@ -41,5 +41,12 @@ export default {
       method: 'get'
     })
   },
+  getSchedule(id) {
+    return request({
+      url: `${api_name}/getSchedule/${id}`,
+      method: 'get'
+    })
+    }
+    
 
 }

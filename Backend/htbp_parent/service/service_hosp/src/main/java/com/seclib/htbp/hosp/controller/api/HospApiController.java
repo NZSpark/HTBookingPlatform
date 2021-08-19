@@ -3,10 +3,13 @@ package com.seclib.htbp.hosp.controller.api;
 import com.seclib.htbp.common.result.Result;
 import com.seclib.htbp.hosp.service.DepartmentService;
 import com.seclib.htbp.hosp.service.HospitalService;
+import com.seclib.htbp.hosp.service.HospitalSetService;
 import com.seclib.htbp.hosp.service.ScheduleService;
 import com.seclib.htbp.model.hosp.Hospital;
 import com.seclib.htbp.vo.hosp.DepartmentVo;
 import com.seclib.htbp.vo.hosp.HospitalQueryVo;
+import com.seclib.htbp.vo.hosp.ScheduleOrderVo;
+import com.seclib.htbp.vo.order.SignInfoVo;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +25,9 @@ import java.util.Map;
 public class HospApiController {
     @Autowired
     private HospitalService hospitalService;
+
+    @Autowired
+    HospitalSetService hospitalSetService;
     @Autowired
     private DepartmentService departmentService;
     @Autowired
@@ -80,6 +86,31 @@ public class HospApiController {
             @PathVariable String workDate) {
         return Result.ok(scheduleService.getScheduleDetail(hoscode, depcode, workDate));
     }
+
+    @ApiOperation(value = "根据排班id获取排班数据")
+    @GetMapping("getSchedule/{scheduleId}")
+    public Result getSchedule(
+            @ApiParam(name = "scheduleId", value = "排班id", required = true)
+            @PathVariable String scheduleId) {
+        return Result.ok(scheduleService.getById(scheduleId));
+    }
+
+    @ApiOperation(value = "根据排班id获取预约下单数据")
+    @GetMapping("inner/getScheduleOrderVo/{scheduleId}")
+    public ScheduleOrderVo getScheduleOrderVo(
+            @ApiParam(name = "scheduleId", value = "排班id", required = true)
+            @PathVariable("scheduleId") String scheduleId) {
+        return scheduleService.getScheduleOrderVo(scheduleId);
+    }
+
+    @ApiOperation(value = "获取医院签名信息")
+    @GetMapping("inner/getSignInfoVo/{hoscode}")
+    public SignInfoVo getSignInfoVo(
+            @ApiParam(name = "hoscode", value = "医院code", required = true)
+            @PathVariable("hoscode") String hoscode) {
+        return hospitalSetService.getSignInfoVo(hoscode);
+    }
+
 
 
 
