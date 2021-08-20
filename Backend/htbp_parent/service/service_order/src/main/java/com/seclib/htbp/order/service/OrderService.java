@@ -6,6 +6,8 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.seclib.htbp.model.order.OrderInfo;
 import com.seclib.htbp.vo.order.OrderQueryVo;
 
+import java.util.Map;
+
 public interface OrderService extends IService<OrderInfo> {
     //保存订单
     Long saveOrder(String scheduleId, Long patientId);
@@ -13,4 +15,13 @@ public interface OrderService extends IService<OrderInfo> {
     OrderInfo getOrder(String orderId);
 
     IPage<OrderInfo> selectPage(Page<OrderInfo> pageParam, OrderQueryVo orderQueryVo);
+
+    /**
+     * 订单详情
+     * @param orderId
+     * @return
+     */
+    Map<String,Object> show(Long orderId);
+
+
 }

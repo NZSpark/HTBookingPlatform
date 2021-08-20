@@ -203,6 +203,19 @@ public class OrderServiceImpl extends
         });
         return pages;
     }
+
+    @Override
+    public Map<String, Object> show(Long orderId) {
+        Map<String, Object> map = new HashMap<>();
+        OrderInfo orderInfo = this.packOrderInfo(this.getById(orderId));
+        map.put("orderInfo", orderInfo);
+        Patient patient
+                =  patientFeignClient.getPatient(orderInfo.getPatientId());
+        map.put("patient", patient);
+        return map;
+    }
+
+
     private OrderInfo packOrderInfo(OrderInfo orderInfo) {
         orderInfo.getParam().put("orderStatusString", OrderStatusEnum.getStatusNameByStatus(orderInfo.getOrderStatus()));
         return orderInfo;
