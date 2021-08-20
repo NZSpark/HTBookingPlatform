@@ -50,8 +50,8 @@ public class OrderInfo extends BaseEntity {
 	private String depname;
 
 	@ApiModelProperty(value = "排班id")
-	@TableField("schedule_id")
-	private String scheduleId;
+	@TableField("hos_schedule_id")
+	private String hosScheduleId;
 
 	@ApiModelProperty(value = "医生职称")
 	@TableField("title")

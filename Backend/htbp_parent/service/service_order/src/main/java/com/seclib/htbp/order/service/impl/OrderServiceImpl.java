@@ -67,7 +67,7 @@ public class OrderServiceImpl extends
         BeanUtils.copyProperties(scheduleOrderVo, orderInfo);
         String outTradeNo = System.currentTimeMillis() + ""+ new Random().nextInt(100);
         orderInfo.setOutTradeNo(outTradeNo);
-        orderInfo.setScheduleId(scheduleId);
+//        orderInfo.setScheduleId(scheduleId);//only hos_record_id in table.
         orderInfo.setUserId(patient.getUserId());
         orderInfo.setPatientId(patientId);
         orderInfo.setPatientName(patient.getName());
@@ -78,7 +78,8 @@ public class OrderServiceImpl extends
         Map<String, Object> paramMap = new HashMap<>();
         paramMap.put("hoscode",orderInfo.getHoscode());
         paramMap.put("depcode",orderInfo.getDepcode());
-        paramMap.put("hosScheduleId",orderInfo.getScheduleId());
+//        paramMap.put("hosScheduleId",orderInfo.getScheduleId());
+        paramMap.put("hosScheduleId",orderInfo.getHosScheduleId());
         paramMap.put("reserveDate",new DateTime(orderInfo.getReserveDate()).toString("yyyy-MM-dd"));
         paramMap.put("reserveTime", orderInfo.getReserveTime());
         paramMap.put("amount",orderInfo.getAmount());
