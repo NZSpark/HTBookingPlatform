@@ -4,6 +4,8 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.seclib.htbp.model.order.OrderInfo;
 import com.seclib.htbp.model.order.PaymentInfo;
 
+import java.util.Map;
+
 public interface PaymentService extends IService<PaymentInfo> {
     /**
      * 保存交易记录
@@ -12,4 +14,5 @@ public interface PaymentService extends IService<PaymentInfo> {
      */
     void savePaymentInfo(OrderInfo order, Integer paymentType);
 
+    void paySuccess(String out_trade_no, Map<String, String> resultMap);
 }

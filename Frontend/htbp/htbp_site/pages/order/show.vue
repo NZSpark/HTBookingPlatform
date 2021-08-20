@@ -44,7 +44,7 @@
             <div>挂号信息</div>
           </div>
           <div class="info-form">
-            <el-form ref="form" :model="form">
+            <el-form ref="form" :model="orderInfo">
               <el-form-item label="就诊人信息：">
                 <div class="content"><span>{{ orderInfo.patientName }}</span></div>
               </el-form-item>
@@ -86,10 +86,10 @@
         </div>
         <div class="bottom-wrapper mt60" v-if="orderInfo.orderStatus == 0 || orderInfo.orderStatus == 1">
           <div class="button-wrapper">
-            <div class="v-button white" @click="cancelOrder()">取消预约</div>
+            <div class="v-button white" @click="cancelOrder()">cancelOrder</div>
           </div>
           <div class="button-wrapper ml20" v-if="orderInfo.orderStatus == 0">
-            <div class="v-button" @click="pay()">支付</div>
+            <div class="v-button" @click="pay()">Pay</div>
           </div>
         </div>
       </div>
@@ -156,7 +156,7 @@ export default {
     },
     queryPayStatus(orderId) {
       weixinApi.queryPayStatus(orderId).then(response => {
-        if (response.message == '支付中') {
+        if (response.message == 'Paying') {
           return
         }
         clearInterval(this.timer);

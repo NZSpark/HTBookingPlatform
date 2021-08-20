@@ -17,4 +17,11 @@ export default {
         })
     },
 
+    queryPayStatus(orderId) {
+        return request({
+            url: `/api/order/wechat/queryPayStatus/${orderId}`,
+            method: 'get'
+        })
+    },
+    
 }
