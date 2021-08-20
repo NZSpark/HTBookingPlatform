@@ -99,6 +99,14 @@ public class PaymentServiceImpl extends
         if(result.getInteger("code") != 200) {
             throw new HtbpException(result.getString("message"), ResultCodeEnum.FAIL.getCode());
         }
-
     }
+
+    @Override
+    public PaymentInfo getPaymentInfo(Long orderId, Integer paymentType) {
+        QueryWrapper<PaymentInfo> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("order_id", orderId);
+        queryWrapper.eq("payment_type", paymentType);
+        return baseMapper.selectOne(queryWrapper);
+    }
+
 }

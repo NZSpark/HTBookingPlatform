@@ -60,6 +60,11 @@ public class OrderApiController {
         return Result.ok(OrderStatusEnum.getStatusList());
     }
 
+    @GetMapping("auth/cancelOrder/{orderId}")
+    public Result cancelOrder(@PathVariable Long orderId){
+        Boolean isOrder = orderService.cancelOrder(orderId);
+        return Result.ok(isOrder);
+    }
 
 
 }

@@ -20,6 +20,7 @@ import javax.net.ssl.SSLContext;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.security.KeyStore;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
@@ -127,7 +128,8 @@ public class HttpClient {
         try {
             if (isHttps) {
                 if(isCert) {
-                    FileInputStream inputStream = new FileInputStream(new File(ConstantPropertiesUtils.CERT));
+//                    FileInputStream inputStream = new FileInputStream(new File(ConstantPropertiesUtils.CERT));
+                    InputStream inputStream = getClass().getResourceAsStream("/cert/apiclient_cert.p12");;
                     KeyStore keystore = KeyStore.getInstance("PKCS12");
                     char[] partnerId2charArray = certPassword.toCharArray();
                     keystore.load(inputStream, partnerId2charArray);

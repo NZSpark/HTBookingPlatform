@@ -16,6 +16,7 @@ import com.seclib.htbp.model.order.OrderInfo;
 import com.seclib.htbp.model.user.Patient;
 import com.seclib.htbp.order.mapper.OrderInfoMapper;
 import com.seclib.htbp.order.service.OrderService;
+import com.seclib.htbp.order.service.WeChatService;
 import com.seclib.htbp.user.client.PatientFeignClient;
 import com.seclib.htbp.vo.hosp.ScheduleOrderVo;
 import com.seclib.htbp.vo.msm.MsmVo;
@@ -43,6 +44,8 @@ public class OrderServiceImpl extends
 
     @Autowired
     private RabbitService rabbitService;
+    @Autowired
+    private WeChatService weChatService;
 
 
     //保存订单
@@ -73,6 +76,7 @@ public class OrderServiceImpl extends
         String outTradeNo = System.currentTimeMillis() + ""+ new Random().nextInt(100);
         orderInfo.setOutTradeNo(outTradeNo);
 //        orderInfo.setScheduleId(scheduleId);//only hos_record_id in table.
+        orderInfo.setHosScheduleId(scheduleId);//only hos_record_id in table.
         orderInfo.setUserId(patient.getUserId());
         orderInfo.setPatientId(patientId);
         orderInfo.setPatientName(patient.getName());
@@ -219,6 +223,62 @@ public class OrderServiceImpl extends
     private OrderInfo packOrderInfo(OrderInfo orderInfo) {
         orderInfo.getParam().put("orderStatusString", OrderStatusEnum.getStatusNameByStatus(orderInfo.getOrderStatus()));
         return orderInfo;
+    }
+
+    @Override
+    public Boolean cancelOrder(Long orderId) {
+        OrderInfo orderInfo = this.getById(orderId);
+//当前时间大约退号时间，不能取消预约
+        DateTime quitTime = new DateTime(orderInfo.getQuitTime());
+        if(quitTime.isBeforeNow()) {
+            throw new HtbpException(ResultCodeEnum.CANCEL_ORDER_NO);
+        }
+        SignInfoVo signInfoVo = hospitalFeignClient.getSignInfoVo(orderInfo.getHoscode());
+        if(null == signInfoVo) {
+            throw new HtbpException(ResultCodeEnum.PARAM_ERROR);
+        }
+        Map<String, Object> reqMap = new HashMap<>();
+        reqMap.put("hoscode",orderInfo.getHoscode());
+        reqMap.put("hosRecordId",orderInfo.getHosRecordId());
+        reqMap.put("timestamp", HttpRequestHelper.getTimestamp());
+        String sign = HttpRequestHelper.getSign(reqMap, signInfoVo.getSignKey());
+        reqMap.put("sign", sign);
+
+        JSONObject result = HttpRequestHelper.sendRequest(reqMap, signInfoVo.getApiUrl()+"/order/updateCancelStatus");
+
+        if(result.getInteger("code") != 200) {
+            throw new HtbpException(result.getString("message"), ResultCodeEnum.FAIL.getCode());
+        } else {
+//是否支付 退款
+            if(orderInfo.getOrderStatus().intValue() == OrderStatusEnum.PAID.getStatus().intValue()) {
+//已支付 退款
+                boolean isRefund = weChatService.refund(orderId);
+                if(!isRefund) {
+                    throw new HtbpException(ResultCodeEnum.CANCEL_ORDER_FAIL);
+                }
+            }
+//更改订单状态
+            orderInfo.setOrderStatus(OrderStatusEnum.CANCLE.getStatus());
+            this.updateById(orderInfo);
+//发送mq信息更新预约数 我们与下单成功更新预约数使用相同的mq信息，不设置可预约数与剩余预约数，接收端可预约数减1即可
+            OrderMqVo orderMqVo = new OrderMqVo();
+//            orderMqVo.setScheduleId(orderInfo.getScheduleId());
+            orderMqVo.setScheduleId(orderInfo.getHosScheduleId());
+//短信提示
+            MsmVo msmVo = new MsmVo();
+            msmVo.setPhone(orderInfo.getPatientPhone());
+            msmVo.setTemplateCode("SMS_194640722");
+            String reserveDate = new DateTime(orderInfo.getReserveDate()).toString("yyyy-MM-dd") + (orderInfo.getReserveTime()==0 ? "上午": "下午");
+            Map<String,Object> param = new HashMap<String,Object>(){{
+                put("title", orderInfo.getHosname()+"|"+orderInfo.getDepname()+"|"+orderInfo.getTitle());
+                put("reserveDate", reserveDate);
+                put("name", orderInfo.getPatientName());
+            }};
+            msmVo.setParam(param);
+            orderMqVo.setMsmVo(msmVo);
+            rabbitService.sendMessage(MqConst.EXCHANGE_DIRECT_ORDER, MqConst.ROUTING_ORDER, orderMqVo);
+        }
+        return true;
     }
 
 
