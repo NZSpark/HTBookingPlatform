@@ -35,12 +35,13 @@ public class WeChatApiController {
         if(resultMap == null){
             return Result.fail().message("Payment error");
         }
-        if(("SUCCESS").equals(resultMap.get("trade_state"))){
+        //if(("SUCCESS").equals(resultMap.get("trade_state")))
+        {
             String out_trade_no =  resultMap.get("out_trade_no");
             paymentService.paySuccess(out_trade_no,resultMap);
             return  Result.ok().message("Payment success");
         }
-        return Result.ok().message("Paying");
+//        return Result.ok().message("Paying");
     }
 
 }
