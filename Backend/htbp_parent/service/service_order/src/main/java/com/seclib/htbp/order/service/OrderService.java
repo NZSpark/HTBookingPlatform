@@ -29,5 +29,9 @@ public interface OrderService extends IService<OrderInfo> {
      */
     Boolean cancelOrder(Long orderId);
 
+    /**
+     * 就诊提醒
+     */
+    void patientTips();
 
 }
