@@ -129,14 +129,15 @@ public class HttpClient {
             if (isHttps) {
                 if(isCert) {
 //                    FileInputStream inputStream = new FileInputStream(new File(ConstantPropertiesUtils.CERT));
-                    InputStream inputStream = getClass().getResourceAsStream("/cert/apiclient_cert.p12");;
+                    InputStream inputStream = getClass().getResourceAsStream("/cert/apiclient_cert.p12");
                     KeyStore keystore = KeyStore.getInstance("PKCS12");
                     char[] partnerId2charArray = certPassword.toCharArray();
                     keystore.load(inputStream, partnerId2charArray);
                     SSLContext sslContext = SSLContexts.custom().loadKeyMaterial(keystore, partnerId2charArray).build();
                     SSLConnectionSocketFactory sslsf =
                             new SSLConnectionSocketFactory(sslContext,
-                                    new String[] { "TLSv1" },
+//                                    new String[] { "TLSv1" },
+                                    new String[] { "TLSv1.2" },
                                     null,
                                     SSLConnectionSocketFactory.BROWSER_COMPATIBLE_HOSTNAME_VERIFIER);
                     httpClient = HttpClients.custom().setSSLSocketFactory(sslsf).build();

@@ -72,11 +72,10 @@ public class OrderServiceImpl extends
             throw new HtbpException(ResultCodeEnum.NUMBER_NO);
         }
         OrderInfo orderInfo = new OrderInfo();
-        BeanUtils.copyProperties(scheduleOrderVo, orderInfo);
+        BeanUtils.copyProperties(scheduleOrderVo, orderInfo);  //here orderInfo.HosScheduleId <- scheduleOrderVo.HosScheduleId
         String outTradeNo = System.currentTimeMillis() + ""+ new Random().nextInt(100);
         orderInfo.setOutTradeNo(outTradeNo);
 //        orderInfo.setScheduleId(scheduleId);//only hos_record_id in table.
-        orderInfo.setHosScheduleId(scheduleId);//only hos_record_id in table.
         orderInfo.setUserId(patient.getUserId());
         orderInfo.setPatientId(patientId);
         orderInfo.setPatientName(patient.getName());
