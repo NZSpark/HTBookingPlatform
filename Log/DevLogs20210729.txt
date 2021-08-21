@@ -1,0 +1,238 @@
+1. install Visual Studio Code for frontend
+https://code.visualstudio.com/
+* install plugins: Chinese Language Pack for Visual Studio Code, Live Server, Vetur, vue-helper
+* create workspace.
+
+
+2. install Intellij IDEA for backend
+https://www.jetbrains.com/idea/download/download-thanks.html?platform=windows&code=IIC
+* file encoding -> utf-8
+* project bytecode version -> 1.8
+* https://start.spring.io/  to generate Spring Initializr Project -> dependency + Spring Web
+
+3.install Java SDK 1.8
+https://www.oracle.com/webapps/redirect/signon?nexturl=https://download.oracle.com/otn/java/jdk/8u301-b09/d3c52aa6bfa54d3ca74e617f18309292/jdk-8u301-windows-x64.exe
+
+
+3. install database client
+https://s3.amazonaws.com/SQLyog_Community/SQLyog+13.1.7/SQLyog-13.1.7-0.x64Community.exe
+https://dev.mysql.com/downloads/windows/visualstudio/
+MySQL Shell, https://dev.mysql.com/downloads/file/?id=505967
+\connect user:password@192.168.1.10
+\sql
+show databases;
+source "c:\1.sql";
+
+4. config Swagger
+-> add Swagger2Config class
+-> scan whole project, @ComponentScan(basePackages = "com.seclib.htbp")
+-> add dependency, with <version>1.0-SNAPSHOT</version>
+-> http://localhost:8201/swagger-ui.html
+
+5. VUE 2.6.14
+https://github.com/vuejs/vue/raw/dev/dist/vue.min.js
+
+6. install nodejs v14.17.4
+https://nodejs.org/dist/v14.17.4/node-v14.17.4-x64.msi
+
+7. npm, node packages manager
+-> npm init  -> package.json
+-> npm config set registry https://registry.npm.taobao.org, (https://registry.npmjs.com)
+-> npm install jquery -> node_moudules -> .git\info\exclude -> **/node_modules 
+
+8. babel
+-> npm install -g babel-cli
+-> npm install -D babel-preset-es2015
+-> babel src -d dist
+
+9. webpack
+-> npm install -g webpack webpack-cli
+-> webpack.config.js
+-> webpack --mode=development
+
+10. vue-element-admin -> backend management system for administrators.
+https://github.com/PanJiaChen/vue-admin-template.git
+-> cd .\vue-admin-template\ -> npm install -> npm run dev , npm run dev --fix --eslint-disable 
+-> .env.developmentset -> VUE_APP_BASE_API="http://localhost:8201"
+-> src/router/index.js modify path -> add api/hospset.js file.
+
+11. EasyExcel to export/import excel files
+
+12. installl redis
+docker run --name yygh-redis -d redis
+
+13. install nginx proxy
+
+14. MongoDB Client
+https://download.studio3t.com/robomongo/windows/robo3t-1.4.3-windows-x86_64-48f7dfd.exe
+https://download.studio3t.com/robomongo/windows/robo3t-1.4.3-windows-x86_64-48f7dfd.zip
+NoSQLBooster
+
+15. Nacos
+dowload: https://github.com/alibaba/nacos/releases/download/2.0.3/nacos-server-2.0.3.zip
+run: C:\Users\Good\Downloads\nacos-server-2.0.3\nacos\bin\startup.cmd
+http://localhost:8848/nacos
+username:nacos, password:nacos
+-> add ip:port in application.properties
+-> add @EnableDiscoveryClient on boot class
+
+16. Gateway, add spring-boot-starter-gateway (failed)
+-> @SpringBootApplication(exclude = {SecurityAutoConfiguration.class })
+
+17. nuxt  -> frontend home pages for users.
+https://github.com/nuxt-community/starter-template/archive/master.zip
+-> copy folder templalte to htbp_site
+-> modify package.json, nuxt.config.js
+-> npm install; npm install element-ui;npm install axios;npm install js-cookie;npm run dev
+* static path: /hosp -> index.vue ; dynamic path: /hosp/{hoscode} -> _hoscode.vue
+* set gateway ip:port -> /utils/requst.js -> baseURL: 'http://192.168.1.10:8080',
+
+18. JWT(Json Web Token)
+
+
+19. import data:
+schedule.json -> MongoDB
+Criteria criteria = Criteria.where("hoscode").is(hoscode).and("depcode").is(depcode).and("workDate").is("ISODate("+ workDate +" 12:00:00.000Z)");
+
+{ "aggregate" : "__collection__", "pipeline" : [{ "$match" : { "hoscode" : "1000_0", "depcode" : "200040878", "workDate" : "ISODate(2021-08-20 12:00:00.000Z)"}}, { "$group" : { "_id" : "$workDate", "workDate" : { "$first" : "$workDate"}, "docCount" : { "$sum" : 1}, "availableNumber" : { "$sum" : "$availableNumber"}, "reservedNumber" : { "$sum" : "$reservedNumber"}}}]}
+
+
+20. RabbitMQ
+
+21. show QR code
+npm install vue-qriously
+
+22. read cert file in resource folder
+InputStream inputStream = getClass().getResourceAsStream("/cert/apiclient_cert.p12");
+
+23. ECharts
+npm install echarts
+https://raw.githubusercontent.com/apache/echarts/5.1.2/dist/echarts.min.js
+
+
+
+100. disable Aarsvc
+-> set Computer\HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\AarSvc\Start=4 to disable it.
+102. SyntaxError: Cannot use import statement outside a module
+-> npm install -g babel-cli
+-> npm install -D babel-preset-es2015
+-> babel src -d dist
+103. babel : The term 'babel' is not recognized as the name of a cmdlet, function, script file, or operable program.
+->打开环境变量设置，新建一个系统变量NODE_GLOBAL，C:\Users\Good\AppData\Roaming\npm, and add to PATH too.
+
+104. Access to XMLHttpRequest at 'http://localhost:8201/admin/hosp/hospitalSet/findPageHospSet/1/3' 
+from origin 'http://localhost:9528' has been blocked by CORS policy: 
+Response to preflight request doesn't pass access control check: 
+No 'Access-Control-Allow-Origin' header is present on the requested resource.
+-> @RequestMapping("/admin/hosp/hospitalSet")
+-> @CrossOrigin                                                      <<- add this annotation to remove block.
+-> public class HospitalSetController {
+
+105. can not start Application calss
+-> add in pom.xml
+    <build>
+        <finalName>service-hosp</finalName>
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </build>
+
+106. unable to infer base url swagger
+-> add mapper xml folder and files and rebuild projects.
+
+107. Exception encountered during context initialization - Unsatisfied dependency expressed through method 'sqlSessionFactory' parameter 0; 
+Error creating bean with name 'dataSource' [com.zaxxer.hikari.HikariDataSource]: Failed to determine a suitable driver class
+Failed to configure a DataSource: 'url' attribute is not specified and no embedded datasource could be configured.
+->setting -> build tools -> maven -> ingore files -> uncheck all pom files.
+->setting -> build tools -> compiler -> Java compiler -> overide compiler parameters per-module -> -Dspring.profiles.active=dev
+
+108.Sharing is only supported for boot loader classes because bootstrap classpath has been appended
+-> Setting and search for async and unchecking the Instrumenting agent box. 
+
+109. Field dictFeignClient in com.seclib.htbp.hosp.service.impl.HospitalServiceImpl required a bean of type 'com.seclib.htbp.cmn.client.DictFeignClient' that could not be found.
+-> add dependency in service pom.xml
+-> add @EnableFeignClients(basePackages = "com.seclib.htbp") at boot class.
+
+110. nacos can not get ip address
+-> add properties in application.properties
+-> spring.cloud.nacos.discovery.ip = 192.168.1.15
+-> spring.cloud.nacos.discovery.port = 8201
+
+111. test data
+hoscode: 1000_0
+depcode: 200040878
+workDate:2021-01-28
+
+
+112.No active profile set, falling back to default profiles: default
+-> add @ActiveProfiles("dev") at boot class.
+-> execute boot class directly, dont click synch button. no dependencis were load, not a good method.
+-> recreate project/module, stupid Intellij IDEA.
+
+113. ERROR 12104 --- [  restartedMain] o.s.b.d.LoggingFailureAnalysisReporter   : 
+-> @SpringBootApplication(exclude={DataSourceAutoConfiguration.class, HibernateJpaAutoConfiguration.class})
+
+114. Spring MVC found on classpath, which is incompatible with Spring Cloud Gateway at this time. Please remove spring-boot-starter-web dependency.
+-> add properties : spring.main.web-application-type=reactive
+
+
+115. The bean 'paginationInterceptor', defined in class path resource [com/seclib/htbp/hosp/config/HospConfig.class], could not be registered. 
+A bean with that name has already been defined in class path resource [com/seclib/htbp/cmn/config/CmnConfig.class] and overriding is disabled.
+-> restore <dependency>spring-boot-starter-web in parenet pom.xml.
+
+116. org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'corsFilter' defined in class path resource
+ [com/seclib/htbp/gateway/CorsConfig.class]: Post-processing of merged bean definition failed; 
+ nested exception is java.lang.IllegalStateException: 
+ Failed to introspect Class [org.springframework.web.cors.reactive.CorsWebFilter] 
+ from ClassLoader [sun.misc.Launcher$AppClassLoader@18b4aac2]
+
+
+117. Error creating bean with name 'reactorNettyWebSocketClient'. The following method did not exist:
+    org.springframework.web.reactive.socket.client.ReactorNettyWebSocketClient.setHandlePing(Z)V
+
+118. dependency version match:
+https://github.com/spring-cloud/spring-cloud-release/wiki/Spring-Cloud-Hoxton-Release-Notes
+Hoxton.RELEASE -> Spring Cloud Gateway 2.2.0.RELEASE -> 
+VUE_APP_BASE_API = 'http://192.168.1.14:9001'
+
+119. Parameter 6 of constructor in springfox.documentation.spring.web.plugins.DocumentationPluginsBootstrapper required a bean of type 'javax.servlet.ServletContext' that could not be found.
+
+120. org.springframework.core.io.buffer.DefaultDataBufferFactory cannot be cast to org.springframework.core.io.buffer.NettyDataBufferFactory
+-> remove all dependency "spring-boot-starter-web"
+
+121. Error can't inspect Swagger2
+-> comment out @ComponentScan(basePackage =""), give up swagger function.
+
+
+122. Unable to infer base url. This is common when using dynamic servlet registration or when the API is behind an API Gateway. The base url is the root of where all the swagger resources are served. For e.g. if the api is available at http://example.org/api/v2/api-docs then the base url is http://example.org/api/. Please enter the location manually: 
+-> add dependency module in the pom.xml, the module which includs the swagger class. -> 
+
+123. [  restartedMain] ConfigServletWebServerApplicationContext : Exception encountered during context initialization - cancelling refresh attempt: org.springframework.beans.factory.UnsatisfiedDependencyException: Error creating bean with name 'msmApiController': Unsatisfied dependency expressed through field 'msmService'; nested exception is org.springframework.beans.factory.NoSuchBeanDefinitionException: No qualifying bean of type 'com.seclib.htbp.msm.service.MsmService' available: expected at least 1 bean which qualifies as autowire candidate. Dependency annotations: {@org.springframework.beans.factory.annotation.Autowired(required=true)}
+-> add @Service tag on ServiceImpl class.
+
+124. [  restartedMain] ConfigServletWebServerApplicationContext : Exception encountered during context initialization - cancelling refresh attempt: org.springframework.beans.factory.UnsatisfiedDependencyException: Error creating bean with name 'redisTemplate' defined in class path resource [org/springframework/boot/autoconfigure/data/redis/RedisAutoConfiguration.class]: Unsatisfied dependency expressed through method 'redisTemplate' parameter 0; nested exception is org.springframework.beans.factory.NoSuchBeanDefinitionException: No qualifying bean of type 'org.springframework.data.redis.connection.RedisConnectionFactory' available: expected at least 1 bean which qualifies as autowire candidate. Dependency annotations: {}
+-> add dependency module "service-utils"
+
+
+Request URL: http://localhost:8160/api/ucenter/wx/callback?code=011Ii6000q9NfM1dT4100xtYqd2Ii60S&state=1629182602530
+https://thirdwx.qlogo.cn/mmopen/vi_32/hFGkVRvlbzBZ8xQb8n9WKdpRT5e5wpVD9rlF6eIcT909py2icq06vrYtGrJU9rTXpfKLoGPGiabuklq3MfFJubAA/132
+
+
+125. loginEvent is not defined  
+
+126. io.jsonwebtoken.MalformedJwtException: JWT strings must contain exactly 2 period characters. Found: 0
+C:\Disk_D\Projects\HospitalTimeBooingPlatform\Frontend\htbp\htbp_hospital_management\src\utils\auth.js
+-> rename const TokenKey = 'vue_admin_template_token' -> 'token'
+
+127. Field orderFeignClient in com.seclib.htbp.statistics.controller.StatisticsController required a bean of type 'com.seclib.htbp.order.client.OrderFeignClient' that could not be found.
+->Consider defining a bean of type 'com.seclib.htbp.order.client.OrderFeignClient' in your configuration.
+->@EnableFeignClients(basePackages = "com.seclib.htbp")
+
+
+
+128.org.apache.ibatis.binding.BindingException: Invalid bound statement (not found): com.seclib.htbp.order.mapper.OrderInfoMapper.selectOrderCount
+
+
