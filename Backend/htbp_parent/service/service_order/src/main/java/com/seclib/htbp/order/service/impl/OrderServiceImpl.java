@@ -20,9 +20,7 @@ import com.seclib.htbp.order.service.WeChatService;
 import com.seclib.htbp.user.client.PatientFeignClient;
 import com.seclib.htbp.vo.hosp.ScheduleOrderVo;
 import com.seclib.htbp.vo.msm.MsmVo;
-import com.seclib.htbp.vo.order.OrderMqVo;
-import com.seclib.htbp.vo.order.OrderQueryVo;
-import com.seclib.htbp.vo.order.SignInfoVo;
+import com.seclib.htbp.vo.order.*;
 import org.joda.time.DateTime;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,6 +31,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import java.util.stream.Collectors;
 
 @Service
 public class OrderServiceImpl extends
@@ -301,6 +300,23 @@ public class OrderServiceImpl extends
             rabbitService.sendMessage(MqConst.EXCHANGE_DIRECT_MSM, MqConst.ROUTING_MSM_ITEM, msmVo);
         }
     }
+    @Override
+    public Map<String, Object> getCountMap(OrderCountQueryVo orderCountQueryVo) {
+        Map<String, Object> map = new HashMap<>();
+
+        List<OrderCountVo> orderCountVoList
+                = baseMapper.selectOrderCount(orderCountQueryVo);
+        //日期列表
+        List<String> dateList
+                =orderCountVoList.stream().map(OrderCountVo::getReserveDate).collect(Collectors.toList());
+        //统计列表
+        List<Integer> countList
+                =orderCountVoList.stream().map(OrderCountVo::getCount).collect(Collectors.toList());
+        map.put("dateList", dateList);
+        map.put("countList", countList);
+        return map;
+    }
+
 
 
 }
