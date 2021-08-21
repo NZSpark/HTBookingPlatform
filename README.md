@@ -3,7 +3,6 @@ Hospitals time booking platform.
 
 
 Backend Technologies
-
 1. SpringBoot
 2. SpringCloud
 (1)Nacos
@@ -29,9 +28,36 @@ Backend Technologies
 
 
 Frontend Technologies
-
 1. vue
 2. Element-ui
 3. Nuxt
 4. npm
 5. ECharts
+
+
+Backend management System
+  Modules:
+  1. Hospitals Information management.
+  * Register/List/Update/Remove
+  2. Data dictionary management.
+  * Tree
+  * Export/Import with Excel files.
+  3. User management
+  * List/Lock
+  * Autherntication
+  4. Order management
+  5. Statistics
+
+Frontend User Time Booking System
+Modules:
+1.Hospitals List
+2.Hospitals Detail Information
+3.User Login/Signup
+4.Mobile phone SMS authernticaon
+5.QR Code authernticaon with Wechat OAuth
+6.User Identification files upload.
+7.Patient information management. List/add/detail/delete
+8.Time booking/cancel. Doctors' time table.
+9.Online payment with Wechat QR Code.
+10.SMS notification scheduled.
+
