@@ -26,17 +26,18 @@ Backend Technologies
 11. Wechat QRCode OAuth/Payment
 12. Scheduled Tasks
 
-
 Frontend Technologies
-1. vue
+1. VUE
 2. Element-ui
 3. Nuxt
 4. npm
 5. ECharts
 
 
-Backend management System
-  Modules:
+
+
+# Platform includes 3 sub systems
+System 1: Information management System (for administors)
   1. Hospitals Information management.
   * Register/List/Update/Remove
   2. Data dictionary management.
@@ -48,16 +49,21 @@ Backend management System
   4. Order management
   5. Statistics
 
-Frontend User Time Booking System
-Modules:
-1.Hospitals List
-2.Hospitals Detail Information
-3.User Login/Signup
-4.Mobile phone SMS authernticaon
-5.QR Code authernticaon with Wechat OAuth
-6.User Identification files upload.
-7.Patient information management. List/add/detail/delete
-8.Time booking/cancel. Doctors' time table.
-9.Online payment with Wechat QR Code.
-10.SMS notification scheduled.
+
+System 2: Time Booking System (for user/patients)
+  1. Hospitals List
+  2. Hospitals Detail Information
+  3. User Login/Signup
+  4. Mobile phone SMS authernticaon
+  5. QR Code authernticaon with Wechat OAuth
+  6. User Identification files upload.
+  7. Patient information management. List/add/detail/delete
+  8. Time booking/cancel. Doctors' time table.
+  9. Online payment with Wechat QR Code.
+  10. SMS notification scheduled.
+
+System 3: Hospital Information Management System (for hospitals)
+
+
+
 
