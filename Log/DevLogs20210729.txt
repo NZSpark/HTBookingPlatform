@@ -250,3 +250,19 @@ C:\Disk_D\Projects\HospitalTimeBooingPlatform\Frontend\htbp\htbp_hospital_manage
 129. com.mysql.jdbc.exceptions.jdbc4.MySQLNonTransientConnectionException: Public Key Retrieval is not allowed
 -> spring.datasource.url=jdbc:mysql://192.168.1.10:3306/yygh_cmn?serverTimezone=GMT%2B12&allowPublicKeyRetrieval=true&useSSL=false
 
+
+
+Java to Kotlin
+
+1. org.springframework.beans.factory.parsing.BeanDefinitionParsingException: Configuration problem: @Configuration class 'CorsConfig' may not be final. Remove the final modifier to continue.
+-> class CorsConfig -> open class CorsConfig
+2. org.springframework.beans.factory.parsing.BeanDefinitionParsingException: Configuration problem: @Bean method 'corsFilter' must not be private or final; change the method's modifiers to continue
+-> fun corsFilter(): CorsWebFilter -> open fun corsFilter(): CorsWebFilter
+3. org.springframework.beans.factory.parsing.BeanDefinitionParsingException: Configuration problem: @Configuration class 'ServerGatewayApplication' may not be final. Remove the final modifier to continue.
+-> object ServerGatewayApplication {  
+-> public open class ServerGatewayApplication {
+    companion object {
+
+
+
+

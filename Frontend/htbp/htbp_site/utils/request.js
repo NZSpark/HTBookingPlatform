@@ -5,7 +5,7 @@ import cookie from 'js-cookie'
 // 创建axios实例
 const service = axios.create({
     // baseURL: 'http://192.168.1.10:9001',
-    baseURL: 'http://192.168.1.10:8080',
+    baseURL: 'http://192.168.1.11:8080',
     timeout: 15000 // 请求超时时间
 })
 // http request 拦截器
