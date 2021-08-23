@@ -171,6 +171,17 @@ workDate:2021-01-28
 -> add @ActiveProfiles("dev") at boot class.
 -> execute boot class directly, dont click synch button. no dependencis were load, not a good method.
 -> recreate project/module, stupid Intellij IDEA.
+-> Edit Configurations -> Build and Run -> Java 8(1.8)
+-> add <dependency>
+    	<groupId>org.springframework.boot</groupId>
+    	<artifactId>spring-boot-starter-web</artifactId>
+       </dependency>
+-> remove <properties>
+	        <maven.compiler.source>8</maven.compiler.source>
+        	<maven.compiler.target>8</maven.compiler.target>
+    	  </properties> 
+-> remove <build></build>
+-> once project found it. it will return back.
 
 113. ERROR 12104 --- [  restartedMain] o.s.b.d.LoggingFailureAnalysisReporter   : 
 -> @SpringBootApplication(exclude={DataSourceAutoConfiguration.class, HibernateJpaAutoConfiguration.class})
@@ -235,4 +246,7 @@ C:\Disk_D\Projects\HospitalTimeBooingPlatform\Frontend\htbp\htbp_hospital_manage
 
 128.org.apache.ibatis.binding.BindingException: Invalid bound statement (not found): com.seclib.htbp.order.mapper.OrderInfoMapper.selectOrderCount
 
+
+129. com.mysql.jdbc.exceptions.jdbc4.MySQLNonTransientConnectionException: Public Key Retrieval is not allowed
+-> spring.datasource.url=jdbc:mysql://192.168.1.10:3306/yygh_cmn?serverTimezone=GMT%2B12&allowPublicKeyRetrieval=true&useSSL=false
 

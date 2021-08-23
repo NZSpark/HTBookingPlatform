@@ -133,8 +133,14 @@ public class ScheduleServiceImpl  implements ScheduleService {
 
     @Override
     public Schedule getById(String id) {
-        Schedule schedule = scheduleRepository.findById(id).get();
-        return this.packSchedule(schedule);
+        try {
+            Schedule schedule = scheduleRepository.findById(id).get();
+            return this.packSchedule(schedule);
+        }catch (Exception e)
+        {
+//            e.printStackTrace();
+        }
+        return null;
     }
 
     //根据排班id获取预约下单数据
