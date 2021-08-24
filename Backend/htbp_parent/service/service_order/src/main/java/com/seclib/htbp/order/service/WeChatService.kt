@@ -1,18 +1,18 @@
-package com.seclib.htbp.order.service;
+package com.seclib.htbp.order.service
 
-import java.util.Map;
+import com.seclib.htbp.vo.order.OrderQueryVo
+import com.seclib.htbp.vo.order.OrderCountQueryVo
+import com.seclib.htbp.model.order.PaymentInfo
+import com.seclib.htbp.model.order.RefundInfo
 
-public interface WeChatService {
-    Map createNative(Long orderId);
-
-    Map<String, String> queryPayStatus(Long orderId);
+interface WeChatService {
+    fun createNative(orderId: Long): Map<String,String>?
+    fun queryPayStatus(orderId: Long): Map<String, String>?
 
     /***
      * 退款
      * @param orderId
      * @return
      */
-    Boolean refund(Long orderId);
-
-
+    fun refund(orderId: Long): Boolean
 }

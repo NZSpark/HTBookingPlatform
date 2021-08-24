@@ -1,33 +1,37 @@
-package com.seclib.htbp.order.utils;
+package com.seclib.htbp.order.utils
 
-import org.springframework.beans.factory.InitializingBean;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
+import org.springframework.beans.factory.InitializingBean
+import org.springframework.beans.factory.annotation.Value
+import org.springframework.stereotype.Component
+import kotlin.Throws
+import java.lang.Exception
 
 @Component
-public class ConstantPropertiesUtils implements InitializingBean {
+class ConstantPropertiesUtils : InitializingBean {
+    @Value("\${weixin.pay.appid}")
+    private var appid = ""
 
-    @Value("${weixin.pay.appid}")
-    private String appid;
+    @Value("\${weixin.pay.partner}")
+    private var partner = ""
 
-    @Value("${weixin.pay.partner}")
-    private String partner;
+    @Value("\${weixin.pay.partnerkey}")
+    private var partnerkey = ""
 
-    @Value("${weixin.pay.partnerkey}")
-    private String partnerkey;
+    @Value("\${weixin.pay.cert}")
+    private var cert = ""
 
-    @Value("${weixin.pay.cert}")
-    private String cert;
+    @Throws(Exception::class)
+    override fun afterPropertiesSet() {
+        APPID = appid
+        PARTNER = partner
+        PARTNERKEY = partnerkey
+        CERT = cert
+    }
 
-    public static String APPID;
-    public static String PARTNER;
-    public static String PARTNERKEY;
-    public static String CERT;
-    @Override
-    public void afterPropertiesSet() throws Exception {
-        APPID = appid;
-        PARTNER = partner;
-        PARTNERKEY = partnerkey;
-        CERT = cert;
+    companion object {
+        var APPID = ""
+        var PARTNER = ""
+        var PARTNERKEY = ""
+        var CERT = ""
     }
 }

@@ -1,112 +1,102 @@
-package com.seclib.htbp.order.service.impl;
+package com.seclib.htbp.order.service.impl
 
-import com.alibaba.fastjson.JSONObject;
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.seclib.htbp.common.exception.HtbpException;
-import com.seclib.htbp.common.result.ResultCodeEnum;
-import com.seclib.htbp.common.helper.HttpRequestHelper;
-import com.seclib.htbp.enums.OrderStatusEnum;
-import com.seclib.htbp.enums.PaymentStatusEnum;
-import com.seclib.htbp.enums.PaymentTypeEnum;
-import com.seclib.htbp.hosp.client.HospitalFeignClient;
-import com.seclib.htbp.model.order.OrderInfo;
-import com.seclib.htbp.model.order.PaymentInfo;
-import com.seclib.htbp.order.mapper.PaymentInfoMapper;
-import com.seclib.htbp.order.service.OrderService;
-import com.seclib.htbp.order.service.PaymentService;
-import com.seclib.htbp.vo.order.SignInfoVo;
-import org.joda.time.DateTime;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl
+import com.seclib.htbp.order.service.OrderService
+import org.springframework.beans.factory.annotation.Autowired
+import com.seclib.htbp.hosp.client.HospitalFeignClient
+import com.seclib.htbp.common.exception.HtbpException
+import com.seclib.htbp.enums.OrderStatusEnum
+import com.seclib.htbp.order.mapper.PaymentInfoMapper
+import com.seclib.htbp.model.order.PaymentInfo
+import com.seclib.htbp.order.service.PaymentService
+import com.seclib.htbp.enums.PaymentStatusEnum
+import com.seclib.htbp.enums.PaymentTypeEnum
+import com.seclib.htbp.common.helper.HttpRequestHelper
+import com.seclib.htbp.common.result.ResultCodeEnum
+import com.seclib.htbp.model.order.OrderInfo
+import org.joda.time.DateTime
+import org.springframework.stereotype.Service
+import java.util.*
 
 @Service
-public class PaymentServiceImpl extends
-        ServiceImpl<PaymentInfoMapper, PaymentInfo> implements PaymentService {
+open class PaymentServiceImpl : ServiceImpl<PaymentInfoMapper?, PaymentInfo?>(), PaymentService {
+    @Autowired
+    private val orderService: OrderService? = null
 
     @Autowired
-    private OrderService orderService;
-    @Autowired
-    private HospitalFeignClient hospitalFeignClient;
+    private val hospitalFeignClient: HospitalFeignClient? = null
 
     /**
      * 保存交易记录
      * @param orderInfo
      * @param paymentType 支付类型（1：微信 2：支付宝）
      */
-    @Override
-    public void savePaymentInfo(OrderInfo orderInfo, Integer paymentType) {
-        QueryWrapper<PaymentInfo> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("order_id", orderInfo.getId());
-        queryWrapper.eq("payment_type", paymentType);
-        Integer count = baseMapper.selectCount(queryWrapper);
-        if(count >0) return;
+    override fun savePaymentInfo(orderInfo: OrderInfo?, paymentType: Int?) {
+        if(orderInfo == null) return
+        if(paymentType == null) return
+        val queryWrapper = QueryWrapper<PaymentInfo>()
+        queryWrapper.eq("order_id", orderInfo.id)
+        queryWrapper.eq("payment_type", paymentType)
+        val count = baseMapper!!.selectCount(queryWrapper)
+        if (count > 0) return
         // 保存交易记录
-        PaymentInfo paymentInfo = new PaymentInfo();
-        paymentInfo.setCreateTime(new Date());
-        paymentInfo.setOrderId(orderInfo.getId());
-        paymentInfo.setPaymentType(paymentType);
-        paymentInfo.setOutTradeNo(orderInfo.getOutTradeNo());
-        paymentInfo.setPaymentStatus(PaymentStatusEnum.UNPAID.getStatus());
-        String subject = new DateTime(orderInfo.getReserveDate()).toString("yyyy-MM-dd")+"|"+orderInfo.getHosname()+"|"+orderInfo.getDepname()+"|"+orderInfo.getTitle();
-        paymentInfo.setSubject(subject);
-        paymentInfo.setTotalAmount(orderInfo.getAmount());
-        baseMapper.insert(paymentInfo);
+        val paymentInfo = PaymentInfo()
+        paymentInfo.createTime = Date()
+        paymentInfo.orderId = orderInfo.id
+        paymentInfo.paymentType = paymentType
+        paymentInfo.outTradeNo = orderInfo.outTradeNo
+        paymentInfo.paymentStatus = PaymentStatusEnum.UNPAID.status
+        val subject =
+            DateTime(orderInfo.reserveDate).toString("yyyy-MM-dd") + "|" + orderInfo.hosname + "|" + orderInfo.depname + "|" + orderInfo.title
+        paymentInfo.subject = subject
+        paymentInfo.totalAmount = orderInfo.amount
+        baseMapper!!.insert(paymentInfo)
     }
 
-    @Override
-    public void paySuccess(String out_trade_no, Map<String, String> resultMap) {
+    override fun paySuccess(out_trade_no: String, resultMap: Map<String, String>) {
         //1. query record of payment by out_trade_no
-        QueryWrapper<PaymentInfo> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("out_trade_no",out_trade_no);
-        queryWrapper.eq("payment_type", PaymentTypeEnum.WEIXIN.getStatus());
-        PaymentInfo paymentInfo = baseMapper.selectOne(queryWrapper);
-
-
-        if (null == paymentInfo) {
-            throw new HtbpException(ResultCodeEnum.PARAM_ERROR);
-        }
-        if (paymentInfo.getPaymentStatus() != PaymentStatusEnum.UNPAID.getStatus()) {
-            return;
+        val queryWrapper = QueryWrapper<PaymentInfo>()
+        queryWrapper.eq("out_trade_no", out_trade_no)
+        queryWrapper.eq("payment_type", PaymentTypeEnum.WEIXIN.status)
+        val paymentInfo = baseMapper!!.selectOne(queryWrapper)
+            ?: throw HtbpException(ResultCodeEnum.PARAM_ERROR)
+        if (paymentInfo.paymentStatus !== PaymentStatusEnum.UNPAID.status) {
+            return
         }
 
         //2. update payment record
-        paymentInfo.setPaymentStatus(PaymentStatusEnum.PAID.getStatus());
-        paymentInfo.setTradeNo(resultMap.get("transaction_id"));
-        paymentInfo.setCallbackTime(new Date());
-        paymentInfo.setCallbackContent(resultMap.toString());
-        baseMapper.updateById(paymentInfo);
+        paymentInfo.paymentStatus = PaymentStatusEnum.PAID.status
+        paymentInfo.tradeNo = resultMap?.get("transaction_id") ?: "1"
+        paymentInfo.callbackTime = Date()
+        paymentInfo.callbackContent = resultMap.toString()
+        baseMapper!!.updateById(paymentInfo)
 
         //3. query order record by record id.
-        OrderInfo orderInfo = orderService.getById(paymentInfo.getOrderId());
+        val orderInfo = orderService!!.getById(paymentInfo.orderId) ?: return
+
         //4. update order record
-        orderInfo.setOrderStatus(OrderStatusEnum.PAID.getStatus());
-        orderService.updateById(orderInfo);
+        orderInfo.orderStatus = OrderStatusEnum.PAID.status
+        orderService.updateById(orderInfo)
 
         //5. update hospital interface
-        SignInfoVo signInfoVo = hospitalFeignClient.getSignInfoVo(orderInfo.getHoscode());
-        Map<String,Object> reqMap = new HashMap<>();
-        reqMap.put("hoscode",orderInfo.getHoscode());
-        reqMap.put("hosRecordId",orderInfo.getHosRecordId());
-        reqMap.put("timestamp", HttpRequestHelper.getTimestamp());
-        String sign = HttpRequestHelper.getSign(reqMap, signInfoVo.getSignKey());
-        reqMap.put("sign", sign);
-        JSONObject result = HttpRequestHelper.sendRequest(reqMap, signInfoVo.getApiUrl()+"/order/updatePayStatus");
-        if(result.getInteger("code") != 200) {
-            throw new HtbpException(result.getString("message"), ResultCodeEnum.FAIL.getCode());
+        val signInfoVo = hospitalFeignClient!!.getSignInfoVo(orderInfo.hoscode)
+        val reqMap: MutableMap<String, Any> = HashMap()
+        reqMap["hoscode"] = orderInfo.hoscode
+        reqMap["hosRecordId"] = orderInfo.hosRecordId
+        reqMap["timestamp"] = HttpRequestHelper.getTimestamp()
+        val sign = HttpRequestHelper.getSign(reqMap, signInfoVo!!.signKey)
+        reqMap["sign"] = sign
+        val result = HttpRequestHelper.sendRequest(reqMap, signInfoVo.apiUrl + "/order/updatePayStatus")
+        if (result.getInteger("code") != 200) {
+            throw HtbpException(result.getString("message"), ResultCodeEnum.FAIL.code)
         }
     }
 
-    @Override
-    public PaymentInfo getPaymentInfo(Long orderId, Integer paymentType) {
-        QueryWrapper<PaymentInfo> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("order_id", orderId);
-        queryWrapper.eq("payment_type", paymentType);
-        return baseMapper.selectOne(queryWrapper);
+    override fun getPaymentInfo(orderId: Long?, paymentType: Int?): PaymentInfo? {
+        val queryWrapper = QueryWrapper<PaymentInfo>()
+        queryWrapper.eq("order_id", orderId)
+        queryWrapper.eq("payment_type", paymentType)
+        return baseMapper!!.selectOne(queryWrapper)
     }
-
 }

@@ -54,3 +54,14 @@ Caused by: java.lang.ClassNotFoundException: kotlin.reflect.jvm.ReflectJvmMappin
 
 11. Kotlin: Type mismatch: inferred type is DictMapper? but DictMapper was expected
 -> DictListener(baseMapper!!)
+
+
+12.orderCountVoList.stream().map(OrderCountVo::GetReserveDate).collect(Collectors.toList())
+-> orderCountVoList.stream().map{ obj: OrderCountVo? -> obj!!.reserveDate}.collect(Collectors.toList())
+
+13. Type mismatch. Required: ((OrderInfo?) → Unit)!Found:(OrderInfo) → Unit
+-> pages?.records?.stream()?.forEach { item: OrderInfo? -> packOrderInfo(item!!) }
+
+14. java.lang.ClassCastException: java.lang.String cannot be cast to java.lang.Void ***
+ redisTemplate.opsForValue().set( orderId.toString() as Nothing, map as Nothing, 120, TimeUnit.MINUTES)
+->  redisTemplate.opsForValue().set( orderId.toString(), map , 120, TimeUnit.MINUTES) ->  (redisTemplate as RedisTemplate<String,Any>).opsForValue().set( orderId.toString(), map , 120, TimeUnit.MINUTES)

@@ -1,176 +1,169 @@
-package com.seclib.htbp.order.service.impl;
+package com.seclib.htbp.order.service.impl
 
-import com.alibaba.fastjson.JSONObject;
-import com.github.wxpay.sdk.WXPayConstants;
-import com.github.wxpay.sdk.WXPayUtil;
-import com.seclib.htbp.enums.PaymentTypeEnum;
-import com.seclib.htbp.enums.RefundStatusEnum;
-import com.seclib.htbp.model.order.OrderInfo;
-import com.seclib.htbp.model.order.PaymentInfo;
-import com.seclib.htbp.model.order.RefundInfo;
-import com.seclib.htbp.order.service.OrderService;
-import com.seclib.htbp.order.service.PaymentService;
-import com.seclib.htbp.order.service.RefundInfoService;
-import com.seclib.htbp.order.service.WeChatService;
-import com.seclib.htbp.order.utils.ConstantPropertiesUtils;
-import com.seclib.htbp.order.utils.HttpClient;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.stereotype.Service;
-
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.concurrent.TimeUnit;
+import com.alibaba.fastjson.JSONObject
+import com.seclib.htbp.order.service.OrderService
+import org.springframework.beans.factory.annotation.Autowired
+import com.seclib.htbp.order.service.WeChatService
+import com.seclib.htbp.order.service.PaymentService
+import com.seclib.htbp.enums.PaymentTypeEnum
+import com.seclib.htbp.order.service.RefundInfoService
+import com.seclib.htbp.enums.RefundStatusEnum
+import org.springframework.data.redis.core.RedisTemplate
+import com.github.wxpay.sdk.WXPayUtil
+import java.lang.Exception
+import com.github.wxpay.sdk.WXPayConstants
+import com.seclib.htbp.order.utils.ConstantPropertiesUtils
+import com.seclib.htbp.order.utils.HttpClient
+import org.springframework.stereotype.Service
+import java.util.*
+import java.util.concurrent.TimeUnit
+import kotlin.collections.HashMap
 
 @Service
-public class WeChatServiceImpl implements WeChatService {
+open class WeChatServiceImpl : WeChatService {
     @Autowired
-    private OrderService orderService;
-    @Autowired
-    private PaymentService paymentService;
-    @Autowired
-    private RedisTemplate redisTemplate;
+    private val orderService: OrderService? = null
 
     @Autowired
-    private RefundInfoService refundInfoService;
+    private val paymentService: PaymentService? = null
+
+    @Autowired
+    private val redisTemplate: RedisTemplate<*, *>? = null
+
+    @Autowired
+    private val refundInfoService: RefundInfoService? = null
+
     /**
      * 根据订单号下单，生成支付链接
      */
-    @Override
-    public Map createNative(Long orderId) {
-        try {
-            Map payMap = (Map) redisTemplate.opsForValue().get(orderId.toString());
-            if(null != payMap) return payMap;
+    override fun createNative(orderId: Long): Map<String,String> {
+        return try {
+            val payMap = redisTemplate!!.opsForValue()[orderId.toString()]
+            if (null != payMap) return payMap as  Map<String,String>
             //根据id获取订单信息
-            OrderInfo order = orderService.getById(orderId);
+            val order = orderService!!.getById(orderId)
+            if (null === order) return HashMap<String,String>()
             // 保存交易记录
-            paymentService.savePaymentInfo(order, PaymentTypeEnum.WEIXIN.getStatus());
+            paymentService!!.savePaymentInfo(order, PaymentTypeEnum.WEIXIN.status)
             //1、设置参数
-            Map paramMap = new HashMap();
-            paramMap.put("appid", ConstantPropertiesUtils.APPID);
-            paramMap.put("mch_id", ConstantPropertiesUtils.PARTNER);
-            paramMap.put("nonce_str", WXPayUtil.generateNonceStr());
-            String body = order.getReserveDate() + "就诊"+ order.getDepname();
-            paramMap.put("body", body);
-            paramMap.put("out_trade_no", order.getOutTradeNo());
+            val paramMap = mutableMapOf<String,String>()
+            paramMap["appid"] = ConstantPropertiesUtils.APPID
+            paramMap["mch_id"] = ConstantPropertiesUtils.PARTNER
+            paramMap["nonce_str"] = WXPayUtil.generateNonceStr()
+            val body = order.reserveDate.toString() + "就诊" + order.depname
+            paramMap["body"] = body
+            paramMap["out_trade_no"] = order.outTradeNo
             //paramMap.put("total_fee", order.getAmount().multiply(new BigDecimal("100")).longValue()+"");
-            paramMap.put("total_fee", "1");
-            paramMap.put("spbill_create_ip", "127.0.0.1");
-            paramMap.put("notify_url", "http://guli.shop/api/order/weixinPay/weixinNotify");
-            paramMap.put("trade_type", "NATIVE");
+            paramMap["total_fee"] = "1"
+            paramMap["spbill_create_ip"] = "127.0.0.1"
+            paramMap["notify_url"] = "http://guli.shop/api/order/weixinPay/weixinNotify"
+            paramMap["trade_type"] = "NATIVE"
             //2、HTTPClient来根据URL访问第三方接口并且传递参数
-            HttpClient client = new HttpClient("https://api.mch.weixin.qq.com/pay/unifiedorder");
+            val client = HttpClient("https://api.mch.weixin.qq.com/pay/unifiedorder")
             //client设置参数
-            client.setXmlParam(WXPayUtil.generateSignedXml(paramMap, ConstantPropertiesUtils.PARTNERKEY));
-            client.setHttps(true);
-            client.post();
+            client.xmlParam = WXPayUtil.generateSignedXml(paramMap, ConstantPropertiesUtils.PARTNERKEY)
+            client.isHttps = true
+            client.post()
             //3、返回第三方的数据
-            String xml = client.getContent();
-            Map<String, String> resultMap = WXPayUtil.xmlToMap(xml);
-            System.out.println("resultMap:" + resultMap);
+            val xml = client.content
+            val resultMap = WXPayUtil.xmlToMap(xml)
+            println("resultMap:$resultMap")
             //4、封装返回结果集
-            Map map = new HashMap<>();
-            map.put("orderId", orderId);
-            map.put("totalFee", order.getAmount());
-            map.put("resultCode", resultMap.get("result_code"));
-            map.put("codeUrl", resultMap.get("code_url"));
-            if(null != resultMap.get("result_code")) {
+            val map = mutableMapOf<String,String>()
+            map["orderId"] = orderId.toString()
+            map["totalFee"] = order.amount.toString()
+            map["resultCode"] = resultMap["result_code"].toString()
+            map["codeUrl"] = resultMap["code_url"].toString()
+            if (null != resultMap["result_code"]) {
                 //微信支付二维码2小时过期，可采取2小时未支付取消订单
-                redisTemplate.opsForValue().set(orderId.toString(), map, 120, TimeUnit.MINUTES);
+                (redisTemplate as RedisTemplate<String,Any>).opsForValue().set( orderId.toString(), map , 120, TimeUnit.MINUTES)
             }
-            return map;
-        } catch (Exception e) {
-            e.printStackTrace();
-            return new HashMap<>();
+            map
+        } catch (e: Exception) {
+            e.printStackTrace()
+            HashMap<String,String>()
         }
     }
 
-    @Override
-    public Map<String, String> queryPayStatus(Long orderId) {
+    override fun queryPayStatus(orderId: Long): Map<String, String> {
         try {
-            OrderInfo orderInfo = orderService.getById(orderId);
-            Map paramMap = new HashMap();
-            paramMap.put("appid", ConstantPropertiesUtils.APPID);
-            paramMap.put("mch_id", ConstantPropertiesUtils.PARTNER);
-            paramMap.put("out_trade_no", orderInfo.getOutTradeNo());
-            paramMap.put("nonce_str", WXPayUtil.generateNonceStr());
+
+            val paramMap= mutableMapOf<String,String>()
+            val orderInfo = orderService!!.getById(orderId)
+            if (null === orderInfo) return paramMap
+            paramMap["appid"] = ConstantPropertiesUtils.APPID
+            paramMap["mch_id"] = ConstantPropertiesUtils.PARTNER
+            paramMap["out_trade_no"] = orderInfo.outTradeNo
+            paramMap["nonce_str"] = WXPayUtil.generateNonceStr()
             //2、设置请求
-            HttpClient client = new HttpClient("https://api.mch.weixin.qq.com/pay/orderquery");
-            client.setXmlParam(WXPayUtil.generateSignedXml(paramMap, ConstantPropertiesUtils.PARTNERKEY));
-            client.setHttps(true);
-            client.post();
+            val client = HttpClient("https://api.mch.weixin.qq.com/pay/orderquery")
+            client.xmlParam = WXPayUtil.generateSignedXml(paramMap, ConstantPropertiesUtils.PARTNERKEY)
+            client.isHttps = true
+            client.post()
             //3、返回第三方的数据，转成Map
-            String xml = client.getContent();
-            Map<String, String> resultMap = WXPayUtil.xmlToMap(xml);
-            System.out.println("Payment result:" + resultMap);
+            val xml = client.content
+            val resultMap = WXPayUtil.xmlToMap(xml)
+            println("Payment result:$resultMap")
             //4、返回
-            return resultMap;
-
-        }catch (Exception e) {
-            e.printStackTrace();
+            return resultMap
+        } catch (e: Exception) {
+            e.printStackTrace()
         }
-        return null;
+        return HashMap<String,String>()
     }
 
-    @Override
-    public Boolean refund(Long orderId) {
+    override fun refund(orderId: Long): Boolean {
         try {
-            PaymentInfo paymentInfoQuery = paymentService.getPaymentInfo(orderId, PaymentTypeEnum.WEIXIN.getStatus());
-
-            RefundInfo refundInfo = refundInfoService.saveRefundInfo(paymentInfoQuery);
-            if(refundInfo.getRefundStatus().intValue() == RefundStatusEnum.REFUND.getStatus().intValue()) {
-                return true;
+            val paymentInfoQuery = paymentService!!.getPaymentInfo(orderId, PaymentTypeEnum.WEIXIN.status)
+            val refundInfo = refundInfoService!!.saveRefundInfo(paymentInfoQuery)
+            if (refundInfo!!.refundStatus.toInt() == RefundStatusEnum.REFUND.status.toInt()) {
+                return true
             }
-            Map<String,String> paramMap = new HashMap<>(8);
-            paramMap.put("appid",ConstantPropertiesUtils.APPID);       //公众账号ID
-            paramMap.put("mch_id",ConstantPropertiesUtils.PARTNER);   //商户编号
-            paramMap.put("nonce_str",WXPayUtil.generateNonceStr());
-            if(paymentInfoQuery.getTradeNo() == null) { //no valid account?
-                paramMap.put("transaction_id","1");  //only for test.
+            val paramMap = mutableMapOf<String,String>()
+            paramMap["appid"] = ConstantPropertiesUtils.APPID //公众账号ID
+            paramMap["mch_id"] = ConstantPropertiesUtils.PARTNER //商户编号
+            paramMap["nonce_str"] = WXPayUtil.generateNonceStr()
+            if (paymentInfoQuery!!.tradeNo == null) { //no valid account?
+                paramMap["transaction_id"] = "1" //only for test.
             } else {
-                paramMap.put("transaction_id", paymentInfoQuery.getTradeNo()); //微信订单号
+                paramMap["transaction_id"] = paymentInfoQuery.tradeNo //微信订单号
             }
-            paramMap.put("out_trade_no",paymentInfoQuery.getOutTradeNo()); //商户订单编号
-            paramMap.put("out_refund_no","tk"+paymentInfoQuery.getOutTradeNo()); //商户退款单号
-//       paramMap.put("total_fee",paymentInfoQuery.getTotalAmount().multiply(new BigDecimal("100")).longValue()+"");
+            paramMap["out_trade_no"] = paymentInfoQuery.outTradeNo //商户订单编号
+            paramMap["out_refund_no"] = "tk" + paymentInfoQuery.outTradeNo //商户退款单号
+            //       paramMap.put("total_fee",paymentInfoQuery.getTotalAmount().multiply(new BigDecimal("100")).longValue()+"");
 //       paramMap.put("refund_fee",paymentInfoQuery.getTotalAmount().multiply(new BigDecimal("100")).longValue()+"");
-            paramMap.put("total_fee","1");
-            paramMap.put("refund_fee","1");
-            String paramXml = WXPayUtil.generateSignedXml(paramMap,ConstantPropertiesUtils.PARTNERKEY);
-            HttpClient client = new HttpClient("https://api.mch.weixin.qq.com/secapi/pay/refund");
-            client.setXmlParam(paramXml);
-            client.setHttps(true);
-            client.setCert(true);
-            client.setCertPassword(ConstantPropertiesUtils.PARTNER);
-            client.post();
-//3、返回第三方的数据
-            String xml = client.getContent();
-
-            Map<String, String> resultMap =  WXPayUtil.xmlToMap(xml);
+            paramMap["total_fee"] = "1"
+            paramMap["refund_fee"] = "1"
+            val paramXml = WXPayUtil.generateSignedXml(paramMap, ConstantPropertiesUtils.PARTNERKEY)
+            val client = HttpClient("https://api.mch.weixin.qq.com/secapi/pay/refund")
+            client.xmlParam = paramXml
+            client.isHttps = true
+            client.isCert = true
+            client.certPassword = ConstantPropertiesUtils.PARTNER
+            client.post()
+            //3、返回第三方的数据
+            val xml = client.content
+            val resultMap = WXPayUtil.xmlToMap(xml)
 
             //for test ----------------->>
-            if(!WXPayConstants.SUCCESS.equalsIgnoreCase(resultMap.get("result_code"))){
-                resultMap.remove("result_code");
-                resultMap.put("result_code", "SUCCESS");
-                resultMap.put("refund_id", "test_only");
+            if (!WXPayConstants.SUCCESS.equals(resultMap!!["result_code"], ignoreCase = true)) {
+                resultMap.remove("result_code")
+                resultMap["result_code"] = "SUCCESS"
+                resultMap["refund_id"] = "test_only"
             }
             //--------------------------<<
-
-            if (null != resultMap && WXPayConstants.SUCCESS.equalsIgnoreCase(resultMap.get("result_code"))) {
-                refundInfo.setCallbackTime(new Date());
-                refundInfo.setTradeNo(resultMap.get("refund_id"));
-                refundInfo.setRefundStatus(RefundStatusEnum.REFUND.getStatus());
-                refundInfo.setCallbackContent(JSONObject.toJSONString(resultMap));
-                refundInfoService.updateById(refundInfo);
-                return true;
+            if (null != resultMap && WXPayConstants.SUCCESS.equals(resultMap["result_code"], ignoreCase = true)) {
+                refundInfo.callbackTime = Date()
+                refundInfo.tradeNo = resultMap["refund_id"]
+                refundInfo.refundStatus = RefundStatusEnum.REFUND.status
+                refundInfo.callbackContent = JSONObject.toJSONString(resultMap)
+                refundInfoService.updateById(refundInfo)
+                return true
             }
-            return false;
-        }  catch (Exception e) {
-            e.printStackTrace();
+            return false
+        } catch (e: Exception) {
+            e.printStackTrace()
         }
-        return false;
+        return false
     }
-
 }
-
