@@ -5,7 +5,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.seclib.htbp.common.exception.HtbpException;
 import com.seclib.htbp.common.result.ResultCodeEnum;
-import com.seclib.htbp.common.utils.helper.HttpRequestHelper;
+import com.seclib.htbp.common.helper.HttpRequestHelper;
 import com.seclib.htbp.enums.OrderStatusEnum;
 import com.seclib.htbp.enums.PaymentStatusEnum;
 import com.seclib.htbp.enums.PaymentTypeEnum;

@@ -3,9 +3,7 @@ package com.seclib.htbp.hosp.controller.api;
 import com.seclib.htbp.common.exception.HtbpException;
 import com.seclib.htbp.common.result.Result;
 import com.seclib.htbp.common.result.ResultCodeEnum;
-import com.seclib.htbp.common.utils.MD5;
-import com.seclib.htbp.common.utils.helper.HttpRequestHelper;
-import com.seclib.htbp.hosp.repository.HospitalRepository;
+import com.seclib.htbp.common.helper.HttpRequestHelper;
 import com.seclib.htbp.hosp.service.DepartmentService;
 import com.seclib.htbp.hosp.service.HospitalService;
 import com.seclib.htbp.hosp.service.HospitalSetService;
@@ -15,16 +13,13 @@ import com.seclib.htbp.model.hosp.Hospital;
 import com.seclib.htbp.model.hosp.Schedule;
 import com.seclib.htbp.vo.hosp.DepartmentQueryVo;
 import com.seclib.htbp.vo.hosp.ScheduleQueryVo;
-import lombok.val;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.util.StringUtils;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import java.util.Map;
 

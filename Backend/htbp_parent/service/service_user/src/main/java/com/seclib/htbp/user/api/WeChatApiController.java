@@ -9,6 +9,7 @@ import com.seclib.htbp.user.utils.HttpClientUtils;
 import com.seclib.htbp.common.exception.HtbpException;
 import com.seclib.htbp.common.result.Result;
 import com.seclib.htbp.common.result.ResultCodeEnum;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,13 +26,11 @@ import java.util.Map;
 
 @Controller  //no response data.
 @RequestMapping("/api/ucenter/wx")
+@Slf4j
 public class WeChatApiController {
 
     @Autowired
     private UserInfoService userInfoService;
-//
-//    @Autowired
-//    private Log log;
 
     @GetMapping("callback")
     public String callback(String code,String state){
@@ -73,14 +72,14 @@ public class WeChatApiController {
 
         JSONObject resultJson = JSONObject.parseObject(result);
         if(resultJson.getString("errcode") != null){
-//            log.error("获取access_token失败：" + resultJson.getString("errcode") + resultJson.getString("errmsg"));
+            log.error("获取access_token失败：" + resultJson.getString("errcode") + resultJson.getString("errmsg"));
             throw new HtbpException(ResultCodeEnum.FETCH_ACCESSTOKEN_FAILD);
         }
 
         String accessToken = resultJson.getString("access_token");
         String openId = resultJson.getString("openid");
-//        log.info(accessToken);
-//        log.info(openId);
+        log.info(accessToken);
+        log.info(openId);
 
         UserInfo userInfo = userInfoService.selectWxInfoOpenId(openId);
         if(userInfo == null) {
@@ -105,7 +104,7 @@ public class WeChatApiController {
 
             JSONObject resultUserInfoJson = JSONObject.parseObject(resultUserInfo);
             if (resultUserInfoJson.getString("errcode") != null) {
-//            log.error("获取用户信息失败：" + resultUserInfoJson.getString("errcode") + resultUserInfoJson.getString("errmsg"));
+            log.error("获取用户信息失败：" + resultUserInfoJson.getString("errcode") + resultUserInfoJson.getString("errmsg"));
                 throw new HtbpException(ResultCodeEnum.FETCH_USERINFO_ERROR);
             }
 

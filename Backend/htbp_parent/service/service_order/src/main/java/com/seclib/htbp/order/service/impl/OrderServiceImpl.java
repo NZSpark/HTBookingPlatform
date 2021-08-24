@@ -9,7 +9,7 @@ import com.seclib.htbp.common.constant.MqConst;
 import com.seclib.htbp.common.exception.HtbpException;
 import com.seclib.htbp.common.result.ResultCodeEnum;
 import com.seclib.htbp.common.service.RabbitService;
-import com.seclib.htbp.common.utils.helper.HttpRequestHelper;
+import com.seclib.htbp.common.helper.HttpRequestHelper;
 import com.seclib.htbp.enums.OrderStatusEnum;
 import com.seclib.htbp.hosp.client.HospitalFeignClient;
 import com.seclib.htbp.model.order.OrderInfo;

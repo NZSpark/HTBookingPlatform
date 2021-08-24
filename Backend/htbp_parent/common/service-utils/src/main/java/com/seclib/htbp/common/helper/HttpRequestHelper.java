@@ -1,4 +1,4 @@
-package com.seclib.htbp.common.utils.helper;
+package com.seclib.htbp.common.helper;
 
 import com.alibaba.fastjson.JSONObject;
 import com.seclib.htbp.common.utils.HttpUtil;

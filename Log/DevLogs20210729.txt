@@ -168,6 +168,7 @@ workDate:2021-01-28
 
 
 112.No active profile set, falling back to default profiles: default
+-> add spring.profiles.active=dev in application.properties.
 -> add @ActiveProfiles("dev") at boot class.
 -> execute boot class directly, dont click synch button. no dependencis were load, not a good method.
 -> recreate project/module, stupid Intellij IDEA.
