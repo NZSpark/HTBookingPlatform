@@ -253,17 +253,6 @@ C:\Disk_D\Projects\HospitalTimeBooingPlatform\Frontend\htbp\htbp_hospital_manage
 
 
 
-Java to Kotlin
-
-1. org.springframework.beans.factory.parsing.BeanDefinitionParsingException: Configuration problem: @Configuration class 'CorsConfig' may not be final. Remove the final modifier to continue.
--> class CorsConfig -> open class CorsConfig
-2. org.springframework.beans.factory.parsing.BeanDefinitionParsingException: Configuration problem: @Bean method 'corsFilter' must not be private or final; change the method's modifiers to continue
--> fun corsFilter(): CorsWebFilter -> open fun corsFilter(): CorsWebFilter
-3. org.springframework.beans.factory.parsing.BeanDefinitionParsingException: Configuration problem: @Configuration class 'ServerGatewayApplication' may not be final. Remove the final modifier to continue.
--> object ServerGatewayApplication {  
--> public open class ServerGatewayApplication {
-    companion object {
-
 
 
 

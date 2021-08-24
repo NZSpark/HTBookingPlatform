@@ -1,214 +1,168 @@
-package com.seclib.htbp.hosp.controller.api;
+package com.seclib.htbp.hosp.controller.api
 
-import com.seclib.htbp.common.exception.HtbpException;
-import com.seclib.htbp.common.result.Result;
-import com.seclib.htbp.common.result.ResultCodeEnum;
-import com.seclib.htbp.common.helper.HttpRequestHelper;
-import com.seclib.htbp.hosp.service.DepartmentService;
-import com.seclib.htbp.hosp.service.HospitalService;
-import com.seclib.htbp.hosp.service.HospitalSetService;
-import com.seclib.htbp.hosp.service.ScheduleService;
-import com.seclib.htbp.model.hosp.Department;
-import com.seclib.htbp.model.hosp.Hospital;
-import com.seclib.htbp.model.hosp.Schedule;
-import com.seclib.htbp.vo.hosp.DepartmentQueryVo;
-import com.seclib.htbp.vo.hosp.ScheduleQueryVo;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.util.StringUtils;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
-import javax.servlet.http.HttpServletRequest;
-import java.util.Map;
+import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.beans.factory.annotation.Autowired
+import com.seclib.htbp.hosp.service.HospitalSetService
+import com.seclib.htbp.hosp.service.DepartmentService
+import com.seclib.htbp.hosp.service.ScheduleService
+import org.springframework.web.bind.annotation.PostMapping
+import javax.servlet.http.HttpServletRequest
+import com.seclib.htbp.common.exception.HtbpException
+import com.seclib.htbp.common.helper.HttpRequestHelper
+import com.seclib.htbp.common.result.Result
+import com.seclib.htbp.common.result.ResultCodeEnum
+import com.seclib.htbp.hosp.service.HospitalService
+import com.seclib.htbp.vo.hosp.ScheduleQueryVo
+import com.seclib.htbp.vo.hosp.DepartmentQueryVo
+import org.springframework.util.StringUtils
 
 @RestController
-@RequestMapping("/api/hosp")
-//@CrossOrigin
-public class ApiController {
+@RequestMapping("/api/hosp") //@CrossOrigin
+class ApiController {
     @Autowired
-    private HospitalService hospitalService;
-    @Autowired
-    private HospitalSetService hospitalSetService;
+    private val hospitalService: HospitalService? = null
 
     @Autowired
-    private DepartmentService departmentService;
+    private val hospitalSetService: HospitalSetService? = null
 
     @Autowired
-    private ScheduleService scheduleService;
+    private val departmentService: DepartmentService? = null
 
+    @Autowired
+    private val scheduleService: ScheduleService? = null
     @PostMapping("schedule/remove")
-    public Result removeSchedule(HttpServletRequest request) {
-        Map<String, String[]> requstMap = request.getParameterMap();
-        Map<String, Object> paramMap = HttpRequestHelper.switchMap(request.getParameterMap());
-
-        String hospSign = (String)paramMap.get("sign");
-        String hoscode = (String)paramMap.get("hoscode");
-        String signKey = hospitalSetService.getSignKey(hoscode);
-        String signKeyMD5 = HttpRequestHelper.getSign(paramMap, signKey);
-
-        if(StringUtils.isEmpty(hoscode)) {
-            throw new HtbpException(ResultCodeEnum.PARAM_ERROR);
+    fun removeSchedule(request: HttpServletRequest): Result<*> {
+        val requstMap = request.parameterMap
+        val paramMap = HttpRequestHelper.switchMap(request.parameterMap)
+        val hospSign = paramMap["sign"] as String?
+        val hoscode = paramMap["hoscode"] as String?
+        val signKey = hospitalSetService!!.getSignKey(hoscode)
+        val signKeyMD5 = HttpRequestHelper.getSign(paramMap, signKey)
+        if (StringUtils.isEmpty(hoscode)) {
+            throw HtbpException(ResultCodeEnum.PARAM_ERROR)
         }
-
-        if(!hospSign.equals(signKeyMD5)){
-            throw new HtbpException(ResultCodeEnum.SIGN_ERROR);
+        if (hospSign != signKeyMD5) {
+            throw HtbpException(ResultCodeEnum.SIGN_ERROR)
         }
-
-        String hosScheduleId = (String)paramMap.get("hosScheduleId");
-
-        scheduleService.remove(hoscode,hosScheduleId);
-
-        return Result.ok();
+        val hosScheduleId = paramMap["hosScheduleId"] as String?
+        scheduleService!!.remove(hoscode, hosScheduleId)
+        return Result.ok<Any>()
     }
 
     @PostMapping("schedule/list")
-    public Result findSchedule(HttpServletRequest request) {
-        Map<String, String[]> requstMap = request.getParameterMap();
-        Map<String, Object> paramMap = HttpRequestHelper.switchMap(request.getParameterMap());
-
-        String hoscode = (String)paramMap.get("hoscode");
-        String depcode = (String)paramMap.get("depcode");
-        int page = StringUtils.isEmpty(paramMap.get("page")) ? 1 : Integer.parseInt((String)paramMap.get("page"));
-        int limit = StringUtils.isEmpty(paramMap.get("limit")) ? 10 : Integer.parseInt((String)paramMap.get("limit"));
-
-        if(StringUtils.isEmpty(hoscode)) {
-            throw new HtbpException(ResultCodeEnum.PARAM_ERROR);
+    fun findSchedule(request: HttpServletRequest): Result<*> {
+        val requstMap = request.parameterMap
+        val paramMap = HttpRequestHelper.switchMap(request.parameterMap)
+        val hoscode = paramMap!!["hoscode"] as String?
+        val depcode = paramMap["depcode"] as String?
+        val page = if (StringUtils.isEmpty(paramMap["page"])) 1 else paramMap["page"].toString().toInt ()
+        val limit = if (StringUtils.isEmpty(paramMap["limit"])) 10 else paramMap["limit"].toString().toInt ()
+        if (StringUtils.isEmpty(hoscode)) {
+            throw HtbpException(ResultCodeEnum.PARAM_ERROR)
         }
-
-        String hospSign = (String)paramMap.get("sign");
-        String signKey = hospitalSetService.getSignKey(hoscode);
-        String signKeyMD5 = HttpRequestHelper.getSign(paramMap, signKey);
-
-        if(!hospSign.equals(signKeyMD5)){
-            throw new HtbpException(ResultCodeEnum.SIGN_ERROR);
+        val hospSign = paramMap["sign"] as String?
+        val signKey = hospitalSetService!!.getSignKey(hoscode)
+        val signKeyMD5 = HttpRequestHelper.getSign(paramMap, signKey)
+        if (hospSign != signKeyMD5) {
+            throw HtbpException(ResultCodeEnum.SIGN_ERROR)
         }
-
-        ScheduleQueryVo scheduleQueryVo = new ScheduleQueryVo();
-        scheduleQueryVo.setHoscode(hoscode);
-        scheduleQueryVo.setDepcode(depcode);
-        Page<Schedule> pageModel = scheduleService.selectPage(page , limit, scheduleQueryVo);
-        return Result.ok(pageModel);
+        val scheduleQueryVo = ScheduleQueryVo()
+        scheduleQueryVo.hoscode = hoscode
+        scheduleQueryVo.depcode = depcode
+        val pageModel = scheduleService!!.selectPage(page, limit, scheduleQueryVo)
+        return Result.ok(pageModel)
     }
-
 
     @PostMapping("saveSchedule")
-    public Result saveSchedule(HttpServletRequest request){
-        Map<String, String[]> requstMap = request.getParameterMap();
-        Map<String, Object> paramMap = HttpRequestHelper.switchMap(requstMap);
-
-        String hospSign = (String)paramMap.get("sign");
-        String hoscode = (String)paramMap.get("hoscode");
-        String signKey = hospitalSetService.getSignKey(hoscode);
-        String signKeyMD5 = HttpRequestHelper.getSign(paramMap, signKey);
-
-        if(!hospSign.equals(signKeyMD5)){
-            throw new HtbpException(ResultCodeEnum.SIGN_ERROR);
+    fun saveSchedule(request: HttpServletRequest): Result<*>? {
+        val requstMap = request.parameterMap
+        val paramMap = HttpRequestHelper.switchMap(requstMap)
+        val hospSign = paramMap!!["sign"] as String?
+        val hoscode = paramMap["hoscode"] as String?
+        val signKey = hospitalSetService!!.getSignKey(hoscode)
+        val signKeyMD5 = HttpRequestHelper.getSign(paramMap, signKey)
+        if (hospSign != signKeyMD5) {
+            throw HtbpException(ResultCodeEnum.SIGN_ERROR)
         }
-
-        scheduleService.save(paramMap);
-
-        return Result.ok();
-
+        scheduleService!!.save(paramMap)
+        return Result.ok<Any?>()
     }
-
-
 
     @PostMapping("department/remove")
-    public Result removeDepartment(HttpServletRequest request) {
-        Map<String, String[]> requstMap = request.getParameterMap();
-        Map<String, Object> paramMap = HttpRequestHelper.switchMap(requstMap);
-        String hoscode = (String) paramMap.get("hoscode");
-        String depcode = (String) paramMap.get("depcode");
-
-        String hospSign = (String)paramMap.get("sign");
-        String signKey = hospitalSetService.getSignKey(hoscode);
-        String signKeyMD5 = HttpRequestHelper.getSign(paramMap, signKey);
-
-        if(!hospSign.equals(signKeyMD5)) {
-            throw new HtbpException(ResultCodeEnum.SIGN_ERROR);
+    fun removeDepartment(request: HttpServletRequest?): Result<*>? {
+        val requstMap = request!!.parameterMap
+        val paramMap = HttpRequestHelper.switchMap(requstMap)
+        val hoscode = paramMap!!["hoscode"] as String?
+        val depcode = paramMap["depcode"] as String?
+        val hospSign = paramMap["sign"] as String?
+        val signKey = hospitalSetService!!.getSignKey(hoscode)
+        val signKeyMD5 = HttpRequestHelper.getSign(paramMap, signKey)
+        if (hospSign != signKeyMD5) {
+            throw HtbpException(ResultCodeEnum.SIGN_ERROR)
         }
-
-        departmentService.remove(hoscode,depcode);
-        return Result.ok();
+        departmentService!!.remove(hoscode, depcode)
+        return Result.ok<Any?>()
     }
+
     @PostMapping("department/list")
-    public Result findDepartment(HttpServletRequest request){
-        Map<String, String[]> requstMap = request.getParameterMap();
-        Map<String, Object> paramMap = HttpRequestHelper.switchMap(requstMap);
-        String hoscode = (String)paramMap.get("hoscode");
-
-        Integer page = StringUtils.isEmpty(paramMap.get("page"))? 1 : Integer.parseInt((String) paramMap.get("page"));
-        Integer limit = StringUtils.isEmpty(paramMap.get("limit"))? 1 : Integer.parseInt((String) paramMap.get("limit"));
-
-        DepartmentQueryVo departmentQueryVo = new DepartmentQueryVo();
-        departmentQueryVo.setHoscode(hoscode);
-
-        Page<Department> pageModel =  departmentService.findPageDepartment(page,limit,departmentQueryVo);
-        return Result.ok(pageModel);
+    fun findDepartment(request: HttpServletRequest?): Result<*>? {
+        val requstMap = request!!.parameterMap
+        val paramMap = HttpRequestHelper.switchMap(requstMap)
+        val hoscode = paramMap!!["hoscode"] as String?
+        val page = if (StringUtils.isEmpty(paramMap["page"])) 1 else paramMap["page"].toString().toInt ()
+        val limit = if (StringUtils.isEmpty(paramMap["limit"])) 1 else paramMap["limit"].toString().toInt ()
+        val departmentQueryVo = DepartmentQueryVo()
+        departmentQueryVo.hoscode = hoscode
+        val pageModel = departmentService!!.findPageDepartment(page, limit, departmentQueryVo)
+        return Result.ok(pageModel)
     }
 
     @PostMapping("saveDepartment")
-    public Result saveDepartment(HttpServletRequest request){
-        Map<String, String[]> requstMap = request.getParameterMap();
-        Map<String, Object> paramMap = HttpRequestHelper.switchMap(requstMap);
-
-        String hospSign = (String)paramMap.get("sign");
-        String hoscode = (String)paramMap.get("hoscode");
-        String signKey = hospitalSetService.getSignKey(hoscode);
-        String signKeyMD5 = HttpRequestHelper.getSign(paramMap, signKey);
-
-        if(!hospSign.equals(signKeyMD5)){
-            throw new HtbpException(ResultCodeEnum.SIGN_ERROR);
+    fun saveDepartment(request: HttpServletRequest?): Result<*>? {
+        val requstMap = request!!.parameterMap
+        val paramMap = HttpRequestHelper.switchMap(requstMap)
+        val hospSign = paramMap!!["sign"] as String?
+        val hoscode = paramMap["hoscode"] as String?
+        val signKey = hospitalSetService!!.getSignKey(hoscode)
+        val signKeyMD5 = HttpRequestHelper.getSign(paramMap, signKey)
+        if (hospSign != signKeyMD5) {
+            throw HtbpException(ResultCodeEnum.SIGN_ERROR)
         }
-
-        departmentService.save(paramMap);
-
-        return Result.ok();
-
+        departmentService!!.save(paramMap)
+        return Result.ok<Any?>()
     }
 
     @PostMapping("hospital/show")
-    public Result getHospital(HttpServletRequest request){
-        Map<String, String[]> requstMap = request.getParameterMap();
-        Map<String, Object> paramMap = HttpRequestHelper.switchMap(requstMap);
-
-        String hospSign = (String)paramMap.get("sign");
-        String hoscode = (String)paramMap.get("hoscode");
-        String signKey = hospitalSetService.getSignKey(hoscode);
-        String signKeyMD5 = HttpRequestHelper.getSign(paramMap, signKey);
-
-        if(!hospSign.equals(signKeyMD5)){
-            throw new HtbpException(ResultCodeEnum.SIGN_ERROR);
+    fun getHospital(request: HttpServletRequest?): Result<*>? {
+        val requstMap = request!!.parameterMap
+        val paramMap = HttpRequestHelper.switchMap(requstMap)
+        val hospSign = paramMap!!["sign"] as String?
+        val hoscode = paramMap["hoscode"] as String?
+        val signKey = hospitalSetService!!.getSignKey(hoscode)
+        val signKeyMD5 = HttpRequestHelper.getSign(paramMap, signKey)
+        if (hospSign != signKeyMD5) {
+            throw HtbpException(ResultCodeEnum.SIGN_ERROR)
         }
-
-        Hospital hospital = hospitalService.getByHoscode(hoscode);
-
-        return Result.ok(hospital);
-
+        val hospital = hospitalService!!.getByHoscode(hoscode)
+        return Result.ok(hospital)
     }
 
     @PostMapping("saveHospital")
-    public Result saveHosp(HttpServletRequest request){
-        Map<String, String[]> requstMap = request.getParameterMap();
-        Map<String, Object> paramMap = HttpRequestHelper.switchMap(requstMap);
-
-        String  logoData = (String) paramMap.get("logoData");
-        logoData = logoData.replace(" ","+");
-        paramMap.put("logoData",logoData);
-
-        String hospSign = (String)paramMap.get("sign");
-        String hoscode = (String)paramMap.get("hoscode");
-        String signKey = hospitalSetService.getSignKey(hoscode);
-        String signKeyMD5 = HttpRequestHelper.getSign(paramMap, signKey);
-
-        if(!hospSign.equals(signKeyMD5)){
-            throw new HtbpException(ResultCodeEnum.SIGN_ERROR);
+    fun saveHosp(request: HttpServletRequest?): Result<*>? {
+        val requstMap = request!!.parameterMap
+        val paramMap = HttpRequestHelper.switchMap(requstMap)
+        var logoData = paramMap!!["logoData"] as String?
+        logoData = logoData!!.replace(" ", "+")
+        paramMap["logoData"] = logoData
+        val hospSign = paramMap["sign"] as String?
+        val hoscode = paramMap["hoscode"] as String?
+        val signKey = hospitalSetService!!.getSignKey(hoscode)
+        val signKeyMD5 = HttpRequestHelper.getSign(paramMap, signKey)
+        if (hospSign != signKeyMD5) {
+            throw HtbpException(ResultCodeEnum.SIGN_ERROR)
         }
-
-
-        hospitalService.save(paramMap);
-        return Result.ok();
+        hospitalService!!.save(paramMap)
+        return Result.ok<Any?>()
     }
 }

@@ -1,28 +1,16 @@
-package com.seclib.htbp.hosp.service;
+package com.seclib.htbp.hosp.service
 
-import com.baomidou.mybatisplus.extension.service.IService;
-import com.seclib.htbp.model.hosp.Hospital;
-import com.seclib.htbp.model.hosp.HospitalSet;
-import com.seclib.htbp.vo.hosp.HospitalQueryVo;
-import org.springframework.data.domain.Page;
+import com.seclib.htbp.model.hosp.Hospital
+import com.seclib.htbp.vo.hosp.HospitalQueryVo
+import org.springframework.data.domain.Page
 
-import java.util.List;
-import java.util.Map;
-
-public interface HospitalService {
-    void save(Map<String, Object> paramMap);
-
-    Hospital getByHoscode(String hoscode);
-
-    Page<Hospital> selectHospPage(Integer page, Integer limit, HospitalQueryVo hospitalQueryVo);
-
-    void updateStatus(String id, Integer status);
-
-    Map<String,Object> getHospById(String id);
-
-    String getHospName(String hoscode);
-
-    List<Hospital> findByHosName(String hosname);
-
-    Map<String, Object> item(String hoscode);
+interface HospitalService {
+    fun save(paramMap: Map<String?, Any?>?)
+    fun getByHoscode(hoscode: String?): Hospital?
+    fun selectHospPage(page: Int?, limit: Int?, hospitalQueryVo: HospitalQueryVo?): Page<Hospital?>?
+    fun updateStatus(id: String?, status: Int?)
+    fun getHospById(id: String?): Map<String?, Any?>?
+    fun getHospName(hoscode: String?): String?
+    fun findByHosName(hosname: String?): List<Hospital?>?
+    fun item(hoscode: String?): Map<String?, Any?>?
 }

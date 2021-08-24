@@ -1,12 +1,9 @@
-package com.seclib.htbp.hosp.repository;
+package com.seclib.htbp.hosp.repository
 
-import com.seclib.htbp.model.hosp.Hospital;
-import org.springframework.data.mongodb.repository.MongoRepository;
+import org.springframework.data.mongodb.repository.MongoRepository
+import com.seclib.htbp.model.hosp.Hospital
 
-import java.util.List;
-
-public interface HospitalRepository extends MongoRepository<Hospital,String> {
-    Hospital getHospitalByHoscode(String hoscode);
-
-    List<Hospital> findHospitalByHosnameLike(String hosname);
+interface HospitalRepository : MongoRepository<Hospital?, String?> {
+    fun getHospitalByHoscode(hoscode: String?): Hospital?
+    fun findHospitalByHosnameLike(hosname: String?): List<Hospital?>?
 }

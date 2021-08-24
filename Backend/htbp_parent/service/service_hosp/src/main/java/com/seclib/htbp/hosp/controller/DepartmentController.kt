@@ -1,26 +1,21 @@
-package com.seclib.htbp.hosp.controller;
+package com.seclib.htbp.hosp.controller
 
+import com.seclib.htbp.hosp.service.DepartmentService
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.PathVariable
+import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RestController
 import com.seclib.htbp.common.result.Result;
-import com.seclib.htbp.hosp.service.DepartmentService;
-import com.seclib.htbp.vo.hosp.DepartmentVo;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
-@RequestMapping("/admin/hosp/department")
-//@CrossOrigin
-public class DepartmentController {
-
+@RequestMapping("/admin/hosp/department") //@CrossOrigin
+class DepartmentController {
     @Autowired
-    private DepartmentService departmentService;
-
+    private val departmentService: DepartmentService? = null
     @GetMapping("getDeptList/{hoscode}")
-    public Result getDeptList(@PathVariable String hoscode){
-        List<DepartmentVo> list = departmentService.findDeptTree(hoscode);
-
-        return Result.ok(list);
+    fun getDeptList(@PathVariable hoscode: String?): Result<*> {
+        val list = departmentService!!.findDeptTree(hoscode)
+        return Result.ok(list)
     }
-
 }

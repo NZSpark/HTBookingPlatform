@@ -1,132 +1,103 @@
-package com.seclib.htbp.hosp.service.impl;
+package com.seclib.htbp.hosp.service.impl
 
-import com.alibaba.fastjson.JSONObject;
-import com.seclib.htbp.cmn.client.DictFeignClient;
-import com.seclib.htbp.hosp.repository.HospitalRepository;
-import com.seclib.htbp.hosp.service.HospitalService;
-import com.seclib.htbp.model.hosp.Hospital;
-import com.seclib.htbp.vo.hosp.HospitalQueryVo;
-import lombok.val;
-import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.*;
-import org.springframework.stereotype.Service;
-
-import java.util.*;
+import com.alibaba.fastjson.JSONObject
+import com.seclib.htbp.cmn.client.DictFeignClient
+import com.seclib.htbp.hosp.repository.HospitalRepository
+import com.seclib.htbp.hosp.service.HospitalService
+import com.seclib.htbp.model.hosp.Hospital
+import com.seclib.htbp.vo.hosp.HospitalQueryVo
+import org.springframework.beans.BeanUtils
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.data.domain.*
+import org.springframework.stereotype.Service
+import java.util.*
+import kotlin.collections.HashMap
 
 @Service
-public class HospitalServiceImpl implements HospitalService {
+open class HospitalServiceImpl : HospitalService {
     @Autowired
-    private HospitalRepository hospitalRepository;
+    private val hospitalRepository: HospitalRepository? = null
 
     @Autowired
-    private DictFeignClient dictFeignClient;
-
-    @Override
-    public void save(Map<String, Object> paramMap) {
-
-        String mapString = JSONObject.toJSONString(paramMap);
-        Hospital hospital = JSONObject.parseObject(mapString, Hospital.class);
-        String hoscode = hospital.getHoscode();
-        Hospital hospitalExist = hospitalRepository.getHospitalByHoscode(hoscode);
-
+    private val dictFeignClient: DictFeignClient? = null
+    override fun save(paramMap: Map<String?, Any?>?) {
+        val mapString = JSONObject.toJSONString(paramMap)
+        val hospital = JSONObject.parseObject(mapString, Hospital::class.java)
+        val hoscode = hospital.hoscode
+        val hospitalExist = hospitalRepository!!.getHospitalByHoscode(hoscode)
         if (hospitalExist != null) {
-            hospital.setStatus(hospitalExist.getStatus());
-            hospital.setCreateTime(hospitalExist.getCreateTime());
+            hospital.status = hospitalExist.status
+            hospital.createTime = hospitalExist.createTime
         } else {
-            hospital.setStatus(0);
-            hospital.setCreateTime(new Date());
+            hospital.status = 0
+            hospital.createTime = Date()
         }
-
-        hospital.setUpdateTime(new Date());
-        hospital.setIsDeleted(0);
-        hospitalRepository.save(hospital);
+        hospital.updateTime = Date()
+        hospital.isDeleted = 0
+        hospitalRepository.save(hospital)
     }
 
-    @Override
-    public Hospital getByHoscode(String hoscode) {
-        Hospital hospital = hospitalRepository.getHospitalByHoscode(hoscode);
-        return hospital;
+    override fun getByHoscode(hoscode: String?): Hospital? {
+        return hospitalRepository!!.getHospitalByHoscode(hoscode)
     }
 
-    @Override
-    public Page<Hospital> selectHospPage(Integer page, Integer limit, HospitalQueryVo hospitalQueryVo) {
-
-        Pageable pageable = PageRequest.of(page-1,limit);
-        ExampleMatcher matcher = ExampleMatcher.matching()
-                .withStringMatcher(ExampleMatcher.StringMatcher.CONTAINING)
-                .withIgnoreCase();
-
-        Hospital hospital = new Hospital();
-        BeanUtils.copyProperties(hospitalQueryVo,hospital);
-
-        Example<Hospital> example = Example.of(hospital,matcher);
-
-        Page<Hospital> pages = hospitalRepository.findAll(example, pageable);
-        pages.getContent().stream().forEach(item -> {
-            this.setHospitalHosType(item);
-        });
-
-        return pages;
+    override fun selectHospPage(page: Int?, limit: Int?, hospitalQueryVo: HospitalQueryVo?): Page<Hospital?>? {
+        val pageable: Pageable = PageRequest.of(page!! - 1, limit!!)
+        val matcher = ExampleMatcher.matching()
+            .withStringMatcher(ExampleMatcher.StringMatcher.CONTAINING)
+            .withIgnoreCase()
+        val hospital = Hospital()
+        BeanUtils.copyProperties(hospitalQueryVo, hospital)
+        val example = Example.of(hospital, matcher)
+        val pages = hospitalRepository!!.findAll(example, pageable)
+        pages.content.stream().forEach { item: Hospital -> setHospitalHosType(item) }
+        return pages
     }
 
-    @Override
-    public void updateStatus(String id, Integer status) {
-        Hospital hospital = hospitalRepository.findById(id).get();
-        hospital.setStatus(status);
-        hospital.setUpdateTime(new Date());
-        hospitalRepository.save(hospital);
+    override fun updateStatus(id: String?, status: Int?) {
+        val hospital = hospitalRepository!!.findById(id).get()
+        hospital.status = status
+        hospital.updateTime = Date()
+        hospitalRepository.save(hospital)
     }
 
-    @Override
-    public  Map<String,Object> getHospById(String id) {
-        Map<String,Object> result = new HashMap<>();
-        Hospital hospital = this.setHospitalHosType( hospitalRepository.findById(id).get());
-        result.put("hospital",hospital);
-        result.put("bookingRule",hospital.getBookingRule());
-        hospital.setBookingRule(null);
-
-        return result;
+    override fun getHospById(id: String?): Map<String?, Any?>? {
+        val result: MutableMap<String?, Any?> = HashMap()
+        val hospital = setHospitalHosType(hospitalRepository!!.findById(id).get())
+        result["hospital"] = hospital
+        result["bookingRule"] = hospital.bookingRule
+        hospital.setBookingRule(null)
+        return result
     }
 
-    @Override
-    public String getHospName(String hoscode) {
-        Hospital hospital = hospitalRepository.getHospitalByHoscode(hoscode);
-        if(hospital != null){
-            return hospital.getHosname();
-        }
-        return null;
+    override fun getHospName(hoscode: String?): String? {
+        val hospital = hospitalRepository!!.getHospitalByHoscode(hoscode)
+        return hospital?.hosname
     }
 
-    @Override
-    public List<Hospital> findByHosName(String hosname) {
-        return hospitalRepository.findHospitalByHosnameLike(hosname);
+    override fun findByHosName(hosname: String?): List<Hospital?>? {
+        return hospitalRepository!!.findHospitalByHosnameLike(hosname)
     }
 
-    @Override
-    public Map<String, Object> item(String hoscode) {
-        Map<String, Object> result = new HashMap<>();
+    override fun item(hoscode: String?): Map<String?, Any?>? {
+        val result: MutableMap<String?, Any?> = HashMap()
         //医院详情
-        Hospital hospital = this.setHospitalHosType(this.getByHoscode(hoscode));
-        result.put("hospital", hospital);
+        val hospital = setHospitalHosType(getByHoscode(hoscode)!!)
+        result["hospital"] = hospital
         //预约规则
-        result.put("bookingRule", hospital.getBookingRule());
+        result["bookingRule"] = hospital.bookingRule
         //不需要重复返回
-        hospital.setBookingRule(null);
-
-        return result;
-
+        hospital.setBookingRule(null)
+        return result
     }
 
-    private Hospital setHospitalHosType(Hospital hospital) {
-        String hostypeString = dictFeignClient.getName("hostype", hospital.getHostype());
-        String provinceString = dictFeignClient.getName(hospital.getProvinceCode());
-        String cityString = dictFeignClient.getName(hospital.getCityCode());
-        String districtString = dictFeignClient.getName(hospital.getDistrictCode());
-
-        hospital.getParam().put("hostypeString",hostypeString);
-        hospital.getParam().put("fullAddress",provinceString + cityString + districtString);
-
-        return hospital;
+    private fun setHospitalHosType(hospital: Hospital): Hospital {
+        val hostypeString = dictFeignClient!!.getName("hostype", hospital.hostype)
+        val provinceString = dictFeignClient.getName(hospital.provinceCode)
+        val cityString = dictFeignClient.getName(hospital.cityCode)
+        val districtString = dictFeignClient.getName(hospital.districtCode)
+        hospital.param["hostypeString"] = hostypeString
+        hospital.param["fullAddress"] = provinceString + cityString + districtString
+        return hospital
     }
 }

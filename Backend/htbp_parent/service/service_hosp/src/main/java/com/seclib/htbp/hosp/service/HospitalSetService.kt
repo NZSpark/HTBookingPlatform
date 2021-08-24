@@ -1,13 +1,12 @@
-package com.seclib.htbp.hosp.service;
+package com.seclib.htbp.hosp.service
 
-import com.baomidou.mybatisplus.extension.service.IService;
-import com.seclib.htbp.model.hosp.HospitalSet;
-import com.seclib.htbp.vo.order.SignInfoVo;
+import com.baomidou.mybatisplus.extension.service.IService
+import com.seclib.htbp.model.hosp.HospitalSet
+import com.seclib.htbp.vo.order.SignInfoVo
 
-public interface HospitalSetService extends IService<HospitalSet> {
+interface HospitalSetService : IService<HospitalSet?> {
+    fun getSignKey(hoscode: String?): String?
 
-    String getSignKey(String hoscode);
     //获取医院签名信息
-    SignInfoVo getSignInfoVo(String hoscode);
-
+    fun getSignInfoVo(hoscode: String?): SignInfoVo?
 }

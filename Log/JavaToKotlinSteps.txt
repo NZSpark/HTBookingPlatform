@@ -1,0 +1,49 @@
+
+Java to Kotlin Steps:
+1. right click file -> Convert Java to Kotlin
+2. remove all import related to set/get
+3. add "open" to all serviceImpl classes!
+4. modify "object" to  "companion object"
+5. add dependency for WebApi/Controller (Get/Post Mapping annotation)
+<dependency>
+	<groupId>com.fasterxml.jackson.module</groupId>
+	<artifactId>jackson-module-kotlin</artifactId>
+</dependency> 
+
+
+
+Bugs fixed:
+1. org.springframework.beans.factory.parsing.BeanDefinitionParsingException: Configuration problem: @Configuration class 'CorsConfig' may not be final. Remove the final modifier to continue.
+-> class CorsConfig -> open class CorsConfig
+2. org.springframework.beans.factory.parsing.BeanDefinitionParsingException: Configuration problem: @Bean method 'corsFilter' must not be private or final; change the method's modifiers to continue
+-> fun corsFilter(): CorsWebFilter -> open fun corsFilter(): CorsWebFilter
+3. org.springframework.beans.factory.parsing.BeanDefinitionParsingException: Configuration problem: @Configuration class 'ServerGatewayApplication' may not be final. Remove the final modifier to continue.
+-> object ServerGatewayApplication {  
+-> public open class ServerGatewayApplication {
+    companion object {
+4. Need Long but int found
+-> intVariable.toLong()
+5. Need List<Date> but MutibleList found
+-> as List<Date>
+6. org.springframework.beans.factory.UnsatisfiedDependencyException: Error creating bean with name 'hospitalSetController': Unsatisfied dependency expressed through field 'hospitalSetService'; 
+Caused by: java.lang.IllegalArgumentException: Cannot subclass final class com.seclib.htbp.hosp.service.impl.HospitalSetServiceImpl
+-> class HospitalServiceImpl  -> open class HospitalServiceImpl 
+7. Kotlin: Only safe (?.) or non-null asserted (!!.) calls are allowed on a nullable receiver of type HospitalSet?
+-> scheduleList.stream().forEach { item: Schedule -> packSchedule(item)}  -> 
+	scheduleList?.stream()?.forEach { item: Schedule? ->
+										if (item != null) {
+											packSchedule(item)
+										}
+									}
+->  return hospitalSet.signKey -> return hospitalSet?.signKey
+
+
+8. org.springframework.beans.factory.UnsatisfiedDependencyException: Error creating bean with name 'documentationPluginsBootstrapper' 
+Caused by: org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'requestMappingHandlerMapping' defined in class path resource [org/springframework/boot/autoconfigure/web/servlet/WebMvcAutoConfiguration$EnableWebMvcConfiguration.class]: 
+Caused by: java.lang.ClassNotFoundException: kotlin.reflect.jvm.ReflectJvmMapping
+-> add dependency       <dependency>
+							<groupId>com.fasterxml.jackson.module</groupId>
+							<artifactId>jackson-module-kotlin</artifactId>
+						</dependency> 
+						
+
