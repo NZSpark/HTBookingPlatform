@@ -126,7 +126,11 @@ public class WeChatServiceImpl implements WeChatService {
             paramMap.put("appid",ConstantPropertiesUtils.APPID);       //公众账号ID
             paramMap.put("mch_id",ConstantPropertiesUtils.PARTNER);   //商户编号
             paramMap.put("nonce_str",WXPayUtil.generateNonceStr());
-            paramMap.put("transaction_id",paymentInfoQuery.getTradeNo()); //微信订单号
+            if(paymentInfoQuery.getTradeNo() == null) { //no valid account?
+                paramMap.put("transaction_id","1");  //only for test.
+            } else {
+                paramMap.put("transaction_id", paymentInfoQuery.getTradeNo()); //微信订单号
+            }
             paramMap.put("out_trade_no",paymentInfoQuery.getOutTradeNo()); //商户订单编号
             paramMap.put("out_refund_no","tk"+paymentInfoQuery.getOutTradeNo()); //商户退款单号
 //       paramMap.put("total_fee",paymentInfoQuery.getTotalAmount().multiply(new BigDecimal("100")).longValue()+"");
