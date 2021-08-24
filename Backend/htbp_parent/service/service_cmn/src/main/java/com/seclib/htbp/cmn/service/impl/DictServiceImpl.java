@@ -79,6 +79,7 @@ public class DictServiceImpl extends ServiceImpl<DictMapper, Dict> implements Di
             QueryWrapper queryWrapper = new QueryWrapper();
             queryWrapper.eq("value",value);
             Dict dict = baseMapper.selectOne(queryWrapper);
+            if(dict == null) return "";
             return dict.getName();
         } else {
             Dict codeDict = getDictByDictCode(dictCode);
