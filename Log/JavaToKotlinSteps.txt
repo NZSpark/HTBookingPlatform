@@ -53,4 +53,4 @@ Caused by: java.lang.ClassNotFoundException: kotlin.reflect.jvm.ReflectJvmMappin
 -> add "?" at all variables in function declaims
 
 11. Kotlin: Type mismatch: inferred type is DictMapper? but DictMapper was expected
-
+-> DictListener(baseMapper!!)
