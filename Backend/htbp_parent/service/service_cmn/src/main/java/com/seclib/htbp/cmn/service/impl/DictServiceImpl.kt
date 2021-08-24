@@ -1,112 +1,105 @@
-package com.seclib.htbp.cmn.service.impl;
+package com.seclib.htbp.cmn.service.impl
 
-import com.alibaba.excel.EasyExcel;
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.seclib.htbp.cmn.listener.DictListener;
-import com.seclib.htbp.cmn.mapper.DictMapper;
-import com.seclib.htbp.cmn.service.DictService;
-import com.seclib.htbp.model.cmn.Dict;
-import com.seclib.htbp.vo.cmn.DictEeVo;
-import org.springframework.beans.BeanUtils;
-import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.Cacheable;
-import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
-import org.springframework.web.multipart.MultipartFile;
-
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.net.URLEncoder;
-import java.util.ArrayList;
-import java.util.List;
+import com.alibaba.excel.EasyExcel
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl
+import com.seclib.htbp.cmn.mapper.DictMapper
+import com.seclib.htbp.model.cmn.Dict
+import com.seclib.htbp.cmn.service.DictService
+import javax.servlet.http.HttpServletResponse
+import com.seclib.htbp.vo.cmn.DictEeVo
+import java.io.IOException
+import org.springframework.cache.annotation.CacheEvict
+import org.springframework.web.multipart.MultipartFile
+import com.seclib.htbp.cmn.listener.DictListener
+import org.springframework.beans.BeanUtils
+import org.springframework.cache.annotation.Cacheable
+import org.springframework.stereotype.Service
+import org.springframework.util.StringUtils
+import java.net.URLEncoder
+import java.util.ArrayList
 
 @Service
-public class DictServiceImpl extends ServiceImpl<DictMapper, Dict> implements DictService {
-
-    @Override
-    @Cacheable(value = "dict",keyGenerator = "keyGenerator")
-    public List<Dict> findChildData(Long id) {
-        QueryWrapper<Dict> wrapper = new QueryWrapper<>();
-        wrapper.eq("parent_id",id);
-        List<Dict> dictList = baseMapper.selectList(wrapper);
-        for(Dict dict:dictList){
-            Long dictId = dict.getId();
-            boolean isChild =  this.isChild(dictId);
-            dict.setHasChildren(isChild);
+open class DictServiceImpl : ServiceImpl<DictMapper?, Dict?>(), DictService {
+    @Cacheable(value = ["dict"], keyGenerator = "keyGenerator")
+    override fun findChildData(id: Long?): List<Dict?>? {
+        val wrapper = QueryWrapper<Dict>()
+        wrapper.eq("parent_id", id)
+        val dictList = baseMapper!!.selectList(wrapper)
+        for (dict in dictList) {
+            if(dict != null) {
+                val dictId = dict.id
+                val isChild = isChild(dictId)
+                dict.isHasChildren = isChild
+            }
         }
-        return dictList;
+        return dictList
     }
 
-    @Override
-    public void exportDictData(HttpServletResponse response) {
+    override fun exportDictData(response: HttpServletResponse?) {
         try {
             //set header for file download.
-            response.setContentType("application/vnd.ms-excel");
-            response.setCharacterEncoding("utf-8");
-            String fileName = URLEncoder.encode("DataDict", "UTF-8");
-            response.setHeader("Content-disposition", "attachment;filename="+ fileName + ".xlsx");
+            response?.contentType = "application/vnd.ms-excel"
+            response?.characterEncoding = "utf-8"
+            val fileName = URLEncoder.encode("DataDict", "UTF-8")
+            response?.setHeader("Content-disposition", "attachment;filename=$fileName.xlsx")
 
             //database query
-            List<Dict> dictList = baseMapper.selectList(null);
-            List<DictEeVo> dictVoList = new ArrayList<>();
-            for(Dict dict : dictList) {
-                DictEeVo dictVo = new DictEeVo();
-                BeanUtils.copyProperties(dict, dictVo, DictEeVo.class);
-                dictVoList.add(dictVo);
+            val dictList = baseMapper!!.selectList(null)
+            val dictVoList: MutableList<DictEeVo?> = ArrayList()
+            for (dict in dictList) {
+                val dictVo = DictEeVo()
+                BeanUtils.copyProperties(dict, dictVo, DictEeVo::class.java)
+                dictVoList.add(dictVo)
             }
-
-            EasyExcel.write(response.getOutputStream(), DictEeVo.class).sheet("Data Dictionary").doWrite(dictVoList);
-        } catch (IOException e) {
-            e.printStackTrace();
+            EasyExcel.write(response?.outputStream, DictEeVo::class.java).sheet("Data Dictionary").doWrite(dictVoList)
+        } catch (e: IOException) {
+            e.printStackTrace()
         }
-
     }
 
-    @Override
-    @CacheEvict(value = "dict", allEntries = true)
-    public void importDictData(MultipartFile file) {
+    @CacheEvict(value = ["dict"], allEntries = true)
+    override fun importDictData(file: MultipartFile?) {
         try {
-            EasyExcel.read(file.getInputStream(), DictEeVo.class, new DictListener(baseMapper)).sheet().doRead();
-        }catch (IOException e) {
-            e.printStackTrace();
+                EasyExcel.read(file?.inputStream, DictEeVo::class.java, DictListener(baseMapper!!)).sheet().doRead()
+        } catch (e: IOException) {
+            e.printStackTrace()
         }
     }
 
-    @Override
-    public String getDictName(String dictCode, String value) {
-        if(StringUtils.isEmpty(dictCode)){
-            QueryWrapper queryWrapper = new QueryWrapper();
-            queryWrapper.eq("value",value);
-            Dict dict = baseMapper.selectOne(queryWrapper);
-            if(dict == null) return "";
-            return dict.getName();
+    override fun getDictName(dictCode: String?, value: String?): String? {
+        return if (StringUtils.isEmpty(dictCode)) {
+            val queryWrapper = QueryWrapper<Dict>()
+            queryWrapper.eq("value", value)
+            val dict = baseMapper!!.selectOne(queryWrapper) ?: return ""
+            dict.name
         } else {
-            Dict codeDict = getDictByDictCode(dictCode);
-            Long parentId = codeDict.getId();
-            Dict finalDict = baseMapper.selectOne(new QueryWrapper<Dict>().eq("parent_id", parentId).eq("value", value));
-            return finalDict.getName();
+            val codeDict = dictCode?.let { getDictByDictCode(it) }
+
+            val parentId = codeDict?.id
+            val finalDict = baseMapper!!.selectOne(
+                QueryWrapper<Dict>().eq("parent_id", parentId)
+                    .eq("value", value)
+            )
+            finalDict?.name
         }
     }
 
-    @Override
-    public List<Dict> findByDictCode(String dictCode) {
-        Dict dict = this.getDictByDictCode(dictCode);
-        List<Dict> dictList = this.findChildData(dict.getId());
-        return dictList;
+    override fun findByDictCode(dictCode: String?): List<Dict?>? {
+        val dict = dictCode?.let { getDictByDictCode(it) }
+        return findChildData(dict?.id)
     }
 
-    private Dict getDictByDictCode(String dictCode){
-        QueryWrapper queryWrapper = new QueryWrapper();
-        queryWrapper.eq("dict_code",dictCode);
-        return baseMapper.selectOne(queryWrapper);
+    private fun getDictByDictCode(dictCode: String): Dict? {
+        val queryWrapper: QueryWrapper<Dict?> = QueryWrapper<Dict?>()
+        queryWrapper.eq("dict_code", dictCode)
+        return baseMapper!!.selectOne(queryWrapper)
     }
 
-    private boolean isChild(Long id) {
-        QueryWrapper<Dict> wrapper = new QueryWrapper<>();
-        wrapper.eq("parent_id",id);
-        Integer count = baseMapper.selectCount(wrapper);
-        return count > 0;
+    private fun isChild(id: Long): Boolean {
+        val wrapper = QueryWrapper<Dict>()
+        wrapper.eq("parent_id", id)
+        val count = baseMapper!!.selectCount(wrapper)
+        return count > 0
     }
-
 }

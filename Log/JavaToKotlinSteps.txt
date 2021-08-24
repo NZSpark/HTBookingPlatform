@@ -45,5 +45,12 @@ Caused by: java.lang.ClassNotFoundException: kotlin.reflect.jvm.ReflectJvmMappin
 							<groupId>com.fasterxml.jackson.module</groupId>
 							<artifactId>jackson-module-kotlin</artifactId>
 						</dependency> 
-						
+	
+9. Kotlin: Class 'DictListener' is not abstract and does not implement abstract base class member public abstract fun invoke(p0: DictEeVo?, p1: AnalysisContext!): Unit defined in com.alibaba.excel.event.AnalysisEventListener
+-> override fun invoke(dictEeVo: DictEeVo?, analysisContext: AnalysisContext?) {
+
+10. Kotlin: Class 'DictServiceImpl' is not abstract and does not implement abstract member public abstract fun findChildData(id: Long?): List<Dict?>? defined in com.seclib.htbp.cmn.service.DictService	
+-> add "?" at all variables in function declaims
+
+11. Kotlin: Type mismatch: inferred type is DictMapper? but DictMapper was expected
 

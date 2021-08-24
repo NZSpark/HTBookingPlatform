@@ -1,60 +1,55 @@
-package com.seclib.htbp.cmn.controller;
+package com.seclib.htbp.cmn.controller
 
-import com.seclib.htbp.cmn.service.DictService;
-import com.seclib.htbp.common.result.Result;
-import com.seclib.htbp.model.cmn.Dict;
-import io.swagger.annotations.Api;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletResponse;
-import java.util.List;
+import io.swagger.annotations.Api
+import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.beans.factory.annotation.Autowired
+import com.seclib.htbp.cmn.service.DictService
+import com.seclib.htbp.common.result.Result
+import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.multipart.MultipartFile
+import org.springframework.web.bind.annotation.GetMapping
+import javax.servlet.http.HttpServletResponse
+import org.springframework.web.bind.annotation.PathVariable
 
-@Api(tags="Dictionary configuration.")
+@Api(tags = ["Dictionary configuration."])
 @RestController
-@RequestMapping("/admin/cmn/dict")
-//@CrossOrigin
-public class DictController {
+@RequestMapping("/admin/cmn/dict") //@CrossOrigin
+class DictController {
     @Autowired
-    private DictService dictService;
-
+    private val dictService: DictService? = null
     @PostMapping("importData")
-    public Result importDict(MultipartFile file){
-        dictService.importDictData(file);
-        return Result.ok();
+    fun importDict(file: MultipartFile?): Result<*> {
+        dictService!!.importDictData(file)
+        return Result.ok<Any>()
     }
 
     @GetMapping("exportData")
-    public Result exportDict(HttpServletResponse response){
-            dictService.exportDictData(response);
-            return Result.ok();
+    fun exportDict(response: HttpServletResponse?): Result<*> {
+        dictService!!.exportDictData(response)
+        return Result.ok<Any>()
     }
 
     @GetMapping("findChildData/{id}")
-    public Result findChildData(@PathVariable Long id){
-        List<Dict> list = dictService.findChildData(id);
-        return Result.ok(list);
-
+    fun findChildData(@PathVariable id: Long?): Result<*> {
+        val list = dictService!!.findChildData(id)
+        return Result.ok(list)
     }
 
     @GetMapping("getName/{dictCode}/{value}")
-    public String getName(@PathVariable String dictCode, @PathVariable String value){
-        String dictName =  dictService.getDictName(dictCode,value);
-        return dictName;
+    fun getName(@PathVariable dictCode: String?, @PathVariable value: String?): String? {
+        return dictService!!.getDictName(dictCode, value)
     }
 
     @GetMapping("getName/{value}")
-    public String getName(@PathVariable String value){
-        String dictName =  dictService.getDictName("",value);
-        return dictName;
+    fun getName(@PathVariable value: String?): String? {
+        return dictService!!.getDictName("", value)
     }
 
     @GetMapping("findByDictCode/{dictCode}")
-    public Result   findByDictCode(@PathVariable String dictCode){
-        List<Dict> dictList = dictService.findByDictCode(dictCode);
-        return Result.ok(dictList);
+    fun findByDictCode(@PathVariable dictCode: String?): Result<*> {
+        val dictList = dictService!!.findByDictCode(dictCode)
+        return Result.ok(dictList)
     }
-
 }
