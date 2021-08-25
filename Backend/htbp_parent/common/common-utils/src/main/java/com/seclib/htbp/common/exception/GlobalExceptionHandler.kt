@@ -11,17 +11,17 @@ import io.swagger.annotations.ApiModelProperty
 import org.springframework.web.bind.annotation.ExceptionHandler
 
 @ControllerAdvice
-class GlobalExceptionHandler {
+open class GlobalExceptionHandler {
     @ExceptionHandler(Exception::class)
     @ResponseBody
-    fun error(e: Exception): Result<*> {
+    open fun error(e: Exception): Result<*> {
         e.printStackTrace()
         return Result.fail<Any>()
     }
 
     @ExceptionHandler(HtbpException::class)
     @ResponseBody
-    fun error(e: HtbpException): Result<*> {
+    open fun error(e: HtbpException): Result<*> {
         e.printStackTrace()
         return Result.fail<Any>()
     }

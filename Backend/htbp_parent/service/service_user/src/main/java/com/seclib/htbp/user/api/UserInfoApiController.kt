@@ -1,6 +1,6 @@
 package com.seclib.htbp.user.api
 
-import com.seclib.htbp.common.result.Result.Companion.ok
+
 import com.seclib.htbp.common.utils.AuthContextHolder.getUserId
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.beans.factory.annotation.Autowired
@@ -22,20 +22,20 @@ class UserInfoApiController {
     @PostMapping("login")
     fun login(@RequestBody loginVo: LoginVo): Result<*> {
         val info = userInfoService!!.loginUser(loginVo)
-        return ok(info)
+        return Result.ok(info)
     }
 
     //user authentication
     @PostMapping("auth/userAuth")
     fun userAuth(@RequestBody userAuthVo: UserAuthVo, request: HttpServletRequest?): Result<*> {
         getUserId(request!!)?.let { userInfoService!!.userAuth(it, userAuthVo) }
-        return ok<Any>()
+        return Result.ok<Any>()
     }
 
     @GetMapping("auth/getUserInfo")
     fun getUserInfo(request: HttpServletRequest?): Result<*> {
         val userId = getUserId(request!!)
         val userInfo = userInfoService!!.getById(userId)
-        return ok(userInfo)
+        return Result.ok(userInfo)
     }
 }

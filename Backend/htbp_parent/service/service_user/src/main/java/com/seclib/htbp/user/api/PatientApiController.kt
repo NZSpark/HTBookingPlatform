@@ -1,6 +1,5 @@
 package com.seclib.htbp.user.api
 
-import com.seclib.htbp.common.result.Result.Companion.ok
 import com.seclib.htbp.common.utils.AuthContextHolder.getUserId
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.beans.factory.annotation.Autowired
@@ -28,7 +27,7 @@ class PatientApiController {
     fun findAll(request: HttpServletRequest?): Result<*> {
         val userId = getUserId(request!!)
         val patientList = patientService!!.findAllByUserId(userId)
-        return ok(patientList)
+        return Result.ok(patientList)
     }
 
     //添加就诊人
@@ -38,28 +37,28 @@ class PatientApiController {
         val userId = getUserId(request!!)
         patient.userId = userId
         patientService!!.save(patient)
-        return ok<Any>()
+        return Result.ok<Any>()
     }
 
     //根据id获取就诊人信息
     @GetMapping("auth/get/{id}")
     fun getPatient(@PathVariable id: Long?): Result<*> {
         val patient = patientService!!.getPatientId(id)
-        return ok(patient)
+        return Result.ok(patient)
     }
 
     //修改就诊人
     @PostMapping("auth/update")
     fun updatePatient(@RequestBody patient: Patient): Result<*> {
         patientService!!.updateById(patient)
-        return ok<Any>()
+        return Result.ok<Any>()
     }
 
     //删除就诊人
     @DeleteMapping("auth/remove/{id}")
     fun removePatient(@PathVariable id: Long?): Result<*> {
         patientService!!.removeById(id)
-        return ok<Any>()
+        return Result.ok<Any>()
     }
 
     @ApiOperation(value = "获取就诊人")

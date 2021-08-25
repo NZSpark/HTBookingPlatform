@@ -17,9 +17,9 @@ import lombok.Data
  */
 @Data
 @ApiModel(value = "自定义全局异常类")
-class HtbpException : RuntimeException {
+open class HtbpException : RuntimeException {
     @ApiModelProperty(value = "异常状态码")
-    private var code: Int
+    var code: Int
 
     /**
      * 通过状态码和错误消息创建异常对象

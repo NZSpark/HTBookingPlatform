@@ -1,7 +1,6 @@
 package com.seclib.htbp.statistics.controller
 
 import com.seclib.htbp.common.result.Result
-import com.seclib.htbp.common.result.Result.Companion.ok
 import io.swagger.annotations.Api
 import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.bind.annotation.RequestMapping
@@ -27,7 +26,7 @@ class StatisticsController {
             required = false
         ) orderCountQueryVo: OrderCountQueryVo?
     ): Result<*> {
-        return ok(
+        return Result.ok(
             orderFeignClient!!.getCountMap(orderCountQueryVo)
         )
     }

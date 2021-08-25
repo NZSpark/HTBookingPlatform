@@ -11,13 +11,13 @@ import lombok.Data
 @ApiModel(value = "全局统一返回结果")
 open class Result<T> {
     @ApiModelProperty(value = "返回码")
-    private var code: Int? = null
+    var code: Int? = null
 
     @ApiModelProperty(value = "返回消息")
-    private var message: String? = null
+    var message: String? = null
 
     @ApiModelProperty(value = "返回数据")
-    private var data: T? = null
+    var data: T? = null
 
     fun message(msg: String): Result<T> {
         this.message = msg

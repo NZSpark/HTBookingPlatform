@@ -1,7 +1,6 @@
 package com.seclib.htbp.user.controller
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page
-import com.seclib.htbp.common.result.Result.Companion.ok
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.beans.factory.annotation.Autowired
 import com.seclib.htbp.user.service.UserInfoService
@@ -29,27 +28,27 @@ class UserController {
             page, limit
         )
         val pageModel = userInfoService!!.selectPage(pageParam, userInfoQueryVo)
-        return ok(pageModel)
+        return Result.ok(pageModel)
     }
 
     //lock user
     @GetMapping("lock/{userId}/{status}")
     fun lock(@PathVariable userId: Long, @PathVariable status: Int): Result<*> {
         userInfoService!!.lock(userId, status)
-        return ok<Any>()
+        return Result.ok<Any>()
     }
 
     //user info
     @GetMapping("show/{userId}")
     fun show(@PathVariable userId: Long): Result<*> {
         val map = userInfoService!!.show(userId)
-        return ok(map)
+        return Result.ok(map)
     }
 
     //authorize
     @GetMapping("approval/{userId}/{authStatus}")
     fun approval(@PathVariable userId: Long, @PathVariable authStatus: Int): Result<*> {
         userInfoService!!.approval(userId, authStatus)
-        return ok<Any>()
+        return Result.ok<Any>()
     }
 }

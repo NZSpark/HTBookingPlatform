@@ -1,7 +1,6 @@
 package com.seclib.htbp.oss.controller
 
 import com.seclib.htbp.common.result.Result
-import com.seclib.htbp.common.result.Result.Companion.ok
 import com.seclib.htbp.oss.service.FileService
 import org.springframework.web.multipart.MultipartFile
 import org.springframework.web.bind.annotation.RestController
@@ -17,6 +16,6 @@ class FileApiController {
     @PostMapping("fileUpload")
     fun fileUpload(multipartFile: MultipartFile): Result<String> {
         val url = fileService!!.upload(multipartFile)
-        return ok(url)
+        return Result.ok(url)
     }
 }
