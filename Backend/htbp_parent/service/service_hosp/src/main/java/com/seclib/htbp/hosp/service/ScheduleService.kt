@@ -7,7 +7,7 @@ import com.seclib.htbp.vo.hosp.ScheduleOrderVo
 import org.springframework.data.domain.Page
 
 interface ScheduleService {
-    fun save(paramMap: Map<String?, Any?>?)
+    fun save(paramMap: MutableMap<String, Any?>?)
     fun selectPage(page: Int?, limit: Int?, scheduleQueryVo: ScheduleQueryVo?): Page<Schedule?>?
     fun remove(hoscode: String?, hosScheduleId: String?)
     fun getScheduleRule(page: Long?, limit: Long?, hoscode: String?, depcode: String?): Map<String?, Any?>?

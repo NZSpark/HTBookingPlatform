@@ -52,7 +52,7 @@ open class WeChatServiceImpl : WeChatService {
             paramMap["nonce_str"] = WXPayUtil.generateNonceStr()
             val body = order.reserveDate.toString() + "就诊" + order.depname
             paramMap["body"] = body
-            paramMap["out_trade_no"] = order.outTradeNo
+            paramMap["out_trade_no"] = order.outTradeNo!!
             //paramMap.put("total_fee", order.getAmount().multiply(new BigDecimal("100")).longValue()+"");
             paramMap["total_fee"] = "1"
             paramMap["spbill_create_ip"] = "127.0.0.1"
@@ -93,7 +93,7 @@ open class WeChatServiceImpl : WeChatService {
             if (null === orderInfo) return paramMap
             paramMap["appid"] = ConstantPropertiesUtils.APPID
             paramMap["mch_id"] = ConstantPropertiesUtils.PARTNER
-            paramMap["out_trade_no"] = orderInfo.outTradeNo
+            paramMap["out_trade_no"] = orderInfo.outTradeNo!!
             paramMap["nonce_str"] = WXPayUtil.generateNonceStr()
             //2、设置请求
             val client = HttpClient("https://api.mch.weixin.qq.com/pay/orderquery")
@@ -116,7 +116,7 @@ open class WeChatServiceImpl : WeChatService {
         try {
             val paymentInfoQuery = paymentService!!.getPaymentInfo(orderId, PaymentTypeEnum.WEIXIN.status)
             val refundInfo = refundInfoService!!.saveRefundInfo(paymentInfoQuery)
-            if (refundInfo!!.refundStatus.toInt() == RefundStatusEnum.REFUND.status.toInt()) {
+            if (refundInfo!!.refundStatus == RefundStatusEnum.REFUND.status) {
                 return true
             }
             val paramMap = mutableMapOf<String,String>()
@@ -126,9 +126,9 @@ open class WeChatServiceImpl : WeChatService {
             if (paymentInfoQuery!!.tradeNo == null) { //no valid account?
                 paramMap["transaction_id"] = "1" //only for test.
             } else {
-                paramMap["transaction_id"] = paymentInfoQuery.tradeNo //微信订单号
+                paramMap["transaction_id"] = paymentInfoQuery.tradeNo.toString()
             }
-            paramMap["out_trade_no"] = paymentInfoQuery.outTradeNo //商户订单编号
+            paramMap["out_trade_no"] = paymentInfoQuery.outTradeNo.toString()
             paramMap["out_refund_no"] = "tk" + paymentInfoQuery.outTradeNo //商户退款单号
             //       paramMap.put("total_fee",paymentInfoQuery.getTotalAmount().multiply(new BigDecimal("100")).longValue()+"");
 //       paramMap.put("refund_fee",paymentInfoQuery.getTotalAmount().multiply(new BigDecimal("100")).longValue()+"");

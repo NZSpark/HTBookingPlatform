@@ -81,10 +81,10 @@ open class PaymentServiceImpl : ServiceImpl<PaymentInfoMapper?, PaymentInfo?>(),
 
         //5. update hospital interface
         val signInfoVo = hospitalFeignClient!!.getSignInfoVo(orderInfo.hoscode)
-        val reqMap: MutableMap<String, Any> = HashMap()
+        val reqMap = mutableMapOf<String,Any?>()
         reqMap["hoscode"] = orderInfo.hoscode
         reqMap["hosRecordId"] = orderInfo.hosRecordId
-        reqMap["timestamp"] = HttpRequestHelper.getTimestamp()
+        reqMap["timestamp"] = HttpRequestHelper.timestamp
         val sign = HttpRequestHelper.getSign(reqMap, signInfoVo!!.signKey)
         reqMap["sign"] = sign
         val result = HttpRequestHelper.sendRequest(reqMap, signInfoVo.apiUrl + "/order/updatePayStatus")

@@ -38,7 +38,7 @@ class OrderController {
     @get:GetMapping("getStatusList")
     @get:ApiOperation(value = "获取订单状态")
     val statusList: Result<*>
-        get() = Result.ok(OrderStatusEnum.getStatusList())
+        get() = Result.ok(OrderStatusEnum.statusList)
 
     @ApiOperation(value = "获取订单")
     @GetMapping("show/{id}")

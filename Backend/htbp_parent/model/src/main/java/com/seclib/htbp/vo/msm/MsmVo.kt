@@ -1,22 +1,21 @@
-package com.seclib.htbp.vo.msm;
+package com.seclib.htbp.vo.msm
 
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
-
-import java.io.Serializable;
-import java.util.Map;
+import io.swagger.annotations.ApiModel
+import io.swagger.annotations.ApiModelProperty
+import com.seclib.htbp.vo.hosp.DepartmentVo
+import java.math.BigDecimal
+import com.seclib.htbp.vo.msm.MsmVo
+import lombok.Data
 
 @Data
 @ApiModel(description = "短信实体")
-public class MsmVo {
-
+class MsmVo {
     @ApiModelProperty(value = "phone")
-    private String phone;
+    var phone: String? = null
 
     @ApiModelProperty(value = "短信模板code")
-    private String templateCode;
+    var templateCode: String? = null
 
     @ApiModelProperty(value = "短信模板参数")
-    private Map<String,Object> param;
+    var param: Map<String, Any?>? = null
 }

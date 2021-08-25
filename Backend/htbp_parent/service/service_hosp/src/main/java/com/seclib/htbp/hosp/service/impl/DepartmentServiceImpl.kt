@@ -19,7 +19,7 @@ import java.util.function.Function
 open class DepartmentServiceImpl : DepartmentService {
     @Autowired
     private val departmentRepository: DepartmentRepository? = null
-    override fun save(paramMap: Map<String?, Any?>?) {
+    override fun save(paramMap: MutableMap<String, Any?>?) {
         val paramString = JSONObject.toJSONString(paramMap)
         val department = JSONObject.parseObject(paramString, Department::class.java)
         val departmentExist =

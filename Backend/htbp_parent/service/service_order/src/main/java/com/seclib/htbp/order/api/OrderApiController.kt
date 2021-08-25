@@ -46,7 +46,7 @@ class OrderApiController {
     fun list(
         @PathVariable page: Long,
         @PathVariable limit: Long,
-        orderQueryVo: OrderQueryVo, request: HttpServletRequest?
+        orderQueryVo: OrderQueryVo, request: HttpServletRequest
     ): Result<*> {
         //设置当前用户id
         orderQueryVo.userId = AuthContextHolder.getUserId(request)
@@ -60,7 +60,7 @@ class OrderApiController {
     @get:GetMapping("auth/getStatusList")
     @get:ApiOperation(value = "获取订单状态")
     val statusList: Result<*>
-        get() = Result.ok(OrderStatusEnum.getStatusList())
+        get() = Result.ok(OrderStatusEnum.statusList)
 
     @GetMapping("auth/cancelOrder/{orderId}")
     fun cancelOrder(@PathVariable orderId: Long): Result<*> {

@@ -1,21 +1,22 @@
-package com.seclib.htbp.common.service;
+package com.seclib.htbp.common.service
 
-import org.springframework.amqp.rabbit.core.RabbitTemplate;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.amqp.rabbit.core.RabbitTemplate
+import org.springframework.stereotype.Service
 
 @Service
-public class RabbitService {
+open class RabbitService {
     @Autowired
-    private RabbitTemplate rabbitTemplate;
+    private val rabbitTemplate: RabbitTemplate? = null
+
     /**
-     *  发送消息
+     * 发送消息
      * @param exchange 交换机
      * @param routingKey 路由键
      * @param message 消息
      */
-    public boolean sendMessage(String exchange, String routingKey, Object message) {
-        rabbitTemplate.convertAndSend(exchange, routingKey, message);
-        return true;
+    fun sendMessage(exchange: String?, routingKey: String?, message: Any?): Boolean {
+        rabbitTemplate!!.convertAndSend(exchange, routingKey, message)
+        return true
     }
 }

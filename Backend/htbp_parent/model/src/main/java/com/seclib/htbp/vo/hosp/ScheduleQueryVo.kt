@@ -1,29 +1,28 @@
-package com.seclib.htbp.vo.hosp;
+package com.seclib.htbp.vo.hosp
 
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
-
-import java.util.Date;
+import io.swagger.annotations.ApiModel
+import io.swagger.annotations.ApiModelProperty
+import com.seclib.htbp.vo.hosp.DepartmentVo
+import java.math.BigDecimal
+import com.seclib.htbp.vo.msm.MsmVo
+import lombok.Data
+import java.util.*
 
 @Data
 @ApiModel(description = "Schedule")
-public class ScheduleQueryVo {
-	
-	@ApiModelProperty(value = "医院编号")
-	private String hoscode;
+class ScheduleQueryVo {
+    @ApiModelProperty(value = "医院编号")
+    var hoscode: String? = null
 
-	@ApiModelProperty(value = "科室编号")
-	private String depcode;
+    @ApiModelProperty(value = "科室编号")
+    var depcode: String? = null
 
-	@ApiModelProperty(value = "医生编号")
-	private String doccode;
+    @ApiModelProperty(value = "医生编号")
+    var doccode: String? = null
 
-	@ApiModelProperty(value = "安排日期")
-	private Date workDate;
+    @ApiModelProperty(value = "安排日期")
+    var workDate: Date? = null
 
-	@ApiModelProperty(value = "安排时间（0：上午 1：下午）")
-	private Integer workTime;
-
+    @ApiModelProperty(value = "安排时间（0：上午 1：下午）")
+    var workTime: Int? = null
 }
-

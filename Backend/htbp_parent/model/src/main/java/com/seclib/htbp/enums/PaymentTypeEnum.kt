@@ -1,32 +1,10 @@
-package com.seclib.htbp.enums;
+package com.seclib.htbp.enums
 
-public enum PaymentTypeEnum {
-    ALIPAY(1,"支付宝"),
-    WEIXIN(2,"微信" );
+import com.seclib.htbp.enums.AuthStatusEnum
+import com.seclib.htbp.enums.OrderStatusEnum
+import java.util.HashMap
 
-    public Integer getStatus() {
-        return status;
-    }
-
-    public void setStatus(Integer status) {
-        this.status = status;
-    }
-
-    private Integer status ;
-    private String comment ;
-
-
-    PaymentTypeEnum(Integer status, String comment ){
-        this.status = status;
-        this.comment=comment;
-    }
-
-    public String getComment() {
-        return comment;
-    }
-
-    public void setComment(String comment) {
-        this.comment = comment;
-    }
+enum class PaymentTypeEnum(var status: Int, var comment: String) {
+    ALIPAY(1, "支付宝"), WEIXIN(2, "微信");
 
 }

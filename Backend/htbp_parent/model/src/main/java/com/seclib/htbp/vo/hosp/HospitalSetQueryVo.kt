@@ -1,15 +1,17 @@
-package com.seclib.htbp.vo.hosp;
+package com.seclib.htbp.vo.hosp
 
-import com.baomidou.mybatisplus.annotation.TableField;
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
+import io.swagger.annotations.ApiModel
+import io.swagger.annotations.ApiModelProperty
+import com.seclib.htbp.vo.hosp.DepartmentVo
+import java.math.BigDecimal
+import com.seclib.htbp.vo.msm.MsmVo
+import lombok.Data
 
 @Data
-public class HospitalSetQueryVo {
-
+class HospitalSetQueryVo {
     @ApiModelProperty(value = "医院名称")
-    private String hosname;
+    var hosname: String? = null
 
     @ApiModelProperty(value = "医院编号")
-    private String hoscode;
+    var hoscode: String? = null
 }

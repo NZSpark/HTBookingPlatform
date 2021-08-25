@@ -9,6 +9,15 @@ Java to Kotlin Steps:
 	<groupId>com.fasterxml.jackson.module</groupId>
 	<artifactId>jackson-module-kotlin</artifactId>
 </dependency> 
+5. add "open" to all @Configuration classes
+6. add "open" to all @Bean classes
+7. add dependency for lombok
+        <dependency>
+            <groupId>org.jetbrains.kotlin</groupId>
+            <artifactId>kotlin-maven-lombok</artifactId>
+            <version>${kotlin.version}</version>
+        </dependency>
+
 
 
 
@@ -65,3 +74,39 @@ Caused by: java.lang.ClassNotFoundException: kotlin.reflect.jvm.ReflectJvmMappin
 14. java.lang.ClassCastException: java.lang.String cannot be cast to java.lang.Void ***
  redisTemplate.opsForValue().set( orderId.toString() as Nothing, map as Nothing, 120, TimeUnit.MINUTES)
 ->  redisTemplate.opsForValue().set( orderId.toString(), map , 120, TimeUnit.MINUTES) ->  (redisTemplate as RedisTemplate<String,Any>).opsForValue().set( orderId.toString(), map , 120, TimeUnit.MINUTES)
+
+15. Kotlin: 'name' in 'Enum' is final and cannot be overridden + 'name' hides member of supertype 'Enum' and needs 'override' modifier , dead lock.
+-> Refactor.Rename 'name' to 'itemName' since 'name' symbol is reserved. use Refactor to keep project same.
+
+16. Kotlin: Cannot access 'message': it is private in 'ResultCodeEnum'
+-> remove private
+
+17. Kotlin: Unresolved reference: setMessage
+18. Kotlin: Type mismatch: inferred type is Any! but CapturedType(*)! was expected
+-> val jackson2JsonRedisSerializer: Jackson2JsonRedisSerializer<*> = Jackson2JsonRedisSerializer(
+-> val jackson2JsonRedisSerializer: Jackson2JsonRedisSerializer<Any> = Jackson2JsonRedisSerializer(
+
+19. Kotlin: Unresolved reference: ushr
+-> chars[k++] = hexChars[b ushr 4 and 0xf] -> chars[k++] = hexChars[b.toInt().ushr(4) and 0xf]
+-> chars[k++] = hexChars[b and 0xf] -> chars[k++] = hexChars[b.toInt() and 0xf]
+
+20. Not enough information to infer type variable T
+-> fail().message("SMS send error.") ->  fail("SMS send error.")
+
+21. Kotlin: Type mismatch: inferred type is Any! but String? was expected
+-> val param: MutableMap<String?, Any?> = HashMap<Any?, Any?>() ->  val param = mutableMapOf<String,Any?>()
+
+22. Kotlin: Unresolved reference: setUserId
+modify all "private val " to "var " in model classes
+
+23.Kotlin: Type mismatch: inferred type is (Patient) -> Unit but ((Patient?) -> Unit)! was expected
+
+24. Kotlin: Unresolved reference: Entry
+-> Entry -> Map.Entry
+
+25. Type mismatch. Required:TypeVariable(V) Found:String? , Type mismatch: inferred type is String? but TypeVariable(V) was expected
+-> .toString()
+
+26. Kotlin: Type mismatch: inferred type is HttpServletRequest? but HttpServletRequest was expected
+
+27. Kotlin: Operator call corresponds to a dot-qualified call 'scheduleOrderVo.availableNumber.compareTo(0)' which is not allowed on a nullable receiver 'scheduleOrderVo.availableNumber'.

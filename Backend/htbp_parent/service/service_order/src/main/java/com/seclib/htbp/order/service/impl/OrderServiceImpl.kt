@@ -60,7 +60,7 @@ open class OrderServiceImpl : ServiceImpl<OrderInfoMapper?, OrderInfo?>(), Order
         if (null == scheduleOrderVo) {
             throw HtbpException(ResultCodeEnum.PARAM_ERROR)
         }
-        if (scheduleOrderVo.availableNumber <= 0) {
+        if (scheduleOrderVo.availableNumber!! <= 0) {
             throw HtbpException(ResultCodeEnum.NUMBER_NO)
         }
         val orderInfo = OrderInfo()
@@ -77,7 +77,7 @@ open class OrderServiceImpl : ServiceImpl<OrderInfoMapper?, OrderInfo?>(), Order
         orderInfo.patientPhone = patient.phone
         orderInfo.orderStatus = OrderStatusEnum.UNPAID.status
         save(orderInfo)
-        val paramMap: MutableMap<String, Any> = HashMap()
+        val paramMap = mutableMapOf<String, Any?>()
         paramMap["hoscode"] = orderInfo.hoscode
         paramMap["depcode"] = orderInfo.depcode
         //        paramMap.put("hosScheduleId",orderInfo.getScheduleId());
@@ -101,7 +101,7 @@ open class OrderServiceImpl : ServiceImpl<OrderInfoMapper?, OrderInfo?>(), Order
         paramMap["contactsCertificatesType"] = patient.contactsCertificatesType
         paramMap["contactsCertificatesNo"] = patient.contactsCertificatesNo
         paramMap["contactsPhone"] = patient.contactsPhone
-        paramMap["timestamp"] = HttpRequestHelper.getTimestamp()
+        paramMap["timestamp"] = HttpRequestHelper.timestamp
         val sign = HttpRequestHelper.getSign(paramMap, signInfoVo!!.signKey)
         paramMap["sign"] = sign
         val result = HttpRequestHelper.sendRequest(paramMap, signInfoVo.apiUrl + "/order/submitOrder")
@@ -137,12 +137,12 @@ open class OrderServiceImpl : ServiceImpl<OrderInfoMapper?, OrderInfo?>(), Order
             msmVo.phone = orderInfo.patientPhone
             val reserveDate = (DateTime(orderInfo.reserveDate).toString("yyyy-MM-dd")
                     + if (orderInfo.reserveTime == 0) "上午" else "下午")
-            val param: Map<String, Any> = mutableMapOf<String, Any>(
-                    Pair<String,Any>("title", orderInfo.hosname + "|" + orderInfo.depname + "|" + orderInfo.title),
-                    Pair<String,Any>("amount", orderInfo.amount),
-                    Pair<String,Any>("reserveDate", reserveDate),
-                    Pair<String,Any>("name", orderInfo.patientName),
-                    Pair<String,Any>("quitTime", DateTime(orderInfo.quitTime).toString("yyyy-MM-dd HH:mm"))
+            val param = mutableMapOf<String, Any?>(
+                    Pair<String,Any?>("title", orderInfo.hosname + "|" + orderInfo.depname + "|" + orderInfo.title),
+                    Pair<String,Any?>("amount", orderInfo.amount),
+                    Pair<String,Any?>("reserveDate", reserveDate),
+                    Pair<String,Any?>("name", orderInfo.patientName),
+                    Pair<String,Any?>("quitTime", DateTime(orderInfo.quitTime).toString("yyyy-MM-dd HH:mm"))
             )
             msmVo.param = param
             orderMqVo.msmVo = msmVo
@@ -204,7 +204,7 @@ open class OrderServiceImpl : ServiceImpl<OrderInfoMapper?, OrderInfo?>(), Order
     }
 
     private fun packOrderInfo(orderInfo: OrderInfo): OrderInfo {
-        orderInfo.param["orderStatusString"] = OrderStatusEnum.getStatusNameByStatus(orderInfo.orderStatus)
+        orderInfo.param["orderStatusString"] = OrderStatusEnum.getStatusNameByStatus(orderInfo.orderStatus!!)
         return orderInfo
     }
 
@@ -217,10 +217,10 @@ open class OrderServiceImpl : ServiceImpl<OrderInfoMapper?, OrderInfo?>(), Order
         }
         val signInfoVo = hospitalFeignClient!!.getSignInfoVo(orderInfo.hoscode)
             ?: throw HtbpException(ResultCodeEnum.PARAM_ERROR)
-        val reqMap: MutableMap<String, Any> = HashMap()
+        val reqMap: MutableMap<String, Any?> = HashMap()
         reqMap["hoscode"] = orderInfo.hoscode
         reqMap["hosRecordId"] = orderInfo.hosRecordId
-        reqMap["timestamp"] = HttpRequestHelper.getTimestamp()
+        reqMap["timestamp"] = HttpRequestHelper.timestamp
         val sign = HttpRequestHelper.getSign(reqMap, signInfoVo.signKey)
         reqMap["sign"] = sign
         val result = HttpRequestHelper.sendRequest(reqMap, signInfoVo.apiUrl + "/order/updateCancelStatus")
@@ -228,7 +228,7 @@ open class OrderServiceImpl : ServiceImpl<OrderInfoMapper?, OrderInfo?>(), Order
             throw HtbpException(result.getString("message"), ResultCodeEnum.FAIL.code)
         } else {
 //是否支付 退款
-            if (orderInfo.orderStatus.toInt() == OrderStatusEnum.PAID.status.toInt()) {
+            if (orderInfo.orderStatus == OrderStatusEnum.PAID.status ) {
 //已支付 退款
                 val isRefund = weChatService!!.refund(orderId)
                 if (!isRefund!!) {
@@ -248,10 +248,10 @@ open class OrderServiceImpl : ServiceImpl<OrderInfoMapper?, OrderInfo?>(), Order
             msmVo.templateCode = "SMS_194640722"
             val reserveDate =
                 DateTime(orderInfo.reserveDate).toString("yyyy-MM-dd") + if (orderInfo.reserveTime == 0) "上午" else "下午"
-            val param: Map<String, Any> = mutableMapOf<String, Any>(
-                Pair<String,Any>("title", orderInfo.hosname + "|" + orderInfo.depname + "|" + orderInfo.title),
-                Pair<String,Any>("reserveDate", reserveDate),
-                Pair<String,Any>("name", orderInfo.patientName)
+            val param = mutableMapOf<String, Any?>(
+                Pair<String,Any?>("title", orderInfo.hosname + "|" + orderInfo.depname + "|" + orderInfo.title),
+                Pair<String,Any?>("reserveDate", reserveDate),
+                Pair<String,Any?>("name", orderInfo.patientName)
             )
             msmVo.param = param
             orderMqVo.msmVo = msmVo
@@ -272,10 +272,10 @@ open class OrderServiceImpl : ServiceImpl<OrderInfoMapper?, OrderInfo?>(), Order
             msmVo.phone = orderInfo.patientPhone
             val reserveDate =
                 DateTime(orderInfo.reserveDate).toString("yyyy-MM-dd") + if (orderInfo.reserveTime == 0) "上午" else "下午"
-            val param: Map<String, Any> =  mutableMapOf<String, Any>(
-                Pair<String,Any>("title", orderInfo.hosname + "|" + orderInfo.depname + "|" + orderInfo.title),
-                Pair<String,Any>("reserveDate", reserveDate),
-                Pair<String,Any>("name", orderInfo.patientName)
+            val param =  mutableMapOf<String, Any?>(
+                Pair<String,Any?>("title", orderInfo.hosname + "|" + orderInfo.depname + "|" + orderInfo.title),
+                Pair<String,Any?>("reserveDate", reserveDate),
+                Pair<String,Any?>("name", orderInfo.patientName)
             )
             msmVo.param = param
             rabbitService!!.sendMessage(MqConst.EXCHANGE_DIRECT_MSM, MqConst.ROUTING_MSM_ITEM, msmVo)

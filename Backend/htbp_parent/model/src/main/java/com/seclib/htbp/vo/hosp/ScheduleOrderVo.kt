@@ -1,57 +1,55 @@
-package com.seclib.htbp.vo.hosp;
+package com.seclib.htbp.vo.hosp
 
-import com.baomidou.mybatisplus.annotation.TableField;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
-
-import java.math.BigDecimal;
-import java.util.Date;
+import io.swagger.annotations.ApiModel
+import io.swagger.annotations.ApiModelProperty
+import com.seclib.htbp.vo.hosp.DepartmentVo
+import java.math.BigDecimal
+import com.seclib.htbp.vo.msm.MsmVo
+import lombok.Data
+import java.util.*
 
 @Data
 @ApiModel(description = "Schedule")
-public class ScheduleOrderVo {
+class ScheduleOrderVo {
+    @ApiModelProperty(value = "医院编号")
+    var hoscode: String? = null
 
-	@ApiModelProperty(value = "医院编号")
-	private String hoscode;
+    @ApiModelProperty(value = "医院名称")
+    var hosname: String? = null
 
-	@ApiModelProperty(value = "医院名称")
-	private String hosname;
+    @ApiModelProperty(value = "科室编号")
+    var depcode: String? = null
 
-	@ApiModelProperty(value = "科室编号")
-	private String depcode;
+    @ApiModelProperty(value = "科室名称")
+    var depname: String? = null
 
-	@ApiModelProperty(value = "科室名称")
-	private String depname;
+    @ApiModelProperty(value = "排班编号（医院自己的排班主键）")
+    var hosScheduleId: String? = null
 
-	@ApiModelProperty(value = "排班编号（医院自己的排班主键）")
-	private String hosScheduleId;
+    @ApiModelProperty(value = "医生职称")
+    var title: String? = null
 
-	@ApiModelProperty(value = "医生职称")
-	private String title;
+    @ApiModelProperty(value = "安排日期")
+    var reserveDate: Date? = null
 
-	@ApiModelProperty(value = "安排日期")
-	private Date reserveDate;
+    @ApiModelProperty(value = "剩余预约数")
+    var availableNumber: Int? = null
 
-	@ApiModelProperty(value = "剩余预约数")
-	private Integer availableNumber;
+    @ApiModelProperty(value = "安排时间（0：上午 1：下午）")
+    var reserveTime: Int? = null
 
-	@ApiModelProperty(value = "安排时间（0：上午 1：下午）")
-	private Integer reserveTime;
+    @ApiModelProperty(value = "医事服务费")
+    var amount: BigDecimal? = null
 
-	@ApiModelProperty(value = "医事服务费")
-	private BigDecimal amount;
+    @ApiModelProperty(value = "退号时间")
+    var quitTime: Date? = null
 
-	@ApiModelProperty(value = "退号时间")
-	private Date quitTime;
+    @ApiModelProperty(value = "挂号开始时间")
+    var startTime: Date? = null
 
-	@ApiModelProperty(value = "挂号开始时间")
-	private Date startTime;
+    @ApiModelProperty(value = "挂号结束时间")
+    var endTime: Date? = null
 
-	@ApiModelProperty(value = "挂号结束时间")
-	private Date endTime;
-
-	@ApiModelProperty(value = "当天停止挂号时间")
-	private Date stopTime;
+    @ApiModelProperty(value = "当天停止挂号时间")
+    var stopTime: Date? = null
 }
-

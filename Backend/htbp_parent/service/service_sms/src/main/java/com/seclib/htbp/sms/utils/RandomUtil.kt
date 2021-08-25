@@ -1,26 +1,14 @@
-package com.seclib.htbp.sms.utils;
+package com.seclib.htbp.sms.utils
 
-import java.text.DecimalFormat;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Random;
+import java.text.DecimalFormat
+import java.util.*
 
-public class RandomUtil {
-
-    private static final Random random = new Random();
-
-    private static final DecimalFormat fourdf = new DecimalFormat("0000");
-
-    private static final DecimalFormat sixdf = new DecimalFormat("000000");
-
-    public static String getFourBitRandom() {
-        return fourdf.format(random.nextInt(10000));
-    }
-
-    public static String getSixBitRandom() {
-        return sixdf.format(random.nextInt(1000000));
-    }
+object RandomUtil {
+    private val random = Random()
+    private val fourdf = DecimalFormat("0000")
+    private val sixdf = DecimalFormat("000000")
+    fun getFourBitRandom (): String = fourdf.format(random.nextInt(10000).toLong())
+    fun getSixBitRandom (): String = sixdf.format(random.nextInt(1000000).toLong())
 
     /**
      * 给定数组，抽取n个数据
@@ -28,31 +16,27 @@ public class RandomUtil {
      * @param n
      * @return
      */
-    public static ArrayList getRandom(List list, int n) {
-
-        Random random = new Random();
-
-        HashMap<Object, Object> hashMap = new HashMap<Object, Object>();
+    fun getRandom(list: List<*>, n: Int): ArrayList<*> {
+        val random = Random()
+        val hashMap = HashMap<Int, Int>()
 
 // 生成随机数字并存入HashMap
-        for (int i = 0; i < list.size(); i++) {
-
-            int number = random.nextInt(100) + 1;
-
-            hashMap.put(number, i);
+        for (i in list.indices) {
+            val number = random.nextInt(100) + 1
+            hashMap[number] = i
         }
 
 // 从HashMap导入数组
-        Object[] robjs = hashMap.values().toArray();
-
-        ArrayList r = new ArrayList();
+        val robjs = hashMap.values.toIntArray()
+        val r: ArrayList<*> = ArrayList<Any?>()
 
 // 遍历数组并打印数据
-        for (int i = 0; i < n; i++) {
-            r.add(list.get((int) robjs[i]));
-            System.out.print(list.get((int) robjs[i]) + "\t");
+        for (i in 0 until n) {
+            r.add(list[robjs[i]] as Nothing)
+            print(list[robjs[i]].toString() + "\t")
         }
-        System.out.print("\n");
-        return r;
+        print("\n")
+        return r
     }
+
 }

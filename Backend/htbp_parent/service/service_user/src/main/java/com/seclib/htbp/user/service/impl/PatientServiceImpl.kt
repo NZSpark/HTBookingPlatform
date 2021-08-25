@@ -1,64 +1,52 @@
-package com.seclib.htbp.user.service.impl;
+package com.seclib.htbp.user.service.impl
 
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.seclib.htbp.cmn.client.DictFeignClient;
-import com.seclib.htbp.enums.DictEnum;
-import com.seclib.htbp.model.user.Patient;
-import com.seclib.htbp.user.service.PatientService;
-import com.seclib.htbp.user.mapper.PatientMapper;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cloud.openfeign.FeignClient;
-import org.springframework.stereotype.Service;
-
-import java.util.List;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl
+import org.springframework.beans.factory.annotation.Autowired
+import com.seclib.htbp.user.service.PatientService
+import com.seclib.htbp.user.mapper.PatientMapper
+import com.seclib.htbp.cmn.client.DictFeignClient
+import com.seclib.htbp.enums.DictEnum
+import com.seclib.htbp.model.user.Patient
+import org.springframework.stereotype.Service
+import java.util.stream.Collectors.toMap
 
 @Service
-public class PatientServiceImpl extends ServiceImpl<PatientMapper, Patient> implements PatientService {
+open class PatientServiceImpl : ServiceImpl<PatientMapper?, Patient?>(), PatientService {
     @Autowired
-    private DictFeignClient dictFeignClient;
-
-    @Override
-    public List<Patient> findAllByUserId(Long userId) {
+    private val dictFeignClient: DictFeignClient? = null
+    override fun findAllByUserId(userId: Long?): List<Patient?> {
         //query list by id
-        QueryWrapper<Patient> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("user_id",userId);
-
-        List<Patient> patients = baseMapper.selectList(queryWrapper);
-
-        patients.stream().forEach(item ->{
-            this.packPatient(item);
-        });
-
-        return patients;
+        val queryWrapper = QueryWrapper<Patient>()
+        queryWrapper.eq("user_id", userId)
+        val patients = baseMapper!!.selectList(queryWrapper)
+        patients.stream().forEach { item: Patient? -> packPatient(item!!) }
+        return patients
     }
 
-    @Override
-    public Patient getPatientId(Long id) {
-        return this.packPatient(baseMapper.selectById(id));
+    override fun getPatientId(id: Long?): Patient {
+        return packPatient(baseMapper!!.selectById(id)!!)
     }
-
 
     //embed strings into param
-    private Patient packPatient(Patient patient) {
-        String certificatesTypeString = dictFeignClient.getName(DictEnum.CERTIFICATES_TYPE.getDictCode(), patient.getCertificatesType());
-        String contactsCertificatesTypeString =
-                dictFeignClient.getName(DictEnum.CERTIFICATES_TYPE.getDictCode(),patient.getContactsCertificatesType());
-
-        String provinceString = dictFeignClient.getName(patient.getProvinceCode());
+    private fun packPatient(patient: Patient): Patient {
+        val certificatesTypeString =
+            dictFeignClient!!.getName(DictEnum.CERTIFICATES_TYPE.dictCode, patient.certificatesType)
+        val contactsCertificatesTypeString =
+            dictFeignClient.getName(DictEnum.CERTIFICATES_TYPE.dictCode, patient.contactsCertificatesType)
+        val provinceString = dictFeignClient.getName(patient.provinceCode)
         //市
-        String cityString = dictFeignClient.getName(patient.getCityCode());
+        val cityString = dictFeignClient.getName(patient.cityCode)
         //区
-        String districtString = dictFeignClient.getName(patient.getDistrictCode());
-
-        patient.getParam().put("certificatesTypeString", certificatesTypeString);
-        patient.getParam().put("contactsCertificatesTypeString", contactsCertificatesTypeString);
-        patient.getParam().put("provinceString", provinceString);
-        patient.getParam().put("cityString", cityString);
-        patient.getParam().put("districtString", districtString);
-        patient.getParam().put("fullAddress", provinceString + cityString + districtString + patient.getAddress());
-
-        return patient;
-
+        val districtString = dictFeignClient.getName(patient.districtCode)
+        if (certificatesTypeString != null) {
+            patient.param["certificatesTypeString"] = certificatesTypeString
+        }
+        if (contactsCertificatesTypeString != null) {
+            patient.param["contactsCertificatesTypeString"] = contactsCertificatesTypeString
+        }
+        patient.param["fullAddress"] = provinceString + cityString + districtString + patient.address
+        return patient
     }
+
 }

@@ -1,32 +1,10 @@
-package com.seclib.htbp.enums;
+package com.seclib.htbp.enums
 
-public enum RefundStatusEnum {
-    UNREFUND(1,"退款中"),
-    REFUND(2,"已退款");
+import com.seclib.htbp.enums.AuthStatusEnum
+import com.seclib.htbp.enums.OrderStatusEnum
+import java.util.HashMap
 
-    private Integer status ;
-
-    public Integer getStatus() {
-        return status;
-    }
-
-    public void setStatus(Integer status) {
-        this.status = status;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    private String name ;
-
-    RefundStatusEnum(Integer status, String name) {
-        this.status = status;
-        this.name=name;
-    }
+enum class RefundStatusEnum(var status: Int,  var itemName: String) {
+    UNREFUND(1, "退款中"), REFUND(2, "已退款");
 
 }

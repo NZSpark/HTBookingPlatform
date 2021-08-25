@@ -20,7 +20,7 @@ open class HospitalServiceImpl : HospitalService {
 
     @Autowired
     private val dictFeignClient: DictFeignClient? = null
-    override fun save(paramMap: Map<String?, Any?>?) {
+    override fun save(paramMap: MutableMap<String, Any?>?) {
         val mapString = JSONObject.toJSONString(paramMap)
         val hospital = JSONObject.parseObject(mapString, Hospital::class.java)
         val hoscode = hospital.hoscode
@@ -96,7 +96,7 @@ open class HospitalServiceImpl : HospitalService {
         val provinceString = dictFeignClient.getName(hospital.provinceCode)
         val cityString = dictFeignClient.getName(hospital.cityCode)
         val districtString = dictFeignClient.getName(hospital.districtCode)
-        hospital.param["hostypeString"] = hostypeString
+        hospital.param["hostypeString"] = hostypeString as Any
         hospital.param["fullAddress"] = provinceString + cityString + districtString
         return hospital
     }

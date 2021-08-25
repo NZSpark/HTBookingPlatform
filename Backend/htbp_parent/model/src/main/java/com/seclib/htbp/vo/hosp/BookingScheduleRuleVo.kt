@@ -1,47 +1,46 @@
-package com.seclib.htbp.vo.hosp;
+package com.seclib.htbp.vo.hosp
 
-import com.seclib.htbp.model.base.BaseEntity;
-import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableName;
-import com.fasterxml.jackson.annotation.JsonFormat;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
-
-import java.util.Date;
+import com.fasterxml.jackson.annotation.JsonFormat
+import io.swagger.annotations.ApiModel
+import io.swagger.annotations.ApiModelProperty
+import com.seclib.htbp.vo.hosp.DepartmentVo
+import java.math.BigDecimal
+import com.seclib.htbp.vo.msm.MsmVo
+import lombok.Data
+import java.util.*
 
 /**
- * <p>
+ *
+ *
  * RegisterRule
- * </p>
+ *
  *
  * @author qy
  */
 @Data
 @ApiModel(description = "可预约排班规则数据")
-public class BookingScheduleRuleVo {
-	
-	@ApiModelProperty(value = "可预约日期")
-	@JsonFormat(pattern = "yyyy-MM-dd")
-	private Date workDate;
+class BookingScheduleRuleVo {
+    @ApiModelProperty(value = "可预约日期")
+    @JsonFormat(pattern = "yyyy-MM-dd")
+    var workDate: Date? = null
 
-	@ApiModelProperty(value = "可预约日期")
-	@JsonFormat(pattern = "MM月dd日")
-	private Date workDateMd; //方便页面使用
+    @ApiModelProperty(value = "可预约日期")
+    @JsonFormat(pattern = "MM月dd日")
+    var workDateMd //方便页面使用
+            : Date? = null
 
-	@ApiModelProperty(value = "周几")
-	private String dayOfWeek;
+    @ApiModelProperty(value = "周几")
+    var dayOfWeek: String? = null
 
-	@ApiModelProperty(value = "就诊医生人数")
-	private Integer docCount;
+    @ApiModelProperty(value = "就诊医生人数")
+    var docCount: Int? = null
 
-	@ApiModelProperty(value = "科室可预约数")
-	private Integer reservedNumber;
+    @ApiModelProperty(value = "科室可预约数")
+    var reservedNumber: Int? = null
 
-	@ApiModelProperty(value = "科室剩余预约数")
-	private Integer availableNumber;
+    @ApiModelProperty(value = "科室剩余预约数")
+    var availableNumber: Int? = null
 
-	@ApiModelProperty(value = "状态 0：正常 1：即将放号 -1：当天已停止挂号")
-	private Integer status;
+    @ApiModelProperty(value = "状态 0：正常 1：即将放号 -1：当天已停止挂号")
+    var status: Int? = null
 }
-

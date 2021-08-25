@@ -1,45 +1,24 @@
-package com.seclib.htbp.enums;
+package com.seclib.htbp.enums
 
-public enum AuthStatusEnum {
+import com.seclib.htbp.enums.AuthStatusEnum
+import com.seclib.htbp.enums.OrderStatusEnum
+import java.util.HashMap
 
-    NO_AUTH(0, "未认证"),
-    AUTH_RUN(1, "认证中"),
-    AUTH_SUCCESS(2, "认证成功"),
-    AUTH_FAIL(-1, "认证失败"),
-    ;
+enum class AuthStatusEnum( var status: Int, var itemName: String) {
 
-    private Integer status;
-    private String name;
+    NO_AUTH(0, "未认证"), AUTH_RUN(1, "认证中"), AUTH_SUCCESS(2, "认证成功"), AUTH_FAIL(-1, "认证失败");
 
-    AuthStatusEnum(Integer status, String name) {
-        this.status = status;
-        this.name = name;
-    }
 
-    public static String getStatusNameByStatus(Integer status) {
-        AuthStatusEnum arrObj[] = AuthStatusEnum.values();
-        for (AuthStatusEnum obj : arrObj) {
-            if (status.intValue() == obj.getStatus().intValue()) {
-                return obj.getName();
+    companion object {
+        @JvmStatic
+        fun getStatusNameByStatus(status: Int): String {
+            val arrObj = values()
+            for (obj in arrObj) {
+                if (status == obj.status) {
+                    return obj.itemName
+                }
             }
+            return ""
         }
-        return "";
-    }
-
-
-    public Integer getStatus() {
-        return status;
-    }
-
-    public void setStatus(Integer status) {
-        this.status = status;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
     }
 }

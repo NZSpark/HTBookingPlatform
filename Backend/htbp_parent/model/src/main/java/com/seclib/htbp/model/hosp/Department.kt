@@ -1,50 +1,47 @@
-package com.seclib.htbp.model.hosp;
+package com.seclib.htbp.model.hosp
 
-import com.seclib.htbp.model.base.BaseEntity;
-import com.seclib.htbp.model.base.BaseMongoEntity;
-import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableName;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
-import org.springframework.data.mongodb.core.index.Indexed;
-import org.springframework.data.mongodb.core.mapping.Document;
-
-import java.util.List;
+import io.swagger.annotations.ApiModel
+import io.swagger.annotations.ApiModelProperty
+import com.seclib.htbp.model.base.BaseMongoEntity
+import com.seclib.htbp.model.hosp.BookingRule
+import lombok.Data
+import org.springframework.data.mongodb.core.index.Indexed
+import org.springframework.data.mongodb.core.mapping.Document
+import java.math.BigDecimal
 
 /**
- * <p>
+ *
+ *
  * Department
- * </p>
+ *
  *
  * @author qy
  */
 @Data
 @ApiModel(description = "Department")
 @Document("Department")
-public class Department extends BaseMongoEntity {
-	
-	private static final long serialVersionUID = 1L;
+class Department : BaseMongoEntity() {
+    @ApiModelProperty(value = "医院编号")
+    @Indexed //普通索引
+    var hoscode: String? = null
 
-	@ApiModelProperty(value = "医院编号")
-	@Indexed //普通索引
-	private String hoscode;
+    @ApiModelProperty(value = "科室编号")
+    @Indexed(unique = true) //唯一索引
+    var depcode: String? = null
 
-	@ApiModelProperty(value = "科室编号")
-	@Indexed(unique = true) //唯一索引
-	private String depcode;
+    @ApiModelProperty(value = "科室名称")
+    var depname: String? = null
 
-	@ApiModelProperty(value = "科室名称")
-	private String depname;
+    @ApiModelProperty(value = "科室描述")
+    var intro: String? = null
 
-	@ApiModelProperty(value = "科室描述")
-	private String intro;
+    @ApiModelProperty(value = "大科室编号")
+    var bigcode: String? = null
 
-	@ApiModelProperty(value = "大科室编号")
-	private String bigcode;
+    @ApiModelProperty(value = "大科室名称")
+    var bigname: String? = null
 
-	@ApiModelProperty(value = "大科室名称")
-	private String bigname;
-
+    companion object {
+        private const val serialVersionUID = 1L
+    }
 }
-

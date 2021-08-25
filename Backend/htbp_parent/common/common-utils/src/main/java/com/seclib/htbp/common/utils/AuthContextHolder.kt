@@ -1,22 +1,22 @@
-package com.seclib.htbp.common.utils;
+package com.seclib.htbp.common.utils
 
-import com.seclib.htbp.common.helper.JwtHelper;
+import com.seclib.htbp.common.helper.JwtHelper.getUserId
+import com.seclib.htbp.common.helper.JwtHelper.getUserName
+import javax.servlet.http.HttpServletRequest
 
-import javax.servlet.http.HttpServletRequest;
-
-public class AuthContextHolder {
+object AuthContextHolder {
     //current user id
-    public static Long getUserId(HttpServletRequest request){
+    @JvmStatic
+    fun getUserId(request: HttpServletRequest): Long? {
         //get token
-        String token = request.getHeader("token");
-        Long userId = JwtHelper.getUserId(token);
-        return userId;
+        val token = request.getHeader("token")
+        return getUserId(token)
     }
+
     //current user name
-    public static String getUserName(HttpServletRequest request){
+    fun getUserName(request: HttpServletRequest): String? {
         //get token
-        String token = request.getHeader("token");
-        String userName = JwtHelper.getUserName(token);
-        return userName;
+        val token = request.getHeader("token")
+        return getUserName(token)
     }
 }

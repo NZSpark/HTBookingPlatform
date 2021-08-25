@@ -1,82 +1,81 @@
-package com.seclib.htbp.user.utils;
-
-import org.apache.commons.io.IOUtils;
-
-import org.apache.commons.lang.StringUtils;
-import org.apache.http.Consts;
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
-import org.apache.http.NameValuePair;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.config.RequestConfig;
-import org.apache.http.client.entity.UrlEncodedFormEntity;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.conn.ConnectTimeoutException;
-import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
-import org.apache.http.conn.ssl.TrustStrategy;
-import org.apache.http.conn.ssl.X509HostnameVerifier;
-import org.apache.http.entity.ContentType;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClients;
-import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
-import org.apache.http.message.BasicNameValuePair;
-import org.apache.http.ssl.SSLContextBuilder;
+package com.seclib.htbp.user.utils
 
 
-import javax.net.ssl.SSLContext;
-import javax.net.ssl.SSLException;
-import javax.net.ssl.SSLSession;
-import javax.net.ssl.SSLSocket;
-import java.io.IOException;
-import java.net.SocketTimeoutException;
-import java.security.GeneralSecurityException;
-import java.security.cert.CertificateException;
-import java.security.cert.X509Certificate;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.lang.Exception
+import kotlin.Throws
+import java.net.SocketTimeoutException
+import org.apache.http.client.methods.HttpPost
+import org.apache.http.entity.StringEntity
+import org.apache.http.client.config.RequestConfig
+import org.apache.http.impl.client.CloseableHttpClient
+import org.apache.http.message.BasicNameValuePair
+import org.apache.http.client.entity.UrlEncodedFormEntity
+import org.apache.http.Consts
+import kotlin.jvm.JvmOverloads
+import org.apache.http.client.methods.HttpGet
+import java.security.GeneralSecurityException
+import org.apache.http.conn.ssl.SSLConnectionSocketFactory
+import org.apache.http.conn.ssl.X509HostnameVerifier
+import javax.net.ssl.SSLSession
+import java.io.IOException
+import javax.net.ssl.SSLException
+import org.apache.http.impl.client.HttpClients
+import org.apache.http.impl.conn.PoolingHttpClientConnectionManager
+import org.apache.commons.io.IOUtils
+import org.apache.commons.lang.StringUtils
+import org.apache.http.HttpEntity
+import org.apache.http.HttpResponse
+import org.apache.http.NameValuePair
+import org.apache.http.client.HttpClient
+import org.apache.http.conn.ConnectTimeoutException
+import org.apache.http.conn.ssl.TrustStrategy
+import org.apache.http.entity.ContentType
+import org.apache.http.ssl.SSLContextBuilder
+import java.security.cert.X509Certificate
+import java.util.ArrayList
+import javax.net.ssl.SSLSocket
 
-public class HttpClientUtils {
-
-    public static final int connTimeout=10000;
-    public static final int readTimeout=10000;
-    public static final String charset="UTF-8";
-    private static HttpClient client = null;
-
-    static {
-        PoolingHttpClientConnectionManager cm = new PoolingHttpClientConnectionManager();
-        cm.setMaxTotal(128);
-        cm.setDefaultMaxPerRoute(128);
-        client = HttpClients.custom().setConnectionManager(cm).build();
+object HttpClientUtils {
+    const val connTimeout = 10000
+    const val readTimeout = 10000
+    const val charset = "UTF-8"
+    private var client: HttpClient? = null
+    @Throws(ConnectTimeoutException::class, SocketTimeoutException::class, Exception::class)
+    fun postParameters(url: String, parameterStr: String?): String {
+        return post(url, parameterStr, "application/x-www-form-urlencoded", charset, connTimeout, readTimeout)
     }
 
-    public static String postParameters(String url, String parameterStr) throws ConnectTimeoutException, SocketTimeoutException, Exception{
-        return post(url,parameterStr,"application/x-www-form-urlencoded",charset,connTimeout,readTimeout);
+    @Throws(ConnectTimeoutException::class, SocketTimeoutException::class, Exception::class)
+    fun postParameters(
+        url: String,
+        parameterStr: String?,
+        charset: String?,
+        connTimeout: Int?,
+        readTimeout: Int?
+    ): String {
+        return post(url, parameterStr, "application/x-www-form-urlencoded", charset, connTimeout, readTimeout)
     }
 
-    public static String postParameters(String url, String parameterStr,String charset, Integer connTimeout, Integer readTimeout) throws ConnectTimeoutException, SocketTimeoutException, Exception{
-        return post(url,parameterStr,"application/x-www-form-urlencoded",charset,connTimeout,readTimeout);
+    @Throws(ConnectTimeoutException::class, SocketTimeoutException::class, Exception::class)
+    fun postParameters(url: String, params: Map<String?, String?>?): String {
+        return postForm(url, params, null, connTimeout, readTimeout)
     }
 
-    public static String postParameters(String url, Map<String, String> params) throws ConnectTimeoutException,
-            SocketTimeoutException, Exception {
-        return postForm(url, params, null, connTimeout, readTimeout);
+    @Throws(ConnectTimeoutException::class, SocketTimeoutException::class, Exception::class)
+    fun postParameters(url: String, params: Map<String?, String?>?, connTimeout: Int?, readTimeout: Int?): String {
+        return postForm(url, params, null, connTimeout, readTimeout)
     }
 
-    public static String postParameters(String url, Map<String, String> params, Integer connTimeout, Integer readTimeout) throws ConnectTimeoutException,
-            SocketTimeoutException, Exception {
-        return postForm(url, params, null, connTimeout, readTimeout);
-    }
 
-    public static String get(String url) throws Exception {
-        return get(url, charset, null, null);
+    @JvmName("get1")
+    @Throws(Exception::class)
+    fun get(url: String): String {
+        return HttpClientUtils[url, null, null]
     }
-
-    public static String get(String url, String charset) throws Exception {
-        return get(url, charset, connTimeout, readTimeout);
+    @JvmName("get1")
+    @Throws(Exception::class)
+    fun get(url: String, charset: String?): String {
+        return HttpClientUtils[url, charset, connTimeout, readTimeout]
     }
 
     /**
@@ -93,46 +92,51 @@ public class HttpClientUtils {
      * @throws SocketTimeoutException  响应超时
      * @throws Exception
      */
-    public static String post(String url, String body, String mimeType,String charset, Integer connTimeout, Integer readTimeout)
-            throws ConnectTimeoutException, SocketTimeoutException, Exception {
-        HttpClient client = null;
-        HttpPost post = new HttpPost(url);
-        String result = "";
+    @Throws(ConnectTimeoutException::class, SocketTimeoutException::class, Exception::class)
+    fun post(
+        url: String,
+        body: String?,
+        mimeType: String?,
+        charset: String?,
+        connTimeout: Int?,
+        readTimeout: Int?
+    ): String {
+        var client: HttpClient? = null
+        val post = HttpPost(url)
+        var result = ""
         try {
             if (StringUtils.isNotBlank(body)) {
-                HttpEntity entity = new StringEntity(body, ContentType.create(mimeType, charset));
-                post.setEntity(entity);
+                val entity: HttpEntity = StringEntity(body, ContentType.create(mimeType, charset))
+                post.entity = entity
             }
             // 设置参数
-            RequestConfig.Builder customReqConf = RequestConfig.custom();
+            val customReqConf = RequestConfig.custom()
             if (connTimeout != null) {
-                customReqConf.setConnectTimeout(connTimeout);
+                customReqConf.setConnectTimeout(connTimeout)
             }
             if (readTimeout != null) {
-                customReqConf.setSocketTimeout(readTimeout);
+                customReqConf.setSocketTimeout(readTimeout)
             }
-            post.setConfig(customReqConf.build());
-
-            HttpResponse res;
+            post.config = customReqConf.build()
+            val res: HttpResponse
             if (url.startsWith("https")) {
                 // 执行 Https 请求.
-                client = createSSLInsecureClient();
-                res = client.execute(post);
+                client = createSSLInsecureClient()
+                res = client.execute(post)
             } else {
                 // 执行 Http 请求.
-                client = HttpClientUtils.client;
-                res = client.execute(post);
+                client = HttpClientUtils.client
+                res = client!!.execute(post)
             }
-            result = IOUtils.toString(res.getEntity().getContent(), charset);
+            result = IOUtils.toString(res.entity.content, charset)
         } finally {
-            post.releaseConnection();
-            if (url.startsWith("https") && client != null&& client instanceof CloseableHttpClient) {
-                ((CloseableHttpClient) client).close();
+            post.releaseConnection()
+            if (url.startsWith("https") && client != null && client is CloseableHttpClient) {
+                client.close()
             }
         }
-        return result;
+        return result
     }
-
 
     /**
      * 提交form表单
@@ -146,52 +150,55 @@ public class HttpClientUtils {
      * @throws SocketTimeoutException
      * @throws Exception
      */
-    public static String postForm(String url, Map<String, String> params, Map<String, String> headers, Integer connTimeout,Integer readTimeout) throws ConnectTimeoutException,
-            SocketTimeoutException, Exception {
-
-        HttpClient client = null;
-        HttpPost post = new HttpPost(url);
-        try {
+    @Throws(ConnectTimeoutException::class, SocketTimeoutException::class, Exception::class)
+    fun postForm(
+        url: String,
+        params: Map<String?, String?>?,
+        headers: Map<String?, String?>?,
+        connTimeout: Int?,
+        readTimeout: Int?
+    ): String {
+        var client: HttpClient? = null
+        val post = HttpPost(url)
+        return try {
             if (params != null && !params.isEmpty()) {
-                List<NameValuePair> formParams = new ArrayList<NameValuePair>();
-                Set<Map.Entry<String, String>> entrySet = params.entrySet();
-                for (Map.Entry<String, String> entry : entrySet) {
-                    formParams.add(new BasicNameValuePair(entry.getKey(), entry.getValue()));
+                val formParams: MutableList<NameValuePair> = ArrayList()
+                val entrySet: Set<Map.Entry<String?, String?>> = params.entries
+                for (entry in entrySet) {
+                    formParams.add(BasicNameValuePair(entry.key, entry.value))
                 }
-                UrlEncodedFormEntity entity = new UrlEncodedFormEntity(formParams, Consts.UTF_8);
-                post.setEntity(entity);
+                val entity = UrlEncodedFormEntity(formParams, Consts.UTF_8)
+                post.entity = entity
             }
-
             if (headers != null && !headers.isEmpty()) {
-                for (Map.Entry<String, String> entry : headers.entrySet()) {
-                    post.addHeader(entry.getKey(), entry.getValue());
+                for ((key, value) in headers) {
+                    post.addHeader(key, value)
                 }
             }
             // 设置参数
-            RequestConfig.Builder customReqConf = RequestConfig.custom();
+            val customReqConf = RequestConfig.custom()
             if (connTimeout != null) {
-                customReqConf.setConnectTimeout(connTimeout);
+                customReqConf.setConnectTimeout(connTimeout)
             }
             if (readTimeout != null) {
-                customReqConf.setSocketTimeout(readTimeout);
+                customReqConf.setSocketTimeout(readTimeout)
             }
-            post.setConfig(customReqConf.build());
-            HttpResponse res = null;
+            post.config = customReqConf.build()
+            var res: HttpResponse? = null
             if (url.startsWith("https")) {
                 // 执行 Https 请求.
-                client = createSSLInsecureClient();
-                res = client.execute(post);
+                client = createSSLInsecureClient()
+                res = client.execute(post)
             } else {
                 // 执行 Http 请求.
-                client = HttpClientUtils.client;
-                res = client.execute(post);
+                client = HttpClientUtils.client
+                res = client!!.execute(post)
             }
-            return IOUtils.toString(res.getEntity().getContent(), "UTF-8");
+            IOUtils.toString(res!!.entity.content, "UTF-8")
         } finally {
-            post.releaseConnection();
-            if (url.startsWith("https") && client != null
-                    && client instanceof CloseableHttpClient) {
-                ((CloseableHttpClient) client).close();
+            post.releaseConnection()
+            if (url.startsWith("https") && client != null && client is CloseableHttpClient) {
+                client.close()
             }
         }
     }
@@ -199,58 +206,59 @@ public class HttpClientUtils {
     /**
      * 发送一个 GET 请求
      */
-    public static String get(String url, String charset, Integer connTimeout,Integer readTimeout)
-            throws ConnectTimeoutException,SocketTimeoutException, Exception {
-
-        HttpClient client = null;
-        HttpGet get = new HttpGet(url);
-        String result = "";
+    @JvmOverloads
+    @Throws(ConnectTimeoutException::class, SocketTimeoutException::class, Exception::class)
+    operator fun get(
+        url: String,
+        charset: String? = this.charset,
+        connTimeout: Int? = null,
+        readTimeout: Int? = null
+    ): String {
+        var client: HttpClient? = null
+        val get = HttpGet(url)
+        var result = ""
         try {
             // 设置参数
-            RequestConfig.Builder customReqConf = RequestConfig.custom();
+            val customReqConf = RequestConfig.custom()
             if (connTimeout != null) {
-                customReqConf.setConnectTimeout(connTimeout);
+                customReqConf.setConnectTimeout(connTimeout)
             }
             if (readTimeout != null) {
-                customReqConf.setSocketTimeout(readTimeout);
+                customReqConf.setSocketTimeout(readTimeout)
             }
-            get.setConfig(customReqConf.build());
-
-            HttpResponse res = null;
-
+            get.config = customReqConf.build()
+            var res: HttpResponse? = null
             if (url.startsWith("https")) {
                 // 执行 Https 请求.
-                client = createSSLInsecureClient();
-                res = client.execute(get);
+                client = createSSLInsecureClient()
+                res = client.execute(get)
             } else {
                 // 执行 Http 请求.
-                client = HttpClientUtils.client;
-                res = client.execute(get);
+                client = HttpClientUtils.client
+                res = client!!.execute(get)
             }
-
-            result = IOUtils.toString(res.getEntity().getContent(), charset);
+            result = IOUtils.toString(res!!.entity.content, charset)
         } finally {
-            get.releaseConnection();
-            if (url.startsWith("https") && client != null && client instanceof CloseableHttpClient) {
-                ((CloseableHttpClient) client).close();
+            get.releaseConnection()
+            if (url.startsWith("https") && client != null && client is CloseableHttpClient) {
+                client.close()
             }
         }
-        return result;
+        return result
     }
 
     /**
      * 从 response 里获取 charset
      */
-    @SuppressWarnings("unused")
-    private static String getCharsetFromResponse(HttpResponse ressponse) {
+    private fun getCharsetFromResponse(ressponse: HttpResponse): String? {
         // Content-Type:text/html; charset=GBK
-        if (ressponse.getEntity() != null  && ressponse.getEntity().getContentType() != null && ressponse.getEntity().getContentType().getValue() != null) {
-            String contentType = ressponse.getEntity().getContentType().getValue();
+        if (ressponse.entity != null && ressponse.entity.contentType != null && ressponse.entity.contentType.value != null) {
+            val contentType = ressponse.entity.contentType.value
             if (contentType.contains("charset=")) {
-                return contentType.substring(contentType.indexOf("charset=") + 8);
+                return contentType.substring(contentType.indexOf("charset=") + 8)
             }
         }
-        return null;
+        return null
     }
 
     /**
@@ -258,40 +266,41 @@ public class HttpClientUtils {
      * @return
      * @throws GeneralSecurityException
      */
-    private static CloseableHttpClient createSSLInsecureClient() throws GeneralSecurityException {
-        try {
-            SSLContext sslContext = new SSLContextBuilder().loadTrustMaterial(null, new TrustStrategy() {
-                public boolean isTrusted(X509Certificate[] chain,String authType) throws CertificateException {
-                    return true;
-                }
-            }).build();
-
-            SSLConnectionSocketFactory sslsf = new SSLConnectionSocketFactory(sslContext, new X509HostnameVerifier() {
-
-                @Override
-                public boolean verify(String arg0, SSLSession arg1) {
-                    return true;
+    @Throws(GeneralSecurityException::class)
+    private fun createSSLInsecureClient(): CloseableHttpClient {
+        return try {
+            val sslContext =
+                SSLContextBuilder().loadTrustMaterial(null, TrustStrategy { chain, authType -> true }).build()
+            val sslsf = SSLConnectionSocketFactory(sslContext, object : X509HostnameVerifier {
+                override fun verify(arg0: String, arg1: SSLSession): Boolean {
+                    return true
                 }
 
-                @Override
-                public void verify(String host, SSLSocket ssl)
-                        throws IOException {
+                @Throws(IOException::class)
+                override fun verify(host: String, ssl: SSLSocket) {
                 }
 
-                @Override
-                public void verify(String host, X509Certificate cert)
-                        throws SSLException {
+                @Throws(SSLException::class)
+                override fun verify(host: String, cert: X509Certificate) {
                 }
 
-                @Override
-                public void verify(String host, String[] cns,
-                                   String[] subjectAlts) throws SSLException {
+                @Throws(SSLException::class)
+                override fun verify(
+                    host: String, cns: Array<String>,
+                    subjectAlts: Array<String>
+                ) {
                 }
-            });
-            return HttpClients.custom().setSSLSocketFactory(sslsf).build();
-
-        } catch (GeneralSecurityException e) {
-            throw e;
+            })
+            HttpClients.custom().setSSLSocketFactory(sslsf).build()
+        } catch (e: GeneralSecurityException) {
+            throw e
         }
+    }
+
+    init {
+        val cm = PoolingHttpClientConnectionManager()
+        cm.maxTotal = 128
+        cm.defaultMaxPerRoute = 128
+        client = HttpClients.custom().setConnectionManager(cm).build()
     }
 }

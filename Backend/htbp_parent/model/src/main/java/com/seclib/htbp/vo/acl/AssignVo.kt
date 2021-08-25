@@ -1,11 +1,14 @@
-package com.seclib.htbp.vo.acl;
+package com.seclib.htbp.vo.acl
 
-import lombok.Data;
+import io.swagger.annotations.ApiModel
+import io.swagger.annotations.ApiModelProperty
+import com.seclib.htbp.vo.hosp.DepartmentVo
+import java.math.BigDecimal
+import com.seclib.htbp.vo.msm.MsmVo
+import lombok.Data
 
 @Data
-public class AssignVo {
-
-    private Long roleId;
-
-    private Long[] permissionId;
+class AssignVo {
+    var roleId: Long? = null
+    var permissionId: Array<Long> = arrayOf<Long>()
 }

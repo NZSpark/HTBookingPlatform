@@ -23,14 +23,15 @@ import java.util.ArrayList
 open class DictServiceImpl : ServiceImpl<DictMapper?, Dict?>(), DictService {
     @Cacheable(value = ["dict"], keyGenerator = "keyGenerator")
     override fun findChildData(id: Long?): List<Dict?>? {
+        if(id == null) return null
         val wrapper = QueryWrapper<Dict>()
         wrapper.eq("parent_id", id)
         val dictList = baseMapper!!.selectList(wrapper)
         for (dict in dictList) {
             if(dict != null) {
-                val dictId = dict.id
+                val dictId = dict.id!!
                 val isChild = isChild(dictId)
-                dict.isHasChildren = isChild
+                dict.hasChildren = isChild
             }
         }
         return dictList
@@ -87,7 +88,7 @@ open class DictServiceImpl : ServiceImpl<DictMapper?, Dict?>(), DictService {
 
     override fun findByDictCode(dictCode: String?): List<Dict?>? {
         val dict = dictCode?.let { getDictByDictCode(it) }
-        return findChildData(dict?.id)
+        return findChildData(dict!!.id!!)
     }
 
     private fun getDictByDictCode(dictCode: String): Dict? {

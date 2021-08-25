@@ -1,24 +1,28 @@
-package com.seclib.htbp.common.exception;
+package com.seclib.htbp.common.exception
 
-import com.seclib.htbp.common.result.Result;
-import org.springframework.web.bind.annotation.ControllerAdvice;
-import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.ControllerAdvice
+import java.lang.Exception
+import org.springframework.web.bind.annotation.ResponseBody
+import com.seclib.htbp.common.exception.HtbpException
+import com.seclib.htbp.common.result.Result
+import io.swagger.annotations.ApiModel
+import java.lang.RuntimeException
+import io.swagger.annotations.ApiModelProperty
+import org.springframework.web.bind.annotation.ExceptionHandler
 
 @ControllerAdvice
-public class GlobalExceptionHandler {
-    @ExceptionHandler(Exception.class)
+class GlobalExceptionHandler {
+    @ExceptionHandler(Exception::class)
     @ResponseBody
-    public Result error(Exception e){
-        e.printStackTrace();
-        return Result.fail();
+    fun error(e: Exception): Result<*> {
+        e.printStackTrace()
+        return Result.fail<Any>()
     }
 
-    @ExceptionHandler(HtbpException.class)
+    @ExceptionHandler(HtbpException::class)
     @ResponseBody
-    public Result error(HtbpException e){
-        e.printStackTrace();
-        return Result.fail();
+    fun error(e: HtbpException): Result<*> {
+        e.printStackTrace()
+        return Result.fail<Any>()
     }
-
 }

@@ -1,16 +1,17 @@
-package com.seclib.htbp.model.acl;
+package com.seclib.htbp.model.acl
 
-import com.seclib.htbp.model.base.BaseEntity;
-import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableName;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
+import com.baomidou.mybatisplus.annotation.TableField
+import com.baomidou.mybatisplus.annotation.TableName
+import com.seclib.htbp.model.base.BaseEntity
+import io.swagger.annotations.ApiModel
+import io.swagger.annotations.ApiModelProperty
+import lombok.Data
 
 /**
- * <p>
+ *
+ *
  * 用户角色
- * </p>
+ *
  *
  * @author qy
  * @since 2019-11-08
@@ -18,17 +19,16 @@ import lombok.Data;
 @Data
 @ApiModel(description = "用户角色")
 @TableName("acl_user_role")
-public class UserRole extends BaseEntity {
-	
-	private static final long serialVersionUID = 1L;
-	
-	@ApiModelProperty(value = "角色id")
-	@TableField("role_id")
-	private Long roleId;
+class UserRole : BaseEntity() {
+    @ApiModelProperty(value = "角色id")
+    @TableField("role_id")
+    var roleId: Long? = null
 
-	@ApiModelProperty(value = "用户id")
-	@TableField("user_id")
-	private Long userId;
+    @ApiModelProperty(value = "用户id")
+    @TableField("user_id")
+    var userId: Long? = null
 
+    companion object {
+        private const val serialVersionUID = 1L
+    }
 }
-

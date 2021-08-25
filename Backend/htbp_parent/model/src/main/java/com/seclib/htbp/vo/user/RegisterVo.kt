@@ -1,19 +1,21 @@
-package com.seclib.htbp.vo.user;
+package com.seclib.htbp.vo.user
 
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
+import io.swagger.annotations.ApiModel
+import io.swagger.annotations.ApiModelProperty
+import com.seclib.htbp.vo.hosp.DepartmentVo
+import java.math.BigDecimal
+import com.seclib.htbp.vo.msm.MsmVo
+import lombok.Data
 
 @Data
-@ApiModel(description="注册对象")
-public class RegisterVo {
-
+@ApiModel(description = "注册对象")
+class RegisterVo {
     @ApiModelProperty(value = "手机号")
-    private String mobile;
+    var mobile: String? = null
 
     @ApiModelProperty(value = "密码")
-    private String password;
+    var password: String? = null
 
     @ApiModelProperty(value = "验证码")
-    private String code;
+    var code: String? = null
 }

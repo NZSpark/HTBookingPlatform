@@ -1,200 +1,174 @@
-package com.seclib.htbp.user.service.impl;
+package com.seclib.htbp.user.service.impl
 
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.seclib.htbp.common.exception.HtbpException;
-import com.seclib.htbp.common.helper.JwtHelper;
-import com.seclib.htbp.common.result.ResultCodeEnum;
-import com.seclib.htbp.enums.AuthStatusEnum;
-import com.seclib.htbp.model.user.Patient;
-import com.seclib.htbp.model.user.UserInfo;
-import com.seclib.htbp.user.mapper.UserInfoMapper;
-import com.seclib.htbp.user.service.PatientService;
-import com.seclib.htbp.user.service.UserInfoService;
-import com.seclib.htbp.vo.user.LoginVo;
-import com.seclib.htbp.vo.user.UserAuthVo;
-import com.seclib.htbp.vo.user.UserInfoQueryVo;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
-
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper
+import com.baomidou.mybatisplus.core.metadata.IPage
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl
+import com.seclib.htbp.common.helper.JwtHelper.createToken
+import com.seclib.htbp.enums.AuthStatusEnum.Companion.getStatusNameByStatus
+import org.springframework.beans.factory.annotation.Autowired
+import com.seclib.htbp.user.service.UserInfoService
+import com.seclib.htbp.common.exception.HtbpException
+import java.util.HashMap
+import com.seclib.htbp.user.service.PatientService
+import com.seclib.htbp.vo.user.LoginVo
+import com.seclib.htbp.vo.user.UserAuthVo
+import com.seclib.htbp.common.result.ResultCodeEnum
+import com.seclib.htbp.user.mapper.UserInfoMapper
+import org.springframework.data.redis.core.RedisTemplate
+import com.seclib.htbp.enums.AuthStatusEnum
+import com.seclib.htbp.model.user.UserInfo
+import com.seclib.htbp.vo.user.UserInfoQueryVo
+import org.springframework.stereotype.Service
+import org.springframework.util.StringUtils
 
 @Service
-public class UserInfoServiceImpl extends ServiceImpl<UserInfoMapper, UserInfo> implements UserInfoService {
+open class UserInfoServiceImpl : ServiceImpl<UserInfoMapper?, UserInfo?>(), UserInfoService {
+    @Autowired
+    private val redisTemplate: RedisTemplate<String, String>? = null
 
     @Autowired
-    private RedisTemplate<String,String> redisTemplate;
-
-    @Autowired
-    private PatientService patientService;
-
-    @Override
-    public Map<String, Object> loginUser(LoginVo loginVo) {
-        String phone = loginVo.getPhone();
-        String code = loginVo.getCode();
+    private val patientService: PatientService? = null
+    override fun loginUser(loginVo: LoginVo): Map<String, Any> {
+        val phone: String? = loginVo.phone
+        val code: String? = loginVo.code
         //校验参数
-        if(StringUtils.isEmpty(phone) ||
-                StringUtils.isEmpty(code)) {
-            throw new HtbpException(ResultCodeEnum.PARAM_ERROR);
+        if (StringUtils.isEmpty(phone) ||
+            StringUtils.isEmpty(code)
+        ) {
+            throw HtbpException(ResultCodeEnum.PARAM_ERROR)
         }
-
-        String redisCode = redisTemplate.opsForValue().get(phone);
-        if(!code.equals(redisCode)){
-            throw new HtbpException(ResultCodeEnum.CODE_ERROR);
+        val redisCode = redisTemplate!!.opsForValue()[phone]
+        if (code != redisCode) {
+            throw HtbpException(ResultCodeEnum.CODE_ERROR)
         }
-
-        UserInfo userInfo = null;
-        if(!StringUtils.isEmpty(loginVo.getOpenid())) {
-            userInfo = this.getByOpenid(loginVo.getOpenid());
-            if(null != userInfo) {
-                userInfo.setPhone(loginVo.getPhone());
-                this.updateById(userInfo);
+        var userInfo: UserInfo? = null
+        if (!StringUtils.isEmpty(loginVo.openid)) {
+            userInfo = getByOpenid(loginVo.openid)
+            if (null != userInfo) {
+                userInfo.phone = loginVo.phone
+                updateById(userInfo)
             } else {
-                throw new HtbpException(ResultCodeEnum.DATA_ERROR);
+                throw HtbpException(ResultCodeEnum.DATA_ERROR)
             }
         }
-
-        if(userInfo == null) {
+        if (userInfo == null) {
             //手机号已被使用
-            QueryWrapper<UserInfo> queryWrapper = new QueryWrapper<>();
-            queryWrapper.eq("phone", phone);
+            val queryWrapper = QueryWrapper<UserInfo>()
+            queryWrapper.eq("phone", phone)
             //获取会员
-            userInfo = baseMapper.selectOne(queryWrapper);
+            userInfo = baseMapper!!.selectOne(queryWrapper)
             if (null == userInfo) {
-                userInfo = new UserInfo();
-                userInfo.setName("");
-                userInfo.setPhone(phone);
-                userInfo.setStatus(1);
-                this.save(userInfo);
+                userInfo = UserInfo()
+                userInfo.name = ""
+                userInfo.phone = phone
+                userInfo.status = 1
+                save(userInfo)
             }
         }
 
         //校验是否被禁用
-        if(userInfo.getStatus() == 0) {
-            throw new HtbpException(ResultCodeEnum.LOGIN_DISABLED_ERROR);
+        if (userInfo.status === 0) {
+            throw HtbpException(ResultCodeEnum.LOGIN_DISABLED_ERROR)
         }
 
         //TODO 记录登录
 
         //返回页面显示名称
-        Map<String, Object> map = new HashMap<>();
-        String name = userInfo.getName();
-        if(StringUtils.isEmpty(name)) {
-            name = userInfo.getNickName();
+        val map= mutableMapOf<String,Any>()
+        var name: String? = userInfo.name
+        if (StringUtils.isEmpty(name)) {
+            name = userInfo.nickName
         }
-        if(StringUtils.isEmpty(name)) {
-            name = userInfo.getPhone();
+        if (StringUtils.isEmpty(name)) {
+            name = userInfo.phone
         }
-        map.put("name", name);
-
-        String token = JwtHelper.createToken(userInfo.getId(),name);
-        map.put("token", token);
-        return map;
-
-    }
-    @Override
-    public UserInfo getByOpenid(String openid) {
-        return baseMapper.selectOne(new QueryWrapper<UserInfo>().eq("openid", openid));
+        map["name"] = name!!
+        val token = createToken(userInfo.id, name)
+        map["token"] = token
+        return map
     }
 
-    @Override
-    public UserInfo selectWxInfoOpenId(String openId) {
-        QueryWrapper<UserInfo> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("openid",openId);
-        UserInfo userInfo = baseMapper.selectOne(queryWrapper);
-        return userInfo;
+    override fun getByOpenid(openid: String?): UserInfo? {
+        return baseMapper!!.selectOne(QueryWrapper<UserInfo>().eq("openid", openid))
     }
 
-    @Override
-    public void userAuth(Long userId, UserAuthVo userAuthVo) {
+    override fun selectWxInfoOpenId(openId: String): UserInfo? {
+        val queryWrapper =
+            QueryWrapper<UserInfo>()
+        queryWrapper.eq("openid", openId)
+        return baseMapper!!.selectOne(queryWrapper)
+    }
+
+    override fun userAuth(userId: Long, userAuthVo: UserAuthVo) {
         //query user information by Id
-        UserInfo userInfo = baseMapper.selectById(userId);
-        userInfo.setName(userAuthVo.getName());
+        val userInfo = baseMapper!!.selectById(userId) ?: return
+        userInfo.name = userAuthVo.name
         //其他认证信息
-        userInfo.setCertificatesType(userAuthVo.getCertificatesType());
-        userInfo.setCertificatesNo(userAuthVo.getCertificatesNo());
-        userInfo.setCertificatesUrl(userAuthVo.getCertificatesUrl());
-        userInfo.setAuthStatus(AuthStatusEnum.AUTH_RUN.getStatus());
+        userInfo.certificatesType = userAuthVo.certificatesType
+        userInfo.certificatesNo = userAuthVo.certificatesNo
+        userInfo.certificatesUrl = userAuthVo.certificatesUrl
+        userInfo.authStatus = AuthStatusEnum.AUTH_RUN.status
         //进行信息更新
-        baseMapper.updateById(userInfo);
+        baseMapper!!.updateById(userInfo)
     }
 
-    @Override
-    public IPage<UserInfo> selectPage(Page<UserInfo> pageParam, UserInfoQueryVo userInfoQueryVo) {
-        String name = userInfoQueryVo.getKeyword();
-        Integer status = userInfoQueryVo.getStatus();
-        Integer authStatus = userInfoQueryVo.getAuthStatus();
-        String createTimeBegin = userInfoQueryVo.getCreateTimeBegin();
-        String createTimeEnd = userInfoQueryVo.getCreateTimeEnd();
-        QueryWrapper<UserInfo> queryWrapper = new QueryWrapper<>();
-        if(!StringUtils.isEmpty(name)){
-            queryWrapper.like("name",name);
+    override fun selectPage(pageParam: Page<UserInfo>, userInfoQueryVo: UserInfoQueryVo): IPage<UserInfo> {
+        val name: String? = userInfoQueryVo.keyword
+        val status: Int? = userInfoQueryVo.status
+        val authStatus: Int? = userInfoQueryVo.authStatus
+        val createTimeBegin: String? = userInfoQueryVo.createTimeBegin
+        val createTimeEnd: String? = userInfoQueryVo.createTimeEnd
+        val queryWrapper = QueryWrapper<UserInfo>()
+        if (!StringUtils.isEmpty(name)) {
+            queryWrapper.like("name", name)
         }
-
-        if(!StringUtils.isEmpty(status)){
-            queryWrapper.eq("status",status);
+        if (!StringUtils.isEmpty(status)) {
+            queryWrapper.eq("status", status)
         }
-        if(!StringUtils.isEmpty(authStatus)){
-            queryWrapper.eq("auth_status",authStatus);
+        if (!StringUtils.isEmpty(authStatus)) {
+            queryWrapper.eq("auth_status", authStatus)
         }
-        if(!StringUtils.isEmpty(createTimeBegin)){
-            queryWrapper.ge("createTimeBegin",createTimeBegin);
+        if (!StringUtils.isEmpty(createTimeBegin)) {
+            queryWrapper.ge("createTimeBegin", createTimeBegin)
         }
-        if(!StringUtils.isEmpty(createTimeEnd)){
-            queryWrapper.lt("createTimeEnd",createTimeEnd);
+        if (!StringUtils.isEmpty(createTimeEnd)) {
+            queryWrapper.lt("createTimeEnd", createTimeEnd)
         }
-
-        IPage<UserInfo> userInfoPage = baseMapper.selectPage(pageParam, queryWrapper);
-
-        userInfoPage.getRecords().stream().forEach(item->{
-            this.packUserInfo(item);
-        });
-
-        return userInfoPage;
+        val userInfoPage: IPage<UserInfo> = baseMapper!!.selectPage<Page<UserInfo>>(pageParam, queryWrapper)
+        userInfoPage.records.stream().forEach { item: UserInfo -> packUserInfo(item) }
+        return userInfoPage
     }
 
-    @Override
-    public void lock(Long userId, Integer status) {
-        if(status.intValue() == 0 || status == 1){
-            UserInfo userInfo = baseMapper.selectById(userId);
-            userInfo.setStatus(status);
-            baseMapper.updateById(userInfo);
+    override fun lock(userId: Long, status: Int) {
+        if (status == 0 || status == 1) {
+            val userInfo = baseMapper!!.selectById(userId) ?: return
+            userInfo.status = status
+            baseMapper!!.updateById(userInfo)
         }
     }
 
-    @Override
-    public Map<String, Object> show(Long userId) {
-        Map<String,Object> map = new HashMap<>();
-        UserInfo userInfo = this.packUserInfo(baseMapper.selectById(userId));
-        map.put("userInfo",userInfo);
-        List<Patient> patientList = patientService.findAllByUserId(userId);
-        map.put("patientList",patientList);
-        return map;
+    override fun show(userId: Long): Map<String, Any?> {
+        val map: MutableMap<String, Any?> = HashMap()
+        val userInfo = packUserInfo(baseMapper!!.selectById(userId)!!)
+        map["userInfo"] = userInfo
+        val patientList = patientService!!.findAllByUserId(userId)
+        map["patientList"] = patientList
+        return map
     }
 
-    @Override
-    public void approval(Long userId, Integer authStatus) {
-        if(authStatus.intValue() == 2 || authStatus == -1){
-            UserInfo userInfo = baseMapper.selectById(userId);
-            userInfo.setAuthStatus(authStatus);
-            baseMapper.updateById(userInfo);
+    override fun approval(userId: Long, authStatus: Int) {
+        if (authStatus == 2 || authStatus == -1) {
+            val userInfo = baseMapper!!.selectById(userId) ?: return
+            userInfo.authStatus = authStatus
+            baseMapper!!.updateById(userInfo)
         }
     }
 
-    private UserInfo packUserInfo(UserInfo userInfo) {
-
-        userInfo.getParam().put("authStatusString",AuthStatusEnum.getStatusNameByStatus(userInfo.getAuthStatus()));
-        String statusString =  userInfo.getStatus().intValue() == 0 ? "lock" :"normal";
-        userInfo.getParam().put("statusString",statusString);
-        return  userInfo;
+    private fun packUserInfo(userInfo: UserInfo): UserInfo {
+        userInfo.param["authStatusString"] = userInfo.authStatus?.let { getStatusNameByStatus(it) }!!
+        val statusString = if (userInfo.status === 0) "lock" else "normal"
+        userInfo.param["statusString"] = statusString
+        return userInfo
     }
-
-
 }
-

@@ -1,12 +1,27 @@
-package com.seclib.htbp.common.config;
+package com.seclib.htbp.common.config
 
-
-import com.baomidou.mybatisplus.extension.plugins.OptimisticLockerInterceptor;
-import com.baomidou.mybatisplus.extension.plugins.PaginationInterceptor;
-import org.mybatis.spring.annotation.MapperScan;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.transaction.annotation.EnableTransactionManagement;
+import com.baomidou.mybatisplus.extension.plugins.OptimisticLockerInterceptor
+import com.baomidou.mybatisplus.extension.plugins.PaginationInterceptor
+import org.springframework.transaction.annotation.EnableTransactionManagement
+import org.springframework.cache.annotation.EnableCaching
+import org.springframework.data.redis.connection.RedisConnectionFactory
+import org.springframework.data.redis.core.RedisTemplate
+import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.annotation.JsonAutoDetect
+import org.mybatis.spring.annotation.MapperScan
+import org.springframework.context.annotation.Bean
+import org.springframework.context.annotation.Configuration
+import org.springframework.data.redis.serializer.StringRedisSerializer
+import org.springframework.data.redis.serializer.RedisSerializer
+import org.springframework.data.redis.serializer.RedisSerializationContext
+import org.springframework.data.redis.cache.RedisCacheManager
+import springfox.documentation.swagger2.annotations.EnableSwagger2
+import springfox.documentation.spring.web.plugins.Docket
+import springfox.documentation.spi.DocumentationType
+import springfox.documentation.builders.PathSelectors
+import springfox.documentation.service.ApiInfo
+import springfox.documentation.builders.ApiInfoBuilder
 
 /**
  * MybatisPlus Configuration Class
@@ -14,22 +29,20 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @EnableTransactionManagement
 @Configuration
 @MapperScan("com.seclib.htbp.*.mapper")
-public class MybatisPlusConfig {
-
+open class MybatisPlusConfig {
     /**
      * 分页插件
      */
     @Bean
-    public PaginationInterceptor paginationInterceptor() {
-        PaginationInterceptor paginationInterceptor = new PaginationInterceptor();
-        return paginationInterceptor;
+    open fun paginationInterceptor(): PaginationInterceptor {
+        return PaginationInterceptor()
     }
 
     /**
      * 乐观锁配置
      */
     @Bean
-    public OptimisticLockerInterceptor optimisticLockerInterceptor() {
-        return new OptimisticLockerInterceptor();
+    open fun optimisticLockerInterceptor(): OptimisticLockerInterceptor {
+        return OptimisticLockerInterceptor()
     }
 }

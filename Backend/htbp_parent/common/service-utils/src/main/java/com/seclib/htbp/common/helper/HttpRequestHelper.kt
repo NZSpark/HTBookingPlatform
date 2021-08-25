@@ -1,26 +1,26 @@
-package com.seclib.htbp.common.helper;
+package com.seclib.htbp.common.helper
 
-import com.alibaba.fastjson.JSONObject;
-import com.seclib.htbp.common.utils.HttpUtil;
-import com.seclib.htbp.common.utils.MD5;
-import lombok.extern.slf4j.Slf4j;
-
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.TreeMap;
+import com.alibaba.fastjson.JSONObject
+import com.seclib.htbp.common.utils.HttpUtil
+import com.seclib.htbp.common.utils.MD5
+import lombok.extern.slf4j.Slf4j
+import org.reflections.Reflections.log
+import kotlin.jvm.JvmStatic
+import java.lang.Exception
+import java.lang.StringBuilder
+import java.util.*
 
 @Slf4j
-public class HttpRequestHelper {
-
-    public static void main(String[] args) {
-        Map<String, Object> paramMap = new HashMap<>();
-        paramMap.put("d", "4");
-        paramMap.put("b", "2");
-        paramMap.put("c", "3");
-        paramMap.put("a", "1");
-        paramMap.put("timestamp", getTimestamp());
-        log.info(getSign(paramMap, "111111111"));
+object HttpRequestHelper {
+    @JvmStatic
+    fun main(args: Array<String>) {
+        val paramMap: MutableMap<String, Any?> = HashMap()
+        paramMap["d"] = "4"
+        paramMap["b"] = "2"
+        paramMap["c"] = "3"
+        paramMap["a"] = "1"
+        paramMap["timestamp"] = timestamp
+        log?.info(getSign(paramMap, "111111111"))
     }
 
     /**
@@ -28,12 +28,12 @@ public class HttpRequestHelper {
      * @param paramMap
      * @return
      */
-    public static Map<String, Object> switchMap(Map<String, String[]> paramMap) {
-        Map<String, Object> resultMap = new HashMap<>();
-        for (Map.Entry<String, String[]> param : paramMap.entrySet()) {
-            resultMap.put(param.getKey(), param.getValue()[0]);
+    fun switchMap(paramMap: Map<String, Array<String>>): MutableMap<String, Any?> {
+        val resultMap: MutableMap<String, Any?> = HashMap()
+        for ((key, value) in paramMap) {
+            resultMap[key] = value[0]
         }
-        return resultMap;
+        return resultMap
     }
 
     /**
@@ -42,20 +42,20 @@ public class HttpRequestHelper {
      * @param signKey
      * @return
      */
-    public static String getSign(Map<String, Object> paramMap, String signKey) {
-        if(paramMap.containsKey("sign")) {
-            paramMap.remove("sign");
+    fun getSign(paramMap: MutableMap<String, Any?>, signKey: String?): String {
+        if (paramMap.containsKey("sign")) {
+            paramMap.remove("sign")
         }
-        TreeMap<String, Object> sorted = new TreeMap<>(paramMap);
-        StringBuilder str = new StringBuilder();
-        for (Map.Entry<String, Object> param : sorted.entrySet()) {
-            str.append(param.getValue()).append("|");
+        val sorted = TreeMap(paramMap)
+        val str = StringBuilder()
+        for ((_, value) in sorted) {
+            str.append(value).append("|")
         }
-        str.append(signKey);
-        log.info("加密前：" + str.toString());
-        String md5Str = MD5.encrypt(str.toString());
-        log.info("加密后：" + md5Str);
-        return md5Str;
+        str.append(signKey)
+        log?.info("加密前：$str")
+        val md5Str = MD5.encrypt(str.toString())
+        log?.info("加密后：$md5Str")
+        return md5Str
     }
 
     /**
@@ -64,22 +64,18 @@ public class HttpRequestHelper {
      * @param signKey
      * @return
      */
-    public static boolean isSignEquals(Map<String, Object> paramMap, String signKey) {
-        String sign = (String)paramMap.get("sign");
-        String md5Str = getSign(paramMap, signKey);
-        if(!sign.equals(md5Str)) {
-            return false;
-        }
-        return true;
+    fun isSignEquals(paramMap: MutableMap<String, Any?>, signKey: String?): Boolean {
+        val sign = paramMap["sign"] as String?
+        val md5Str = getSign(paramMap, signKey)
+        return sign == md5Str
     }
 
     /**
      * 获取时间戳
      * @return
      */
-    public static long getTimestamp() {
-        return new Date().getTime();
-    }
+    val timestamp: Long
+        get() = Date().time
 
     /**
      * 封装同步请求
@@ -87,23 +83,23 @@ public class HttpRequestHelper {
      * @param url
      * @return
      */
-    public static JSONObject sendRequest(Map<String, Object> paramMap, String url){
-        String result = "";
+    fun sendRequest(paramMap: Map<String, Any?>, url: String): JSONObject {
+        var result: String? = ""
         try {
             //封装post参数
-            StringBuilder postdata = new StringBuilder();
-            for (Map.Entry<String, Object> param : paramMap.entrySet()) {
-                postdata.append(param.getKey()).append("=")
-                        .append(param.getValue()).append("&");
+            val postdata = StringBuilder()
+            for ((key, value) in paramMap) {
+                postdata.append(key).append("=")
+                    .append(value).append("&")
             }
-            log.info(String.format("--> 发送请求：post data %1s", postdata));
-            byte[] reqData = postdata.toString().getBytes("utf-8");
-            byte[] respdata = HttpUtil.doPost(url,reqData);
-            result = new String(respdata);
-            log.info(String.format("--> 应答结果：result data %1s", result));
-        } catch (Exception ex) {
-            ex.printStackTrace();
+            log?.info(String.format("--> 发送请求：post data %1s", postdata))
+            val reqData = postdata.toString().toByteArray(charset("utf-8"))
+            val respdata = HttpUtil.doPost(url, reqData)
+            result = respdata?.let { String(it) }
+            log?.info(String.format("--> 应答结果：result data %1s", result))
+        } catch (ex: Exception) {
+            ex.printStackTrace()
         }
-        return JSONObject.parseObject(result);
+        return JSONObject.parseObject(result)
     }
 }

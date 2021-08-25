@@ -1,26 +1,27 @@
-package com.seclib.htbp.vo.user;
+package com.seclib.htbp.vo.user
 
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
+import io.swagger.annotations.ApiModel
+import io.swagger.annotations.ApiModelProperty
+import com.seclib.htbp.vo.hosp.DepartmentVo
+import java.math.BigDecimal
+import com.seclib.htbp.vo.msm.MsmVo
+import lombok.Data
 
 @Data
-@ApiModel(description="会员搜索对象")
-public class UserInfoQueryVo {
-
+@ApiModel(description = "会员搜索对象")
+class UserInfoQueryVo {
     @ApiModelProperty(value = "关键字")
-    private String keyword;
+    var keyword: String? = null
 
     @ApiModelProperty(value = "状态")
-    private Integer status;
+    var status: Int? = null
 
     @ApiModelProperty(value = "认证状态")
-    private Integer authStatus;
+    var authStatus: Int? = null
 
     @ApiModelProperty(value = "创建时间")
-    private String createTimeBegin;
+    var createTimeBegin: String? = null
 
     @ApiModelProperty(value = "创建时间")
-    private String createTimeEnd;
-
+    var createTimeEnd: String? = null
 }

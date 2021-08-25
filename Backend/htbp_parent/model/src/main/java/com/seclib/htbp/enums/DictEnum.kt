@@ -1,33 +1,10 @@
-package com.seclib.htbp.enums;
+package com.seclib.htbp.enums
 
-public enum DictEnum {
+import com.seclib.htbp.enums.AuthStatusEnum
+import com.seclib.htbp.enums.OrderStatusEnum
+import java.util.HashMap
 
+enum class DictEnum(var dictCode: String, var msg: String) {
+    HOSTYPE("Hostype", "医院等级"), CERTIFICATES_TYPE("CertificatesType", "证件类型");
 
-    HOSTYPE("Hostype", "医院等级"),
-    CERTIFICATES_TYPE("CertificatesType", "证件类型"),
-    ;
-
-    private String dictCode;
-    private String msg;
-
-    DictEnum(String dictCode, String msg) {
-        this.dictCode = dictCode;
-        this.msg = msg;
-    }
-
-    public String getDictCode() {
-        return dictCode;
-    }
-
-    public void setDictCode(String dictCode) {
-        this.dictCode = dictCode;
-    }
-
-    public String getMsg() {
-        return msg;
-    }
-
-    public void setMsg(String msg) {
-        this.msg = msg;
-    }
 }

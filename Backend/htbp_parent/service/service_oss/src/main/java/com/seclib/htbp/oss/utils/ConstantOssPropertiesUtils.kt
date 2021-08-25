@@ -1,34 +1,37 @@
-package com.seclib.htbp.oss.utils;
+package com.seclib.htbp.oss.utils
 
-import org.springframework.beans.factory.InitializingBean;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
+import org.springframework.beans.factory.InitializingBean
+import kotlin.Throws
+import java.lang.Exception
+import org.springframework.beans.factory.annotation.Value
+import org.springframework.stereotype.Component
 
 @Component
-public class ConstantOssPropertiesUtils implements InitializingBean {
+class ConstantOssPropertiesUtils : InitializingBean {
+    @Value("\${aliyun.oss.endpoint}")
+    private val endpoint: String? = null
 
-    @Value("${aliyun.oss.endpoint}")
-    private String endpoint;
+    @Value("\${aliyun.oss.accessKeyId}")
+    private val accessKeyId: String? = null
 
-    @Value("${aliyun.oss.accessKeyId}")
-    private String accessKeyId;
+    @Value("\${aliyun.oss.secret}")
+    private val secret: String? = null
 
-    @Value("${aliyun.oss.secret}")
-    private String secret;
+    @Value("\${aliyun.oss.bucket}")
+    private val bucket: String? = null
 
-    @Value("${aliyun.oss.bucket}")
-    private String bucket;
+    @Throws(Exception::class)
+    override fun afterPropertiesSet() {
+        ENDPOINT = endpoint ?: ""
+        ACCESS_KEY_ID = accessKeyId ?: ""
+        SECRET = secret ?: ""
+        BUCKET = bucket ?: ""
+    }
 
-    public static String ENDPOINT;
-    public static String ACCESS_KEY_ID;
-    public static String SECRECT;
-    public static String BUCKET;
-
-    @Override
-    public void afterPropertiesSet() throws Exception {
-        ENDPOINT = endpoint;
-        ACCESS_KEY_ID = accessKeyId;
-        SECRECT = secret;
-        BUCKET = bucket;
+    companion object {
+        var ENDPOINT = ""
+        var ACCESS_KEY_ID = ""
+        var SECRET = ""
+        var BUCKET = ""
     }
 }

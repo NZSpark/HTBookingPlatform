@@ -1,35 +1,26 @@
-package com.seclib.htbp.user.service;
+package com.seclib.htbp.user.service
 
-import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.baomidou.mybatisplus.extension.service.IService;
-import com.seclib.htbp.model.user.UserInfo;
-import com.seclib.htbp.vo.user.LoginVo;
-import com.seclib.htbp.vo.user.UserAuthVo;
-import com.seclib.htbp.vo.user.UserInfoQueryVo;
+import com.baomidou.mybatisplus.core.metadata.IPage
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page
+import com.baomidou.mybatisplus.extension.service.IService
+import com.seclib.htbp.vo.user.LoginVo
+import com.seclib.htbp.vo.user.UserAuthVo
+import com.seclib.htbp.model.user.UserInfo
+import com.seclib.htbp.vo.user.UserInfoQueryVo
 
-import java.util.Map;
-
-public interface UserInfoService extends IService<UserInfo> {
-
-    Map<String, Object> loginUser(LoginVo loginVo);
+interface UserInfoService : IService<UserInfo?> {
+    fun loginUser(loginVo: LoginVo): Map<String, Any>
 
     /**
      * 根据微信openid获取用户信息
      * @param openid
      * @return
      */
-    UserInfo getByOpenid(String openid);
-
-    UserInfo selectWxInfoOpenId(String openId);
-
-    void userAuth(Long userId, UserAuthVo userAuthVo);
-
-    IPage<UserInfo> selectPage(Page<UserInfo> pageParam, UserInfoQueryVo userInfoQueryVo);
-
-    void lock(Long userId, Integer status);
-
-    Map<String, Object> show(Long userId);
-
-    void approval(Long userId, Integer authStatus);
+    fun getByOpenid(openid: String?): UserInfo?
+    fun selectWxInfoOpenId(openId: String): UserInfo?
+    fun userAuth(userId: Long, userAuthVo: UserAuthVo)
+    fun selectPage(pageParam: Page<UserInfo>, userInfoQueryVo: UserInfoQueryVo): IPage<UserInfo>
+    fun lock(userId: Long, status: Int)
+    fun show(userId: Long): Map<String, Any?>
+    fun approval(userId: Long, authStatus: Int)
 }

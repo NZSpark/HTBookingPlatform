@@ -1,30 +1,32 @@
-package com.seclib.htbp.vo.acl;
+package com.seclib.htbp.vo.acl
 
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
-
-import java.io.Serializable;
+import io.swagger.annotations.ApiModel
+import io.swagger.annotations.ApiModelProperty
+import com.seclib.htbp.vo.hosp.DepartmentVo
+import java.math.BigDecimal
+import com.seclib.htbp.vo.msm.MsmVo
+import lombok.Data
+import java.io.Serializable
 
 /**
- * <p>
+ *
+ *
  * 用户查询实体
- * </p>
+ *
  *
  * @author qy
  * @since 2019-11-08
  */
 @Data
 @ApiModel(description = "用户查询实体")
-public class UserQueryVo implements Serializable {
-	
-	private static final long serialVersionUID = 1L;
-	
-	@ApiModelProperty(value = "用户名")
-	private String username;
+class UserQueryVo : Serializable {
+    @ApiModelProperty(value = "用户名")
+    var username: String? = null
 
-	@ApiModelProperty(value = "昵称")
-	private String nickName;
+    @ApiModelProperty(value = "昵称")
+    var nickName: String? = null
 
+    companion object {
+        private const val serialVersionUID = 1L
+    }
 }
-

@@ -6,7 +6,7 @@ import com.seclib.htbp.vo.hosp.DepartmentVo
 import org.springframework.data.domain.Page
 
 interface DepartmentService {
-    fun save(paramMap: Map<String?, Any?>?)
+    fun save(paramMap: MutableMap<String, Any?>?)
     fun findPageDepartment(page: Int?, limit: Int?, departmentQueryVo: DepartmentQueryVo?): Page<Department?>?
     fun remove(hoscode: String?, depcode: String?)
     fun findDeptTree(hoscode: String?): List<DepartmentVo?>?

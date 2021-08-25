@@ -122,8 +122,8 @@ class ApiController {
     fun saveDepartment(request: HttpServletRequest?): Result<*>? {
         val requstMap = request!!.parameterMap
         val paramMap = HttpRequestHelper.switchMap(requstMap)
-        val hospSign = paramMap!!["sign"] as String?
-        val hoscode = paramMap["hoscode"] as String?
+        val hospSign = paramMap["sign"]
+        val hoscode = paramMap["hoscode"].toString()
         val signKey = hospitalSetService!!.getSignKey(hoscode)
         val signKeyMD5 = HttpRequestHelper.getSign(paramMap, signKey)
         if (hospSign != signKeyMD5) {
@@ -155,8 +155,8 @@ class ApiController {
         var logoData = paramMap!!["logoData"] as String?
         logoData = logoData!!.replace(" ", "+")
         paramMap["logoData"] = logoData
-        val hospSign = paramMap["sign"] as String?
-        val hoscode = paramMap["hoscode"] as String?
+        val hospSign = paramMap["sign"].toString()
+        val hoscode = paramMap["hoscode"].toString()
         val signKey = hospitalSetService!!.getSignKey(hoscode)
         val signKeyMD5 = HttpRequestHelper.getSign(paramMap, signKey)
         if (hospSign != signKeyMD5) {

@@ -166,19 +166,19 @@ open class ScheduleServiceImpl : ScheduleService {
 
         //退号截止天数（如：就诊前一天为-1，当天为0）
         val quitDay = bookingRule.quitDay
-        val quitTime = getDateTime(DateTime(schedule.workDate).plusDays(quitDay).toDate(), bookingRule.quitTime)
+        val quitTime = getDateTime(DateTime(schedule.workDate).plusDays(quitDay!!).toDate(), bookingRule.quitTime!!)
         scheduleOrderVo.quitTime = quitTime.toDate()
 
         //预约开始时间
-        val startTime = getDateTime(Date(), bookingRule.releaseTime)
+        val startTime = getDateTime(Date(), bookingRule.releaseTime!!)
         scheduleOrderVo.startTime = startTime.toDate()
 
         //预约截止时间
-        val endTime = getDateTime(DateTime().plusDays(bookingRule.cycle).toDate(), bookingRule.stopTime)
+        val endTime = getDateTime(DateTime().plusDays(bookingRule.cycle!!).toDate(), bookingRule.stopTime!!)
         scheduleOrderVo.endTime = endTime.toDate()
 
         //当天停止挂号时间
-        val stopTime = getDateTime(Date(), bookingRule.stopTime)
+        val stopTime = getDateTime(Date(), bookingRule.stopTime!!)
         scheduleOrderVo.startTime = startTime.toDate()
         return scheduleOrderVo
     }
@@ -197,9 +197,9 @@ open class ScheduleServiceImpl : ScheduleService {
         val result: MutableMap<String?, Any?> = HashMap()
         val hospital = hospitalService!!.getByHoscode(hoscode)
             ?: throw HtbpException(ResultCodeEnum.DATA_ERROR)
-        val bookingRule = hospital.bookingRule
+        val bookingRule = hospital.bookingRule ?: return null
         val iPage = getListDate(page, limit, bookingRule)
-        val dateList: List<Date?> = iPage.getRecords() as List<Date?>
+        val dateList: List<Date?> = iPage.records as List<Date?>
         val criteria =
             Criteria.where("hoscode").`is`(hoscode).and("depcode").`is`(depcode).and("workDate").`in`(dateList)
         val agg = Aggregation.newAggregation(
@@ -241,7 +241,7 @@ open class ScheduleServiceImpl : ScheduleService {
             }
             //当天预约如果过了停号时间， 不能预约
             if (i == 0 && page == 1) {
-                val stopTime = getDateTime(Date(), bookingRule.stopTime)
+                val stopTime = getDateTime(Date(), bookingRule.stopTime!!)
                 if (stopTime.isBeforeNow) {
                     //停止预约
                     bookingScheduleRuleVo.status = -1
@@ -270,8 +270,8 @@ open class ScheduleServiceImpl : ScheduleService {
     }
 
     private fun getListDate(page: Int?, limit: Int?, bookingRule: BookingRule): IPage<*> {
-        val releaseTime = getDateTime(Date(), bookingRule.releaseTime)
-        var cycle = bookingRule.cycle
+        val releaseTime = getDateTime(Date(), bookingRule.releaseTime!!)
+        var cycle = bookingRule.cycle ?: 0
         if (releaseTime.isBeforeNow) {
             cycle += 1
         }
@@ -328,7 +328,7 @@ open class ScheduleServiceImpl : ScheduleService {
         return dayOfWeek
     }
 
-    override fun save(paramMap: Map<String?, Any?>?) {
+    override fun save(paramMap: MutableMap<String, Any?>?) {
         val paramString = JSONObject.toJSONString(paramMap)
         val schedule = JSONObject.parseObject(paramString, Schedule::class.java)
         val scheduleExist =

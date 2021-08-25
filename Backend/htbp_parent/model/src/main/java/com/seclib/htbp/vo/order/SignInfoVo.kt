@@ -1,32 +1,31 @@
-package com.seclib.htbp.vo.order;
+package com.seclib.htbp.vo.order
 
-import com.seclib.htbp.model.base.BaseMongoEntity;
-import com.baomidou.mybatisplus.annotation.TableName;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
-import org.springframework.data.mongodb.core.mapping.Document;
-
-import java.io.Serializable;
+import io.swagger.annotations.ApiModel
+import io.swagger.annotations.ApiModelProperty
+import com.seclib.htbp.vo.hosp.DepartmentVo
+import java.math.BigDecimal
+import com.seclib.htbp.vo.msm.MsmVo
+import lombok.Data
+import java.io.Serializable
 
 /**
- * <p>
+ *
+ *
  * HospitalSet
- * </p>
+ *
  *
  * @author qy
  */
 @Data
 @ApiModel(description = "签名信息")
-public class SignInfoVo  implements Serializable {
-	
-	private static final long serialVersionUID = 1L;
+class SignInfoVo : Serializable {
+    @ApiModelProperty(value = "api基础路径")
+    var apiUrl: String? = null
 
-	@ApiModelProperty(value = "api基础路径")
-	private String apiUrl;
+    @ApiModelProperty(value = "签名秘钥")
+    var signKey: String? = null
 
-	@ApiModelProperty(value = "签名秘钥")
-	private String signKey;
-
+    companion object {
+        private const val serialVersionUID = 1L
+    }
 }
-

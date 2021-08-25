@@ -1,60 +1,35 @@
-package com.seclib.htbp.enums;
+package com.seclib.htbp.enums
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import com.seclib.htbp.enums.AuthStatusEnum
+import com.seclib.htbp.enums.OrderStatusEnum
+import java.util.ArrayList
+import java.util.HashMap
 
-public enum OrderStatusEnum {
-    UNPAID(0,"预约成功，待支付"),
-    PAID(1,"已支付" ),
-    GET_NUMBER(2,"已取号" ),
-    CANCLE(-1,"取消预约"),
-    ;
+enum class OrderStatusEnum(var status: Int, var comment: String) {
+    UNPAID(0, "预约成功，待支付"), PAID(1, "已支付"), GET_NUMBER(2, "已取号"), CANCLE(-1, "取消预约");
 
-    private Integer status;
-    private String comment ;
-
-    public static String getStatusNameByStatus(Integer status) {
-        OrderStatusEnum arrObj[] = OrderStatusEnum.values();
-        for (OrderStatusEnum obj : arrObj) {
-            if (status.intValue() == obj.getStatus().intValue()) {
-                return obj.getComment();
+    companion object {
+        fun getStatusNameByStatus(status: Int): String {
+            val arrObj = values()
+            for (obj in arrObj) {
+                if (status == obj.status) {
+                    return obj.comment
+                }
             }
+            return ""
         }
-        return "";
-    }
 
-    public static List<Map<String,Object>> getStatusList() {
-        List<Map<String,Object>> list = new ArrayList<>();
-        OrderStatusEnum arrObj[] = OrderStatusEnum.values();
-        for (OrderStatusEnum obj : arrObj) {
-            Map<String,Object> map = new HashMap<>();
-            map.put("status", obj.getStatus());
-            map.put("comment", obj.getComment());
-            list.add(map);
-        }
-        return list;
-    }
-
-    OrderStatusEnum(Integer status, String comment ){
-        this.comment=comment;
-        this.status = status;
-    }
-
-    public String getComment() {
-        return comment;
-    }
-
-    public void setComment(String comment) {
-        this.comment = comment;
-    }
-
-    public Integer getStatus() {
-        return status;
-    }
-
-    public void setStatus(Integer status) {
-        this.status = status;
+        val statusList: List<Map<String, Any>>
+            get() {
+                val list: MutableList<Map<String, Any>> = ArrayList()
+                val arrObj = values()
+                for (obj in arrObj) {
+                    val map: MutableMap<String, Any> = HashMap()
+                    map["status"] = obj.status
+                    map["comment"] = obj.comment
+                    list.add(map)
+                }
+                return list
+            }
     }
 }

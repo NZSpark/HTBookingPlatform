@@ -1,27 +1,24 @@
-package com.seclib.htbp.vo.order;
+package com.seclib.htbp.vo.order
 
-import com.seclib.htbp.vo.msm.MsmVo;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
-
-import java.util.Date;
+import io.swagger.annotations.ApiModel
+import io.swagger.annotations.ApiModelProperty
+import com.seclib.htbp.vo.hosp.DepartmentVo
+import java.math.BigDecimal
+import com.seclib.htbp.vo.msm.MsmVo
+import lombok.Data
 
 @Data
 @ApiModel(description = "OrderMqVo")
-public class OrderMqVo {
+class OrderMqVo {
+    @ApiModelProperty(value = "可预约数")
+    var reservedNumber: Int? = null
 
-	@ApiModelProperty(value = "可预约数")
-	private Integer reservedNumber;
+    @ApiModelProperty(value = "剩余预约数")
+    var availableNumber: Int? = null
 
-	@ApiModelProperty(value = "剩余预约数")
-	private Integer availableNumber;
+    @ApiModelProperty(value = "排班id")
+    var scheduleId: String? = null
 
-	@ApiModelProperty(value = "排班id")
-	private String scheduleId;
-
-	@ApiModelProperty(value = "短信实体")
-	private MsmVo msmVo;
-
+    @ApiModelProperty(value = "短信实体")
+    var msmVo: MsmVo? = null
 }
-

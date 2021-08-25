@@ -1,21 +1,18 @@
-package com.seclib.htbp.common.handler;
+package com.seclib.htbp.common.handler
 
-import com.baomidou.mybatisplus.core.handlers.MetaObjectHandler;
-import org.apache.ibatis.reflection.MetaObject;
-import org.springframework.stereotype.Component;
-
-import java.util.Date;
+import com.baomidou.mybatisplus.core.handlers.MetaObjectHandler
+import org.apache.ibatis.reflection.MetaObject
+import org.springframework.stereotype.Component
+import java.util.*
 
 @Component
-public class CommonMetaObjectHandler implements MetaObjectHandler {
-
-    @Override
-    public void insertFill(MetaObject metaObject) {
-        this.setFieldValByName("createTime", new Date(), metaObject);
-        this.setFieldValByName("updateTime", new Date(), metaObject);
+class CommonMetaObjectHandler : MetaObjectHandler {
+    override fun insertFill(metaObject: MetaObject) {
+        this.setFieldValByName("createTime", Date(), metaObject)
+        this.setFieldValByName("updateTime", Date(), metaObject)
     }
-    @Override
-    public void updateFill(MetaObject metaObject) {
-        this.setFieldValByName("updateTime", new Date(), metaObject);
+
+    override fun updateFill(metaObject: MetaObject) {
+        this.setFieldValByName("updateTime", Date(), metaObject)
     }
 }

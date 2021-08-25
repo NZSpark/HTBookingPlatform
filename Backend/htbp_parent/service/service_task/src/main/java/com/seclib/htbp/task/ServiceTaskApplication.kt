@@ -1,16 +1,20 @@
-package com.seclib.htbp.task;
+package com.seclib.htbp.task
 
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
-import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
-import org.springframework.context.annotation.ComponentScan;
+import org.springframework.boot.autoconfigure.SpringBootApplication
+import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration
+import org.springframework.context.annotation.ComponentScan
+import kotlin.jvm.JvmStatic
+import org.springframework.boot.SpringApplication
+import org.springframework.cloud.client.discovery.EnableDiscoveryClient
 
-@SpringBootApplication(exclude = DataSourceAutoConfiguration.class)//取消数据源自动配置
+@SpringBootApplication(exclude = [DataSourceAutoConfiguration::class]) //取消数据源自动配置
 @EnableDiscoveryClient
-@ComponentScan(basePackages = {"com.seclib.htbp"})
-public class ServiceTaskApplication {
-    public static void main(String[] args) {
-        SpringApplication.run(ServiceTaskApplication.class, args);
+@ComponentScan(basePackages = ["com.seclib.htbp"])
+open class  ServiceTaskApplication {
+    companion object {
+        @JvmStatic
+        fun main(args: Array<String>) {
+            SpringApplication.run(ServiceTaskApplication::class.java, *args)
+        }
     }
 }

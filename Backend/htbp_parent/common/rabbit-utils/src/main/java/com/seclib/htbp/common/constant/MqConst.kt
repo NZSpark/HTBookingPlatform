@@ -1,26 +1,26 @@
-package com.seclib.htbp.common.constant;
+package com.seclib.htbp.common.constant
 
-public class MqConst {
+object MqConst {
     /**
      * 预约下单
      */
-    public static final String EXCHANGE_DIRECT_ORDER
-            = "exchange.direct.order";
-    public static final String ROUTING_ORDER = "order";
+    const val EXCHANGE_DIRECT_ORDER = "exchange.direct.order"
+    const val ROUTING_ORDER = "order"
+
     //队列
-    public static final String QUEUE_ORDER  = "queue.order";
+    const val QUEUE_ORDER = "queue.order"
+
     /**
      * 短信
      */
-    public static final String EXCHANGE_DIRECT_MSM = "exchange.direct.msm";
-    public static final String ROUTING_MSM_ITEM = "msm.item";
+    const val EXCHANGE_DIRECT_MSM = "exchange.direct.msm"
+    const val ROUTING_MSM_ITEM = "msm.item"
+
     //队列
-    public static final String QUEUE_MSM_ITEM  = "queue.msm.item";
+    const val QUEUE_MSM_ITEM = "queue.msm.item"
+    const val EXCHANGE_DIRECT_TASK = "exchange.direct.task"
+    const val ROUTING_TASK_8 = "task.8"
 
-
-    public static final String EXCHANGE_DIRECT_TASK = "exchange.direct.task";
-    public static final String ROUTING_TASK_8 = "task.8";
     //队列
-    public static final String QUEUE_TASK_8 = "queue.task.8";
-
+    const val QUEUE_TASK_8 = "queue.task.8"
 }

@@ -1,33 +1,35 @@
-package com.seclib.htbp.vo.cmn;
+package com.seclib.htbp.vo.cmn
 
-import com.alibaba.excel.annotation.ExcelProperty;
-import com.alibaba.excel.metadata.BaseRowModel;
-import lombok.Data;
+import com.alibaba.excel.annotation.ExcelProperty
+import io.swagger.annotations.ApiModel
+import io.swagger.annotations.ApiModelProperty
+import com.seclib.htbp.vo.hosp.DepartmentVo
+import java.math.BigDecimal
+import com.seclib.htbp.vo.msm.MsmVo
+import lombok.Data
 
 /**
- * <p>
+ *
+ *
  * Dict
- * </p>
+ *
  *
  * @author qy
  */
 @Data
-public class DictEeVo {
+class DictEeVo {
+    @ExcelProperty(value = ["id"], index = 0)
+    var id: Long? = null
 
-	@ExcelProperty(value = "id" ,index = 0)
-	private Long id;
+    @ExcelProperty(value = ["上级id"], index = 1)
+    var parentId: Long? = null
 
-	@ExcelProperty(value = "上级id" ,index = 1)
-	private Long parentId;
+    @ExcelProperty(value = ["名称"], index = 2)
+    var name: String? = null
 
-	@ExcelProperty(value = "名称" ,index = 2)
-	private String name;
+    @ExcelProperty(value = ["值"], index = 3)
+    var value: String? = null
 
-	@ExcelProperty(value = "值" ,index = 3)
-	private String value;
-
-	@ExcelProperty(value = "编码" ,index = 4)
-	private String dictCode;
-
+    @ExcelProperty(value = ["编码"], index = 4)
+    var dictCode: String? = null
 }
-

@@ -1,41 +1,41 @@
-package com.seclib.htbp.user.api;
+package com.seclib.htbp.user.api
 
-import com.seclib.htbp.common.result.Result;
-import com.seclib.htbp.common.utils.AuthContextHolder;
-import com.seclib.htbp.model.user.UserInfo;
-import com.seclib.htbp.user.service.UserInfoService;
-import com.seclib.htbp.vo.user.LoginVo;
-import com.seclib.htbp.vo.user.UserAuthVo;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
-
-import javax.servlet.http.HttpServletRequest;
-import java.util.Map;
+import com.seclib.htbp.common.result.Result.Companion.ok
+import com.seclib.htbp.common.utils.AuthContextHolder.getUserId
+import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.beans.factory.annotation.Autowired
+import com.seclib.htbp.user.service.UserInfoService
+import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.RestController
+import javax.servlet.http.HttpServletRequest
+import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.RequestBody
+import com.seclib.htbp.vo.user.LoginVo
+import com.seclib.htbp.vo.user.UserAuthVo
+import com.seclib.htbp.common.result.Result
 
 @RestController
 @RequestMapping("/api/user")
-public class UserInfoApiController {
-
+class UserInfoApiController {
     @Autowired
-    private UserInfoService userInfoService;
-
+    private val userInfoService: UserInfoService? = null
     @PostMapping("login")
-    public Result login(@RequestBody LoginVo loginVo){
-        Map<String,Object> info = userInfoService.loginUser(loginVo);
-        return Result.ok(info);
+    fun login(@RequestBody loginVo: LoginVo): Result<*> {
+        val info = userInfoService!!.loginUser(loginVo)
+        return ok(info)
     }
 
     //user authentication
     @PostMapping("auth/userAuth")
-    public Result userAuth(@RequestBody UserAuthVo userAuthVo, HttpServletRequest request) {
-        userInfoService.userAuth(AuthContextHolder.getUserId(request), userAuthVo);
-        return Result.ok();
+    fun userAuth(@RequestBody userAuthVo: UserAuthVo, request: HttpServletRequest?): Result<*> {
+        getUserId(request!!)?.let { userInfoService!!.userAuth(it, userAuthVo) }
+        return ok<Any>()
     }
 
     @GetMapping("auth/getUserInfo")
-    public Result getUserInfo(HttpServletRequest request){
-        Long userId = AuthContextHolder.getUserId(request);
-        UserInfo userInfo = userInfoService.getById(userId);
-        return Result.ok(userInfo);
+    fun getUserInfo(request: HttpServletRequest?): Result<*> {
+        val userId = getUserId(request!!)
+        val userInfo = userInfoService!!.getById(userId)
+        return ok(userInfo)
     }
 }

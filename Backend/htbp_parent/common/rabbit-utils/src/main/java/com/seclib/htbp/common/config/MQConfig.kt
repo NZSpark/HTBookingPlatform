@@ -1,14 +1,14 @@
-package com.seclib.htbp.common.config;
+package com.seclib.htbp.common.config
 
-import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter;
-import org.springframework.amqp.support.converter.MessageConverter;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
+import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter
+import org.springframework.amqp.support.converter.MessageConverter
+import org.springframework.context.annotation.Bean
+import org.springframework.context.annotation.Configuration
 
 @Configuration
-public class MQConfig {
+open class MQConfig {
     @Bean
-    public MessageConverter messageConverter(){
-        return new Jackson2JsonMessageConverter();
+    open fun messageConverter(): MessageConverter {
+        return Jackson2JsonMessageConverter()
     }
 }
