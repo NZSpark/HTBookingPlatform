@@ -1,0 +1,115 @@
+
+Java to Kotlin Steps:
+1. right click file -> Convert Java to Kotlin
+2. remove all import related to set/get
+3. add "open" to all serviceImpl classes!
+4. modify "object" to  "companion object"
+5. add dependency for WebApi/Controller (Get/Post Mapping annotation)
+<dependency>
+	<groupId>com.fasterxml.jackson.module</groupId>
+	<artifactId>jackson-module-kotlin</artifactId>
+</dependency> 
+5. add "open" to all @Configuration classes
+6. add "open" to all @Bean classes
+7. add dependency for lombok
+        <dependency>
+            <groupId>org.jetbrains.kotlin</groupId>
+            <artifactId>kotlin-maven-lombok</artifactId>
+            <version>${kotlin.version}</version>
+        </dependency>
+
+
+
+
+Bugs fixed:
+1. org.springframework.beans.factory.parsing.BeanDefinitionParsingException: Configuration problem: @Configuration class 'CorsConfig' may not be final. Remove the final modifier to continue.
+-> class CorsConfig -> open class CorsConfig
+2. org.springframework.beans.factory.parsing.BeanDefinitionParsingException: Configuration problem: @Bean method 'corsFilter' must not be private or final; change the method's modifiers to continue
+-> fun corsFilter(): CorsWebFilter -> open fun corsFilter(): CorsWebFilter
+3. org.springframework.beans.factory.parsing.BeanDefinitionParsingException: Configuration problem: @Configuration class 'ServerGatewayApplication' may not be final. Remove the final modifier to continue.
+-> object ServerGatewayApplication {  
+-> public open class ServerGatewayApplication {
+    companion object {
+4. Need Long but int found
+-> intVariable.toLong()
+5. Need List<Date> but MutibleList found
+-> as List<Date>
+6. org.springframework.beans.factory.UnsatisfiedDependencyException: Error creating bean with name 'hospitalSetController': Unsatisfied dependency expressed through field 'hospitalSetService'; 
+Caused by: java.lang.IllegalArgumentException: Cannot subclass final class com.seclib.htbp.hosp.service.impl.HospitalSetServiceImpl
+-> class HospitalServiceImpl  -> open class HospitalServiceImpl 
+7. Kotlin: Only safe (?.) or non-null asserted (!!.) calls are allowed on a nullable receiver of type HospitalSet?
+-> scheduleList.stream().forEach { item: Schedule -> packSchedule(item)}  -> 
+	scheduleList?.stream()?.forEach { item: Schedule? ->
+										if (item != null) {
+											packSchedule(item)
+										}
+									}
+->  return hospitalSet.signKey -> return hospitalSet?.signKey
+
+
+8. org.springframework.beans.factory.UnsatisfiedDependencyException: Error creating bean with name 'documentationPluginsBootstrapper' 
+Caused by: org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'requestMappingHandlerMapping' defined in class path resource [org/springframework/boot/autoconfigure/web/servlet/WebMvcAutoConfiguration$EnableWebMvcConfiguration.class]: 
+Caused by: java.lang.ClassNotFoundException: kotlin.reflect.jvm.ReflectJvmMapping
+-> add dependency       <dependency>
+							<groupId>com.fasterxml.jackson.module</groupId>
+							<artifactId>jackson-module-kotlin</artifactId>
+						</dependency> 
+	
+9. Kotlin: Class 'DictListener' is not abstract and does not implement abstract base class member public abstract fun invoke(p0: DictEeVo?, p1: AnalysisContext!): Unit defined in com.alibaba.excel.event.AnalysisEventListener
+-> override fun invoke(dictEeVo: DictEeVo?, analysisContext: AnalysisContext?) {
+
+10. Kotlin: Class 'DictServiceImpl' is not abstract and does not implement abstract member public abstract fun findChildData(id: Long?): List<Dict?>? defined in com.seclib.htbp.cmn.service.DictService	
+-> add "?" at all variables in function declaims
+
+11. Kotlin: Type mismatch: inferred type is DictMapper? but DictMapper was expected
+-> DictListener(baseMapper!!)
+
+
+12.orderCountVoList.stream().map(OrderCountVo::GetReserveDate).collect(Collectors.toList())
+-> orderCountVoList.stream().map{ obj: OrderCountVo? -> obj!!.reserveDate}.collect(Collectors.toList())
+
+13. Type mismatch. Required: ((OrderInfo?) → Unit)!Found:(OrderInfo) → Unit
+-> pages?.records?.stream()?.forEach { item: OrderInfo? -> packOrderInfo(item!!) }
+
+14. java.lang.ClassCastException: java.lang.String cannot be cast to java.lang.Void ***
+ redisTemplate.opsForValue().set( orderId.toString() as Nothing, map as Nothing, 120, TimeUnit.MINUTES)
+->  redisTemplate.opsForValue().set( orderId.toString(), map , 120, TimeUnit.MINUTES) ->  (redisTemplate as RedisTemplate<String,Any>).opsForValue().set( orderId.toString(), map , 120, TimeUnit.MINUTES)
+
+15. Kotlin: 'name' in 'Enum' is final and cannot be overridden + 'name' hides member of supertype 'Enum' and needs 'override' modifier , dead lock.
+-> Refactor.Rename 'name' to 'itemName' since 'name' symbol is reserved. use Refactor to keep project same.
+
+16. Kotlin: Cannot access 'message': it is private in 'ResultCodeEnum'
+-> remove private
+
+17. Kotlin: Unresolved reference: setMessage
+18. Kotlin: Type mismatch: inferred type is Any! but CapturedType(*)! was expected
+-> val jackson2JsonRedisSerializer: Jackson2JsonRedisSerializer<*> = Jackson2JsonRedisSerializer(
+-> val jackson2JsonRedisSerializer: Jackson2JsonRedisSerializer<Any> = Jackson2JsonRedisSerializer(
+
+19. Kotlin: Unresolved reference: ushr
+-> chars[k++] = hexChars[b ushr 4 and 0xf] -> chars[k++] = hexChars[b.toInt().ushr(4) and 0xf]
+-> chars[k++] = hexChars[b and 0xf] -> chars[k++] = hexChars[b.toInt() and 0xf]
+
+20. Not enough information to infer type variable T
+-> fail().message("SMS send error.") ->  fail("SMS send error.")
+
+21. Kotlin: Type mismatch: inferred type is Any! but String? was expected
+-> val param: MutableMap<String?, Any?> = HashMap<Any?, Any?>() ->  val param = mutableMapOf<String,Any?>()
+
+22. Kotlin: Unresolved reference: setUserId
+modify all "private val " to "var " in model classes
+
+23.Kotlin: Type mismatch: inferred type is (Patient) -> Unit but ((Patient?) -> Unit)! was expected
+
+24. Kotlin: Unresolved reference: Entry
+-> Entry -> Map.Entry
+
+25. Type mismatch. Required:TypeVariable(V) Found:String? , Type mismatch: inferred type is String? but TypeVariable(V) was expected
+-> .toString()
+
+26. Kotlin: Type mismatch: inferred type is HttpServletRequest? but HttpServletRequest was expected
+
+27. Kotlin: Operator call corresponds to a dot-qualified call 'scheduleOrderVo.availableNumber.compareTo(0)' which is not allowed on a nullable receiver 'scheduleOrderVo.availableNumber'.
+
+
+->  return Result.ok<Any>()

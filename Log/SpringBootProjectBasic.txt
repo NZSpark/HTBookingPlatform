@@ -1,0 +1,55 @@
+Spring Boot Project:
+
+1. Create a blank Maven project;
+
+2. Add dependency in pom.xml
+    </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+            <version>2.2.1.RELEASE</version>
+        </dependency>
+    </dependencies>
+
+3. Add start class in src/main/jave
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+
+@SpringBootApplication
+@EnableAutoConfiguration
+public class ServiceTestApplication {
+    public static void main(String[] args) {
+        SpringApplication.run(ServiceTestApplication.class, args);
+    }
+}
+
+4. Add application.properties in src/resources
+server.port=8201
+spring.application.name=service-test
+spring.profiles.active=dev
+#logging.level.root=DEBUG
+
+5. Run Debug on start class.
+
+--------------------------------------------------------------------
+
+6. Add web pages
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+@RestController
+@RequestMapping("/")
+public class HelloWorld {
+    @GetMapping("index.html")
+    public String EchoString(){
+        String echoString = "Hello World!";
+        return echoString;
+    }
+}
+
+7. Access web pages.
+http://localhost:8201/index.html
+
+
