@@ -1,0 +1,7 @@
+{
+"registry-mirrors":["https://docker.mirrors.ustc.edu.cn"],
+"insecure-registries":["192.168.1.10:5000"],
+"features":{"buildkit":true},
+"experimental":false,
+"builder":{"gc":{"defaultKeepStorage":"20GB","enabled":true}}
+}
