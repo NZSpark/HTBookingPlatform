@@ -38,14 +38,14 @@ import org.springframework.stereotype.Component
 class SmsReceiver {
     @Autowired
     private val smsService: SmsService? = null
-    @RabbitListener(
-        bindings = [QueueBinding(
-            value = Queue(value = MqConst.QUEUE_MSM_ITEM, durable = "true"),
-            exchange = Exchange(value = MqConst.EXCHANGE_DIRECT_MSM),
-            key = [MqConst.ROUTING_MSM_ITEM]
-        )]
-    )
-    fun send(msmVo: MsmVo, message: Message?, channel: Channel?) {
-        smsService!!.send(msmVo)
-    }
+//    @RabbitListener(
+//        bindings = [QueueBinding(
+//            value = Queue(value = MqConst.QUEUE_MSM_ITEM, durable = "true"),
+//            exchange = Exchange(value = MqConst.EXCHANGE_DIRECT_MSM),
+//            key = [MqConst.ROUTING_MSM_ITEM]
+//        )]
+//    )
+//    fun send(msmVo: MsmVo, message: Message?, channel: Channel?) {
+//        smsService!!.send(msmVo)
+//    }
 }

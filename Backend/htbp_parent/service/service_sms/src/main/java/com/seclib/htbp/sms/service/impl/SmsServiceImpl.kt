@@ -22,7 +22,9 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.amqp.rabbit.annotation.RabbitListener
 import org.springframework.amqp.rabbit.annotation.QueueBinding
 import com.seclib.htbp.common.constant.MqConst
+import com.seclib.htbp.common.service.RabbitService
 import com.seclib.htbp.sms.utils.ConstantPropertiesUtils
+import org.joda.time.DateTime
 import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.data.redis.core.RedisTemplate
@@ -38,10 +40,28 @@ import org.springframework.util.StringUtils
 
 @Service
 open class SmsServiceImpl : SmsService {
+
+    @Autowired
+    val rabbitService:RabbitService? = null
+
     override fun send(phone: String?, code: String?): Boolean {
         if (StringUtils.isEmpty(phone)) {
             return false
         }
+
+        //--------mobile phone--------<<
+        val msmVo = MsmVo()
+        msmVo.phone = phone
+        msmVo.templateCode = code
+        val param =  mutableMapOf<String, Any?>(
+            Pair<String,Any?>("title", "title"),
+            Pair<String,Any?>("name", "name")
+        )
+        msmVo.param = param
+        return rabbitService!!.sendMessage(MqConst.EXCHANGE_DIRECT_MSM, MqConst.ROUTING_MSM_ITEM, msmVo)
+        //----------------------------->>
+
+        /*
         val profile = DefaultProfile.getProfile(
             ConstantPropertiesUtils.Companion.REGION_ID,
             ConstantPropertiesUtils.Companion.ACCESS_KEY_ID,
@@ -77,9 +97,17 @@ open class SmsServiceImpl : SmsService {
 
 //        return false;
         return true //for test.
+
+         */
     }
 
     override fun send(msmVo: MsmVo): Boolean {
+        //--------mobile phone--------<<
+        return if (!StringUtils.isEmpty(msmVo.phone)) {
+            rabbitService!!.sendMessage(MqConst.EXCHANGE_DIRECT_MSM, MqConst.ROUTING_MSM_ITEM, msmVo)
+        } else false
+        //----------------------------->>
+
         return if (!StringUtils.isEmpty(msmVo.phone)) {
             this.send(msmVo.phone, msmVo.param)
         } else false

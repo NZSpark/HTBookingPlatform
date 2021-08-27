@@ -17,5 +17,5 @@ class MsmVo {
     var templateCode: String? = null
 
     @ApiModelProperty(value = "短信模板参数")
-    var param: Map<String, Any?>? = null
+    var param: MutableMap<String, Any?>? = null
 }
