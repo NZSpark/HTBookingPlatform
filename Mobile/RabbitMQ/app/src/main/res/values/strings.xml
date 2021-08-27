@@ -1,0 +1,13 @@
+<resources>
+    <string name="app_name">RabbitMQ</string>
+
+    <string name="user_name">guest</string>
+    <string name="password">guest</string>
+    <string name="virtual_host">/</string>
+    <string name="host">192.168.1.10</string>
+    <string name="port">5672</string>
+
+    <string name="exchange_name">exchange.direct.msm</string>
+    <string name="routing_key">msm.item</string>
+    <string name="queue_name">queue.msm.item</string>
+</resources>
