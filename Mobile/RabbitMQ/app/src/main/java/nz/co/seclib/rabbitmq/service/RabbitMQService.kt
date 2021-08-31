@@ -30,11 +30,11 @@ class RabbitMQService(private val context: Context) {
 
     fun setupConnectionFactory() {
 
-        factory.setUsername(context.getString(R.string.user_name)) //"guest");
-        factory.setPassword(context.getString(R.string.password)) //"guest");
-        factory.setVirtualHost(context.getString(R.string.virtual_host)) //"/");
-        factory.setHost(context.getString(R.string.host)) //"192.168.1.10");
-        factory.setPort(context.getString(R.string.port).toInt()) //5672);
+        factory.username = context.getString(R.string.user_name) //"guest");
+        factory.password = context.getString(R.string.password) //"guest");
+        factory.virtualHost = context.getString(R.string.virtual_host) //"/");
+        factory.host = context.getString(R.string.host) //"192.168.1.10");
+        factory.port = context.getString(R.string.port).toInt() //5672);
 
         exchangeName = context.getString(R.string.exchange_name) // "exchange.direct.msm";
         routingKey = context.getString(R.string.routing_key) //"msm.item";
@@ -77,9 +77,9 @@ class RabbitMQService(private val context: Context) {
                                                         envelope: Envelope,
                                                         properties: AMQP.BasicProperties,
                                                         body: ByteArray) {
-                                val routingKey = envelope.getRoutingKey()
-                                val contentType = properties.getContentType()
-                                val deliveryTag = envelope.getDeliveryTag()
+                                val routingKey = envelope.routingKey
+                                val contentType = properties.contentType
+                                val deliveryTag = envelope.deliveryTag
                                 val message = String(body)
                                 smsService.SendMessage(message)
                                 Log.d("", "[r] $message")
