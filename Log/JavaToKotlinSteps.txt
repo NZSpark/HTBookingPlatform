@@ -110,3 +110,6 @@ modify all "private val " to "var " in model classes
 26. Kotlin: Type mismatch: inferred type is HttpServletRequest? but HttpServletRequest was expected
 
 27. Kotlin: Operator call corresponds to a dot-qualified call 'scheduleOrderVo.availableNumber.compareTo(0)' which is not allowed on a nullable receiver 'scheduleOrderVo.availableNumber'.
+
+
+->  return Result.ok<Any>()
