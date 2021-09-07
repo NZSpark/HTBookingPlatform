@@ -27,11 +27,6 @@
         </dependency>
         <dependency>
             <groupId>com.seclib.htbp</groupId>
-            <artifactId>common</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
-        </dependency>
-        <dependency>
-            <groupId>com.seclib.htbp</groupId>
             <artifactId>service-utils</artifactId>
             <version>0.0.1-SNAPSHOT</version>
         </dependency>
