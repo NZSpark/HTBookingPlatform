@@ -251,7 +251,12 @@ C:\Disk_D\Projects\HospitalTimeBooingPlatform\Frontend\htbp\htbp_hospital_manage
 129. com.mysql.jdbc.exceptions.jdbc4.MySQLNonTransientConnectionException: Public Key Retrieval is not allowed
 -> spring.datasource.url=jdbc:mysql://192.168.1.10:3306/yygh_cmn?serverTimezone=GMT%2B12&allowPublicKeyRetrieval=true&useSSL=false
 
-
+130. no main class <- mvn package
+-> remove build plugin from pom.xml
+	<plugin>
+		<groupId>org.springframework.boot</groupId>
+		<artifactId>spring-boot-maven-plugin</artifactId>
+	</plugin>
 
 
 
