@@ -70,4 +70,16 @@
             <version>1.5.30</version>
         </dependency>
     </dependencies>
+
+
+    <build>
+        <finalName>service-gateway</finalName>
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </build>
+
 </project>

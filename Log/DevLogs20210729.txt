@@ -110,13 +110,20 @@ npm install echarts
 https://raw.githubusercontent.com/apache/echarts/5.1.2/dist/echarts.min.js
 
 24.Maven lifecycle
+https://dlcdn.apache.org/maven/maven-3/3.8.2/binaries/apache-maven-3.8.2-bin.zip
 mvn clean package
 mvn clean site
 default setting.xml is at IntelliJ IDEA/plugins/maven/lib/maven3/conf
+Maven home path set in 
+C:\Program Files\JetBrains\IntelliJ IDEA Community Edition 2021.2\plugins\maven\lib\maven3\bin
 
-
-
-
+25. Jenkins
+https://get.jenkins.io/war-stable/2.303.1/jenkins.war
+"c:\Program Files\Java\jdk1.8.0_301\bin\java.exe" -jar jenkins.war --httpPort=28080
+Building in workspace C:\Users\Good\.jenkins\workspace\maven-test
+Maven home path set in Global tool configuration, no '"' quote mark for the path string.
+C:\Program Files\JetBrains\IntelliJ IDEA Community Edition 2021.2\plugins\maven\lib\maven3\bin
+JAVA_HOME -> c:\Program Files\Java\jdk1.8.0_301
 
 100. disable Aarsvc
 -> set Computer\HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\AarSvc\Start=4 to disable it.
@@ -275,4 +282,14 @@ C:\Disk_D\Projects\HospitalTimeBooingPlatform\Frontend\htbp\htbp_hospital_manage
             <version>1.5.30</version>
         </dependency>
 
-
+132. no main manifest attribute, in service_gateway-0.0.1-SNAPSHOT.jar
+-> add plugin in build scope in pom.xml
+    <build>
+        <finalName>service-gateway</finalName>
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </build>
