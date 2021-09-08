@@ -293,3 +293,9 @@ C:\Disk_D\Projects\HospitalTimeBooingPlatform\Frontend\htbp\htbp_hospital_manage
             </plugin>
         </plugins>
     </build>
+
+133. docker only expose internal IP address to register to Nacos.
+-> application.properties
+# nacos server address, if this service runs in docker, discovery.ip should be the IP address of host.
+spring.cloud.nacos.discovery.server-addr=192.168.1.10:8848
+spring.cloud.nacos.discovery.ip = 192.168.1.15
