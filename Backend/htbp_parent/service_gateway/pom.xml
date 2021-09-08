@@ -64,5 +64,10 @@
             <artifactId>kotlin-allopen</artifactId>
             <version>1.5.30-RC</version>
         </dependency>
+        <dependency>
+            <groupId>org.jetbrains.kotlin</groupId>
+            <artifactId>kotlin-reflect</artifactId>
+            <version>1.5.30</version>
+        </dependency>
     </dependencies>
 </project>
