@@ -267,4 +267,12 @@ C:\Disk_D\Projects\HospitalTimeBooingPlatform\Frontend\htbp\htbp_hospital_manage
 
 
 
+131. INFO org.springframework.core.KotlinDetector - Kotlin reflection implementation not found at runtime, related features won't be available.
+-> add dependency
+	<dependency>
+            <groupId>org.jetbrains.kotlin</groupId>
+            <artifactId>kotlin-reflect</artifactId>
+            <version>1.5.30</version>
+        </dependency>
+
 
