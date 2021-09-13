@@ -26,7 +26,7 @@ mysql -uyygh -ppw_yygh < /sql_files/initialize_data.sql
 6. Registry
 * docker run -d -p 5000:5000 --restart=always --name local-registry -v `pwd`/registry/local_images:/var/lib/registry registry:2
 
-7. Services
+7. Services (9 services images)
 cd Docker/JDKImage
 docker build -t jdkimage .
 
@@ -51,3 +51,5 @@ docker run -d -p 8207:8207 service-task
 docker run -d -p 8208:8208 service-statistics 
 docker run -d -p 8080:8080 service-gateway 
 
+8. websites 
+docker build --rm --pull -f "htbp/htbp_site/Dockerfile" -t "htbpsite:latest" "../Frontend/htbp/htbp_site"
