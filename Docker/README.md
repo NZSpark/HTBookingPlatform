@@ -15,7 +15,7 @@ mysql -uyygh -ppw_yygh < /sql_files/initialize_data.sql
 
 
 3. Mongodb
-* docker run -d -p 27017:27017 --name my_mongo -v `pwd`/mongo/db:/data/db mongo
+* docker run -d -p 27017:27017 --name yygh_mongo -v `pwd`/mongo/db:/data/db mongo
 
 4. Redis
 * docker run --name yygh-redis -p 6379:6379 -d redis
