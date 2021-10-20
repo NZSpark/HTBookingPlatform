@@ -1,0 +1,46 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: yygh-mysql
+spec:
+  ports:
+  - port: 3306
+  selector:
+    app: yygh-mysql
+  clusterIP: None
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: yygh-mysql
+spec:
+  selector:
+    matchLabels:
+      app: yygh-mysql
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: yygh-mysql
+    spec:
+      containers:
+      - image: mysql
+        name: mysql
+        env:
+          # Use secret in real usage
+        - name: MYSQL_ROOT_PASSWORD
+          value: pw_yygh
+        ports:
+        - containerPort: 3306
+          name: mysql
+        volumeMounts:
+        - name: mysql-persistent-storage
+          mountPath: /var/lib/mysql
+      volumes:
+      - name: mysql-persistent-storage
+        persistentVolumeClaim:
+          claimName: mysql-pvc
+
+
+#kubectl run -it --rm --image=mysql --restart=Never mysql-client -- mysql -h yygh-mysql -ppw_yygh

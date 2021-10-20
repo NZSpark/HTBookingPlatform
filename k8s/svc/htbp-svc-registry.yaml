@@ -1,0 +1,45 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: yygh-registry
+spec:
+  ports:
+  - port: 5000
+  selector:
+    app: yygh-registry
+  clusterIP: None
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: yygh-registry
+spec:
+  selector:
+    matchLabels:
+      app: yygh-registry
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: yygh-registry
+    spec:
+      containers:
+      - image: registry:2
+        name: registry
+        env:
+          # Use secret in real usage
+        - name: MODE
+          value: standalone
+        ports:
+        - containerPort: 5000
+          name: registry
+        volumeMounts:
+        - name: registry-persistent-storage
+          mountPath: /var/lib/registry
+      volumes:
+      - name: registry-persistent-storage
+        persistentVolumeClaim:
+          claimName: registry-pvc
+
+            
