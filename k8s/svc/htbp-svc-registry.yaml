@@ -5,6 +5,7 @@ metadata:
 spec:
   ports:
   - port: 5000
+    targetPort: 5000
   selector:
     app: yygh-registry
   clusterIP: None
@@ -25,10 +26,19 @@ spec:
         app: yygh-registry
     spec:
       containers:
-      - image: registry:2
+      - image: registry:2.6.2
         name: registry
         env:
-          # Use secret in real usage
+        - name: REGISTRY_AUTH
+          value: "htpasswd"
+        - name: REGISTRY_AUTH_HTPASSWD_REALM
+          value: "Registry Realm"
+        - name: REGISTRY_AUTH_HTPASSWD_PATH
+          value: "/auth/htpasswd"
+        - name: REGISTRY_HTTP_TLS_CERTIFICATE
+          value: "/certs/tls.crt"
+        - name: REGISTRY_HTTP_TLS_KEY
+          value: "/certs/tls.key"
         - name: MODE
           value: standalone
         ports:
@@ -37,9 +47,29 @@ spec:
         volumeMounts:
         - name: registry-persistent-storage
           mountPath: /var/lib/registry
+        - name: certs-vol
+          mountPath: "/certs"
+          readOnly: true
+        - name: auth-vol
+          mountPath: "/auth"
+          readOnly: true
       volumes:
       - name: registry-persistent-storage
         persistentVolumeClaim:
           claimName: registry-pvc
+      - name: certs-vol
+        secret:
+          secretName: certs-secret
+      - name: auth-vol
+        secret:
+          secretName: auth-secret
+        
 
-            
+#openssl req -x509 -newkey rsa:4096 -days 365 -nodes -sha256 -keyout /data/k8s/certs/tls.key -out /data/k8s/certs/tls.crt -subj "/CN=yygh-registry"
+#docker run --rm --entrypoint htpasswd registry:2.6.2 -Bbn yygh pw_yygh > /data/k8s/registry/auth/htpasswd
+#kubectl create secret generic auth-secret --from-file=/data/k8s/registry/auth/htpasswd
+#kubectl create secret tls certs-secret --cert=/data/k8s/registry/certs/tls.crt --key=/data/k8s/registry/certs/tls.key
+#kubectl create secret docker-registry regcred --docker-server=yygh-registry --docker-username=yygh --docker-password=pw_yygh --docker-email=admin@admin.com
+
+
+

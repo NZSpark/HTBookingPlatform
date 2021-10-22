@@ -1,0 +1,53 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: build-pod
+  namespace: default
+  labels:
+    app: build-pod
+spec:
+  containers:
+    - name: nginx
+      image: "nginx"
+      resources:
+        limits:
+          cpu: 1
+          memory: 2Gi
+        requests:
+          cpu: 1
+          memory: 2Gi
+      env:
+      - name: POD_IP
+        valueFrom:
+          fieldRef:
+            fieldPath: status.podIP
+      - name: DOCKER_HOST
+        value: tcp://localhost:2375
+    - name: dind
+      image: docker:18.05-dind
+      securityContext:
+        privileged: true
+      volumeMounts:
+        - name: dind-storage
+          mountPath: /var/lib/docker
+  volumes:
+    - name: dind-storage
+      emptyDir: {}
+
+#install docker client in pod
+#kubectl exec -it build-pod -- /bin/bash
+#apt-get update
+#apt-get install apt-transport-https ca-certificates curl gnupg lsb-release
+#curl -fsSL https://download.docker.com/linux/debian/gpg | sudo gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
+#echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/debian $(lsb_release -cs) stable" | tee /etc/apt/sources.list.d/docker.list > /dev/null
+#apt-get update
+#apt-get install docker-ce-cli
+#mkdir /data
+#kubectl cp /data/k8s/JDKImage build-pod:/data
+#kubectl cp /data/k8s/ServiceImage build-pod:/data
+#cd /data/JDKImage && docker build -t jdkimage .
+#cd /data/ServiceImage && docker build --build-arg service_file_name=service-gateway.jar --build-arg service_port=8080 -t yygh-registry:5000/service-gateway .
+#docker login yygh-registry:5000 -u yygh -p pw_yygh
+#mkdir -p /etc/docker/certs.d/yygh-registry:5000
+#kubectl cp /data/k8s/registry/certs/tls.crt build-pod:/etc/docker/certs.d/yygh-registry:5000/ca.crt -c dind
+#echo '{ "insecure-registries":["yygh-registry:5000"] }' > /etc/docker/daemon.json   <- to allow http, not https.
