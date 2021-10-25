@@ -5,7 +5,8 @@ import cookie from 'js-cookie'
 // 创建axios实例
 const service = axios.create({
     // baseURL: 'http://192.168.1.10:9001',  //for nginx
-    baseURL: 'http://192.168.1.10:8080',     //for spring-cloud-gateway
+    //baseURL: 'http://192.168.1.10:8080',     //for spring-cloud-gateway
+    baseURL: 'http://service-gateway:8080', 
     timeout: 15000 // 请求超时时间
 })
 // http request 拦截器
