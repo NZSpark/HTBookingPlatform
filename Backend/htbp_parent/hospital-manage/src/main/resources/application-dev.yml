@@ -14,7 +14,8 @@ spring:
     #配置模板路径，默认是templates，可以不用配置
     prefix: classpath:/templates/
   redis:
-    host: 192.168.1.10
+#    host: 192.168.1.10
+    host: htbp-redis
     port: 6379
     database: 0
     timeout: 1800000
@@ -28,7 +29,8 @@ spring:
   datasource:
     type: com.zaxxer.hikari.HikariDataSource
     driver-class-name: com.mysql.jdbc.Driver
-    url: jdbc:mysql://192.168.1.10:3306/yygh_manage?characterEncoding=utf-8&allowPublicKeyRetrieval=true&useSSL=false
+#    url: jdbc:mysql://192.168.1.10:3306/yygh_manage?characterEncoding=utf-8&allowPublicKeyRetrieval=true&useSSL=false
+    url: jdbc:mysql://htbp-mysql:3306/yygh_manage?characterEncoding=utf-8&allowPublicKeyRetrieval=true&useSSL=false
     username: yygh
     password: pw_yygh
     hikari:

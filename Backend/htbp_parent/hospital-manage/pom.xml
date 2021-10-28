@@ -5,9 +5,9 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.2.1.RELEASE</version>
+        <artifactId>htbp_parent</artifactId>
+        <groupId>com.seclib.htbp</groupId>
+        <version>0.0.1-SNAPSHOT</version>
     </parent>
 
     <groupId>com.seclib.htbp</groupId>
@@ -125,7 +125,7 @@
     </dependencies>
 
     <build>
-        <finalName>hospital-manage2020/6/16</finalName>
+        <finalName>hospital-manage</finalName>
         <plugins>
             <plugin>
                 <groupId>org.springframework.boot</groupId>
