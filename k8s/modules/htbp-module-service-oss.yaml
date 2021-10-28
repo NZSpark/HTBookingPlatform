@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name:  htbp-service-oss
+  namespace: default
+  labels:
+    app:  htbp-service-oss
+spec:
+  selector:
+    matchLabels:
+      app: htbp-service-oss
+  replicas: 1
+  strategy:
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app:  htbp-service-oss
+    spec:
+      # initContainers:
+        # Init containers are exactly like regular containers, except:
+          # - Init containers always run to completion.
+          # - Each init container must complete successfully before the next one starts.
+      containers:
+      - name:  service-oss
+        image: htbp-registry:5000/service-oss
+        # imagePullPolicy: IfNotPresent
+        ports: 
+          - containerPort: 8205
+      imagePullSecrets:
+      - name: regcred
+
+#kubectl create secret docker-registry regcred --docker-server=htbp-registry --docker-username=htbp --docker-password=pw_htbp --docker-email=admin@admin.com
+

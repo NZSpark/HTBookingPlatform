@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name:  htbp-service-hosp
+  namespace: default
+  labels:
+    app:  htbp-service-hosp
+spec:
+  selector:
+    matchLabels:
+      app: htbp-service-hosp
+  replicas: 1
+  strategy:
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app:  htbp-service-hosp
+    spec:
+      # initContainers:
+        # Init containers are exactly like regular containers, except:
+          # - Init containers always run to completion.
+          # - Each init container must complete successfully before the next one starts.
+      containers:
+      - name:  service-hosp
+        image: htbp-registry:5000/service-hosp
+        # imagePullPolicy: IfNotPresent
+        ports: 
+          - containerPort: 8201
+      imagePullSecrets:
+      - name: regcred
+
+#kubectl create secret docker-registry regcred --docker-server=htbp-registry --docker-username=htbp --docker-password=pw_htbp --docker-email=admin@admin.com
+

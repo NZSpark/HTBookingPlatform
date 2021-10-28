@@ -1,0 +1,38 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: htbp-rabbitmq
+spec:
+  ports:
+  - port: 5672
+    name: rabbitmq1
+  - port: 15672
+    name: rabbitmq2
+  selector:
+    app: htbp-rabbitmq
+  clusterIP: None
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: htbp-rabbitmq
+spec:
+  selector:
+    matchLabels:
+      app: htbp-rabbitmq
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: htbp-rabbitmq
+    spec:
+      containers:
+      - image: rabbitmq:management
+        name: rabbitmq
+        ports:
+        - containerPort: 5672
+          name: rabbitmq1
+        - containerPort: 15672
+          name: rabbitmq2
+            
