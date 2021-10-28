@@ -1,28 +1,28 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: yygh-mysql
+  name: htbp-mysql
 spec:
   ports:
   - port: 3306
   selector:
-    app: yygh-mysql
+    app: htbp-mysql
   clusterIP: None
 ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: yygh-mysql
+  name: htbp-mysql
 spec:
   selector:
     matchLabels:
-      app: yygh-mysql
+      app: htbp-mysql
   strategy:
     type: Recreate
   template:
     metadata:
       labels:
-        app: yygh-mysql
+        app: htbp-mysql
     spec:
       containers:
       - image: mysql
@@ -30,7 +30,7 @@ spec:
         env:
           # Use secret in real usage
         - name: MYSQL_ROOT_PASSWORD
-          value: pw_yygh
+          value: pw_htbp
         ports:
         - containerPort: 3306
           name: mysql
@@ -43,4 +43,4 @@ spec:
           claimName: mysql-pvc
 
 
-#kubectl run -it --rm --image=mysql --restart=Never mysql-client -- mysql -h yygh-mysql -ppw_yygh
+#kubectl run -it --rm --image=mysql --restart=Never mysql-client -- mysql -h htbp-mysql -ppw_htbp

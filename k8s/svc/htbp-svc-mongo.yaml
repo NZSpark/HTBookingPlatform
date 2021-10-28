@@ -1,28 +1,28 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: yygh-mongo
+  name: htbp-mongo
 spec:
   ports:
   - port: 27017
   selector:
-    app: yygh-mongo
+    app: htbp-mongo
   clusterIP: None
 ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: yygh-mongo
+  name: htbp-mongo
 spec:
   selector:
     matchLabels:
-      app: yygh-mongo
+      app: htbp-mongo
   strategy:
     type: Recreate
   template:
     metadata:
       labels:
-        app: yygh-mongo
+        app: htbp-mongo
     spec:
       containers:
       - image: mongo
@@ -39,4 +39,4 @@ spec:
           claimName: mongo-pvc
 
 
-#kubectl run -it --rm --image=mysql --restart=Never mysql-client -- mysql -h yygh-mysql -ppw_yygh
+#kubectl run -it --rm --image=mysql --restart=Never mysql-client -- mysql -h htbp-mysql -ppw_htbp

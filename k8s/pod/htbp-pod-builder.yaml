@@ -7,8 +7,9 @@ metadata:
     app: build-pod
 spec:
   containers:
-    - name: nginx
-      image: "nginx"
+    - name: docker-build-client
+#      image: "nginx"
+      image: htbp-registry:5000/build-pod-docker-client
       resources:
         limits:
           cpu: 1
@@ -24,7 +25,8 @@ spec:
       - name: DOCKER_HOST
         value: tcp://localhost:2375
     - name: dind
-      image: docker:18.05-dind
+#      image: docker:18.05-dind
+      image: htbp-registry:5000/build-pod-docker-server
       securityContext:
         privileged: true
       volumeMounts:
@@ -34,20 +36,44 @@ spec:
     - name: dind-storage
       emptyDir: {}
 
-#install docker client in pod
-#kubectl exec -it build-pod -- /bin/bash
+
+#----1. install docker client in pod
+#kubectl exec -it build-pod -c nginx -- /bin/bash
 #apt-get update
 #apt-get install apt-transport-https ca-certificates curl gnupg lsb-release
-#curl -fsSL https://download.docker.com/linux/debian/gpg | sudo gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
+#curl -fsSL https://download.docker.com/linux/debian/gpg | gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
 #echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/debian $(lsb_release -cs) stable" | tee /etc/apt/sources.list.d/docker.list > /dev/null
 #apt-get update
 #apt-get install docker-ce-cli
 #mkdir /data
-#kubectl cp /data/k8s/JDKImage build-pod:/data
-#kubectl cp /data/k8s/ServiceImage build-pod:/data
+
+#----2. prepare jar files
+#cd /home/spark/Github/HTBookingPlatform/Backend/htbp_parent
+#mvn package -DskipTests
+#find . -name *.jar -exec cp {} /data/k8s/ServiceImage \;
+#kubectl cp /data/k8s/JDKImage build-pod:/data -c nginx
+#kubectl cp /data/k8s/ServiceImage build-pod:/data -c nginx
+
+#----3. prepare upload paramaters
+#kubectl exec -it build-pod -c dind -- /bin/sh
+#mkdir -p /etc/docker/certs.d/htbp-registry:5000
+#kubectl cp /data/k8s/registry/certs/tls.crt build-pod:/etc/docker/certs.d/htbp-registry:5000/ca.crt -c dind
+#echo '{ "insecure-registries":["htbp-registry:5000"] }' >> /etc/docker/daemon.json   <- to allow http, not https.
+#docker login htbp-registry:5000 -u htbp -p pw_htbp
+
+#----4. build docker images
 #cd /data/JDKImage && docker build -t jdkimage .
-#cd /data/ServiceImage && docker build --build-arg service_file_name=service-gateway.jar --build-arg service_port=8080 -t yygh-registry:5000/service-gateway .
-#docker login yygh-registry:5000 -u yygh -p pw_yygh
-#mkdir -p /etc/docker/certs.d/yygh-registry:5000
-#kubectl cp /data/k8s/registry/certs/tls.crt build-pod:/etc/docker/certs.d/yygh-registry:5000/ca.crt -c dind
-#echo '{ "insecure-registries":["yygh-registry:5000"] }' > /etc/docker/daemon.json   <- to allow http, not https.
+#cd /data/ServiceImage && docker build --build-arg service_file_name=service-gateway.jar --build-arg service_port=8080 -t htbp-registry:5000/service-gateway .
+#docker login htbp-registry:5000 -u htbp -p pw_htbp
+#docker push htbp-registry:5000/service-gateway
+#curl http://htbp-registry:5000/v2/_catalog
+
+#----5. backup build-pod images
+#docker ps
+#CONTAINER ID   IMAGE                  COMMAND                  CREATED       STATUS       PORTS     NAMES
+#768ad9e8bac6   a340e9c87a95           "dockerd-entrypoint.…"   2 hours ago   Up 2 hours             k8s_dind_build-pod_default_c51676f0-75e8-44ef-834d-94b7a7cecb3f_0
+#47e66c71bf54   nginx                  "/docker-entrypoint.…"   2 hours ago   Up 2 hours             k8s_nginx_build-pod_default_c51676f0-75e8-44ef-834d-94b7a7cecb3f_0
+#docker commit 47e66c71bf54 htbp-registry:5000/build-pod-docker-client
+#docker commit 768ad9e8bac6 htbp-registry:5000/build-pod-docker-server
+#docker save htbp-registry:5000/build-pod-docker-client -o build-pod-docker-client.tar
+#docker save htbp-registry:5000/build-pod-docker-server -o build-pod-docker-server.tar

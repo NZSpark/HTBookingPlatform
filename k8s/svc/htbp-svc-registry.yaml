@@ -1,49 +1,49 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: yygh-registry
+  name: htbp-registry
 spec:
   ports:
   - port: 5000
     targetPort: 5000
   selector:
-    app: yygh-registry
-  clusterIP: None
+    app: htbp-registry
+# clusterIP: None
 ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: yygh-registry
+  name: htbp-registry
 spec:
   selector:
     matchLabels:
-      app: yygh-registry
+      app: htbp-registry
   strategy:
     type: Recreate
   template:
     metadata:
       labels:
-        app: yygh-registry
+        app: htbp-registry
     spec:
       containers:
       - image: registry:2.6.2
         name: registry
         env:
-        - name: REGISTRY_AUTH
-          value: "htpasswd"
-        - name: REGISTRY_AUTH_HTPASSWD_REALM
-          value: "Registry Realm"
-        - name: REGISTRY_AUTH_HTPASSWD_PATH
-          value: "/auth/htpasswd"
-        - name: REGISTRY_HTTP_TLS_CERTIFICATE
-          value: "/certs/tls.crt"
-        - name: REGISTRY_HTTP_TLS_KEY
-          value: "/certs/tls.key"
+        # - name: REGISTRY_AUTH
+        #   value: "htpasswd"
+        # - name: REGISTRY_AUTH_HTPASSWD_REALM
+        #   value: "Registry Realm"
+        # - name: REGISTRY_AUTH_HTPASSWD_PATH
+        #   value: "/auth/htpasswd"
+        # - name: REGISTRY_HTTP_TLS_CERTIFICATE
+        #   value: "/certs/tls.crt"
+        # - name: REGISTRY_HTTP_TLS_KEY
+        #   value: "/certs/tls.key"
         - name: MODE
           value: standalone
         ports:
         - containerPort: 5000
-          name: registry
+          name: https
         volumeMounts:
         - name: registry-persistent-storage
           mountPath: /var/lib/registry
@@ -65,11 +65,16 @@ spec:
           secretName: auth-secret
         
 
-#openssl req -x509 -newkey rsa:4096 -days 365 -nodes -sha256 -keyout /data/k8s/certs/tls.key -out /data/k8s/certs/tls.crt -subj "/CN=yygh-registry"
-#docker run --rm --entrypoint htpasswd registry:2.6.2 -Bbn yygh pw_yygh > /data/k8s/registry/auth/htpasswd
+#openssl req -x509 -newkey rsa:4096 -days 365 -nodes -sha256 -keyout /data/k8s/registry/certs/tls.key -out /data/k8s/registry/certs/tls.crt -subj "/CN=htbp-registry" -addext "subjectAltName = DNS:htbp-registry" 
+#docker run --rm --entrypoint htpasswd registry:2.6.2 -Bbn htbp pw_htbp > /data/k8s/registry/auth/htpasswd
 #kubectl create secret generic auth-secret --from-file=/data/k8s/registry/auth/htpasswd
 #kubectl create secret tls certs-secret --cert=/data/k8s/registry/certs/tls.crt --key=/data/k8s/registry/certs/tls.key
-#kubectl create secret docker-registry regcred --docker-server=yygh-registry --docker-username=yygh --docker-password=pw_yygh --docker-email=admin@admin.com
-
+#kubectl create secret docker-registry regcred --docker-server=htbp-registry --docker-username=htbp --docker-password=pw_htbp --docker-email=admin@admin.com
+#export REGISTRY_NAME="htbp-registry"
+#export REGISTRY_IP="10.108.8.89"
+#for x in $(kubectl get nodes -o jsonpath='{ $.items[*].status.addresses[?(@.type=="InternalIP")].address }'); do ssh root@$x "echo '$REGISTRY_IP $REGISTRY_NAME' >> /etc/hosts"; done
+#for x in $(kubectl get nodes -o jsonpath='{ $.items[*].status.addresses[?(@.type=="InternalIP")].address }'); do ssh root@$x "rm -rf /etc/docker/certs.d/$REGISTRY_NAME:5000;mkdir -p /etc/docker/certs.d/$REGISTRY_NAME:5000"; done
+#
+#----Error response from daemon: Get "https://htbp-registry:5000/v2/": x509: certificate relies on legacy Common Name field, use SANs or temporarily enable Common Name matching with GODEBUG=x509ignoreCN=0
 
 
